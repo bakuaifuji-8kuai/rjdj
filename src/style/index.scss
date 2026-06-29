@@ -1,0 +1,65 @@
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$warning-color: #faad14;
+$danger-color: #f5222d;
+$info-color: #1890ff;
+
+$bg-color: #f0f2f5;
+$sidebar-bg: #001529;
+$header-bg: #ffffff;
+
+$text-primary: #1f1f1f;
+$text-secondary: #666666;
+$text-light: #999999;
+
+$border-color: #e8e8e8;
+$shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page-container {
+  padding: 20px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: $shadow;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid $border-color;
+  
+  .title {
+    font-size: 18px;
+    font-weight: 600;
+    color: $text-primary;
+  }
+}
+
+.el-table {
+  --el-table-row-hover-bg-color: #fafafa;
+}
+
+.el-button {
+  --el-button-primary-bg-color: $primary-color;
+  --el-button-primary-border-color: $primary-color;
+}

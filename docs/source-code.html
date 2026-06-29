@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>城市隧道智慧照明系统 - 源码文档</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: #e0e0e0;
+    }
+    .header {
+      background: linear-gradient(90deg, #0f3460, #1a1a2e);
+      padding: 20px 40px;
+      border-bottom: 2px solid #00d4ff;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+    .header h1 {
+      font-size: 24px;
+      color: #00d4ff;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    }
+    .header p {
+      color: #888;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .nav-panel {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+    }
+    .nav-panel h3 {
+      color: #00d4ff;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .nav-links a {
+      padding: 6px 12px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 4px;
+      color: #00d4ff;
+      text-decoration: none;
+      font-size: 13px;
+      transition: all 0.3s ease;
+    }
+    .nav-links a:hover {
+      background: rgba(0, 212, 255, 0.2);
+      border-color: #00d4ff;
+    }
+    .file-section {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      overflow: hidden;
+    }
+    .file-header {
+      background: linear-gradient(90deg, rgba(0, 212, 255, 0.1), transparent);
+      padding: 12px 20px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .file-header h4 {
+      color: #00d4ff;
+      font-size: 15px;
+    }
+    .file-path {
+      color: #888;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+    }
+    .code-container {
+      padding: 15px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .code-container pre {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #d4d4d4;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .code-container code {
+      color: #d4d4d4;
+    }
+    .comment {
+      color: #6a9955;
+    }
+    .keyword {
+      color: #569cd6;
+    }
+    .string {
+      color: #ce9178;
+    }
+    .function {
+      color: #dcdcaa;
+    }
+    .number {
+      color: #b5cea8;
+    }
+    .module-section {
+      margin-bottom: 30px;
+    }
+    .module-section h2 {
+      color: #00d4ff;
+      font-size: 20px;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+    }
+    .scroll-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 10px 15px;
+      background: rgba(0, 212, 255, 0.3);
+      border: 1px solid rgba(0, 212, 255, 0.5);
+      border-radius: 50%;
+      color: #00d4ff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .scroll-top:hover {
+      background: rgba(0, 212, 255, 0.5);
+    }
+    @media (max-width: 768px) {
+      .header {
+        padding: 15px 20px;
+      }
+      .header h1 {
+        font-size: 20px;
+      }
+      .nav-links {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>城市隧道智慧照明系统 V1.0</h1>
+    <p>智能照明+供电管理一体化管控平台 - 源代码文档</p>
+  </div>
+
+  <div class="container">
+    <div class="nav-panel">
+      <h3>快速导航</h3>
+      <div class="nav-links">
+        <a href="#overview">项目概述</a>
+        <a href="#tunnel">隧道管理模块</a>
+        <a href="#power">供电管理模块</a>
+        <a href="#scene">智能场景模块</a>
+        <a href="#config">配置文件</a>
+        <a href="#components">公共组件</a>
+      </div>
+    </div>
+
+    <div id="overview" class="module-section">
+      <h2>📋 项目概述</h2>
+      <div class="file-section">
+        <div class="file-header">
+          <h4>项目结构</h4>
+          <span class="file-path">/workspace/src/</span>
+        </div>
+        <div class="code-container">
+          <pre>
+├── src/
+│   ├── views/                    # 页面视图组件
+│   │   ├── tunnel/              # 隧道管理模块
+│   │   │   ├── TunnelList.vue       # 隧道列表
+│   │   │   ├── TunnelHome.vue       # 隧道管理首页
+│   │   │   ├── LightingControl.vue  # 隧道照明控制
+│   │   │   ├── SectionManage.vue    # 分段管理
+│   │   │   ├── TimeSchedule.vue     # 时序设置
+│   │   │   ├── CircuitGroup.vue     # 回路分组
+│   │   │   ├── LampManage.vue       # 隧道灯管理
+│   │   │   └── FittingManage.vue    # 灯具管理
+│   │   ├── power/                # 供电管理模块
+│   │   │   ├── DistributionBox.vue  # 配电柜监测
+│   │   │   ├── LineInfo.vue         # 线路信息
+│   │   │   ├── CentralControl.vue   # 集控设备
+│   │   │   ├── CircuitControl.vue   # 回路控制
+│   │   │   ├── ModuleInfo.vue       # 模块信息
+│   │   │   ├── StrongElectricScene.vue # 强电场景
+│   │   │   ├── HistoryScene.vue     # 历史下发场景
+│   │   │   ├── CircuitGroup.vue     # 回路分组
+│   │   │   └── LampControlBind.vue  # 灯控绑定
+│   │   └── scene/                # 智能场景模块
+│   │       ├── QuickOperation.vue    # 快捷操作
+│   │       ├── SceneManage.vue       # 场景管理
+│   │       ├── SceneLinkage.vue      # 场景联动
+│   │       └── LinkageManage.vue     # 联动管理
+│   ├── components/               # 公共组件
+│   │   └── Sidebar.vue              # 侧边导航栏
+│   ├── router/                   # 路由配置
+│   │   └── index.js                 # 路由定义
+│   ├── App.vue                   # 根组件
+│   ├── main.js                   # 入口文件
+│   └── style.css                 # 全局样式
+├── public/                       # 静态资源
+├── index.html                   # HTML模板
+├── package.json                 # 项目依赖配置
+├── vite.config.js               # Vite配置
+└── README.md                    # 项目说明
+          </pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="tunnel" class="module-section">
+      <h2>🚇 隧道管理模块</h2>
+      <div class="file-section">
+        <div class="file-header">
+          <h4>TunnelList.vue - 隧道列表</h4>
+          <span class="file-path">/workspace/src/views/tunnel/TunnelList.vue</span>
+        </div>
+        <div class="code-container">
+          <pre><code>&lt;template&gt;
+  &lt;div class="page-container"&gt;
+    &lt;div class="page-header"&gt;
+      &lt;el-button type="primary" @click="handleAdd"&gt;新增隧道&lt;/el-button&gt;
+    &lt;/div&gt;
+    &lt;div class="content-area"&gt;
+      &lt;el-table :data="tunnelList" border&gt;
+        &lt;el-table-column type="selection" width="50"/&gt;
+        &lt;el-table-column prop="no" label="序号"/&gt;
+        &lt;el-table-column prop="name" label="隧道名称"/&gt;
+        &lt;el-table-column prop="location" label="所属位置"/&gt;
+        &lt;el-table-column prop="length" label="隧道长度"/&gt;
+        &lt;el-table-column prop="status" label="状态"&gt;
+          &lt;template #default="{row}"&gt;
+            &lt;el-tag :type="row.status === '运行中' ? 'success' : 'warning'"&gt;
+              {{row.status}}
+            &lt;/el-tag&gt;
+          &lt;/template&gt;
+        &lt;/el-table-column&gt;
+        &lt;el-table-column label="操作"&gt;
+          &lt;template #default="{row}"&gt;
+            &lt;el-button size="small" @click="handleEdit(row)"&gt;修改&lt;/el-button&gt;
+            &lt;el-button size="small" type="danger" @click="handleDelete(row)"&gt;删除&lt;/el-button&gt;
+          &lt;/template&gt;
+        &lt;/el-table-column&gt;
+      &lt;/el-table&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
+const tunnelList = ref([
+  { no: 1, name: '梅溪湖隧道', location: '长沙市岳麓区', length: '2.8km', status: '运行中' },
+  { no: 2, name: '洋湖隧道', location: '长沙市岳麓区', length: '3.2km', status: '运行中' },
+  { no: 3, name: '南湖路隧道', location: '长沙市天心区', length: '1.8km', status: '维护中' }
+])
+
+const handleAdd = () =&gt; {
+  ElMessage.info('新增隧道功能')
+}
+const handleEdit = (row) =&gt; {
+  ElMessage.info('修改隧道: ' + row.name)
+}
+const handleDelete = (row) =&gt; {
+  ElMessageBox.confirm('确定删除隧道【' + row.name + '】?', '提示', {type: 'warning'})
+    .then(() =&gt; {
+      tunnelList.value = tunnelList.value.filter(t =&gt; t.no !== row.no)
+      ElMessage.success('删除成功')
+    })
+}
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="file-section">
+        <div class="file-header">
+          <h4>LightingControl.vue - 隧道照明控制</h4>
+          <span class="file-path">/workspace/src/views/tunnel/LightingControl.vue</span>
+        </div>
+        <div class="code-container">
+          <pre><code>&lt;template&gt;
+  &lt;div class="page-container"&gt;
+    &lt;el-tabs v-model="activeTab"&gt;
+      &lt;el-tab-pane label="调光控制" name="dimming"&gt;
+        &lt;div class="dimming-panel"&gt;
+          &lt;el-slider v-model="brightness" :min="0" :max="100" 
+            @change="handleBrightnessChange"/&gt;
+          &lt;el-button type="primary" @click="handleDimming"&gt;调光&lt;/el-button&gt;
+        &lt;/div&gt;
+      &lt;/el-tab-pane&gt;
+      &lt;el-tab-pane label="回路控制" name="circuit"&gt;
+        &lt;el-table :data="circuitList" border&gt;
+          &lt;el-table-column prop="name" label="回路名称"/&gt;
+          &lt;el-table-column prop="status" label="状态"/&gt;
+          &lt;el-table-column label="操作"&gt;
+            &lt;template #default="{row}"&gt;
+              &lt;el-button size="small" @click="toggleCircuit(row)"&gt;
+                {{row.status === '开启' ? '关闭' : '开启'}}
+              &lt;/el-button&gt;
+            &lt;/template&gt;
+          &lt;/el-table-column&gt;
+        &lt;/el-table&gt;
+      &lt;/el-tab-pane&gt;
+    &lt;/el-tabs&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
+
+const activeTab = ref('dimming')
+const brightness = ref(50)
+const circuitList = ref([
+  { name: '入口段回路', status: '开启' },
+  { name: '过渡段回路', status: '开启' },
+  { name: '中间段回路', status: '开启' },
+  { name: '出口段回路', status: '关闭' }
+])
+
+const handleBrightnessChange = (val) =&gt; {
+  console.log('亮度调整为: ' + val + '%')
+}
+const handleDimming = () =&gt; {
+  ElMessage.success('调光成功，亮度: ' + brightness.value + '%')
+}
+const toggleCircuit = (row) =&gt; {
+  row.status = row.status === '开启' ? '关闭' : '开启'
+  ElMessage.success('回路【' + row.name + '】已' + row.status)
+}
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="file-section">
+        <div class="file-header">
+          <h4>SectionManage.vue - 分段管理</h4>
+          <span class="file-path">/workspace/src/views/tunnel/SectionManage.vue</span>
+        </div>
+        <div class="code-container">
+          <pre><code>&lt;template&gt;
+  &lt;div class="page-container"&gt;
+    &lt;div class="page-header"&gt;
+      &lt;el-button type="primary" @click="handleAdd"&gt;新增分段&lt;/el-button&gt;
+      &lt;el-button type="danger" @click="handleBatchDelete"&gt;批量删除&lt;/el-button&gt;
+    &lt;/div&gt;
+    &lt;el-table :data="sectionList" border @selection-change="handleSelection"&gt;
+      &lt;el-table-column type="selection"/&gt;
+      &lt;el-table-column prop="no" label="序号"/&gt;
+      &lt;el-table-column prop="name" label="分段名称"/&gt;
+      &lt;el-table-column prop="start" label="起始位置"/&gt;
+      &lt;el-table-column prop="end" label="结束位置"/&gt;
+      &lt;el-table-column label="操作"&gt;
+        &lt;template #default="{row}"&gt;
+          &lt;el-button size="small" @click="handleEdit(row)"&gt;修改&lt;/el-button&gt;
+          &lt;el-button size="small" type="danger" @click="handleDelete(row)"&gt;删除&lt;/el-button&gt;
+        &lt;/template&gt;
+      &lt;/el-table-column&gt;
+    &lt;/el-table&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
+const sectionList = ref([
+  { no: 1, name: '入口段', start: '0m', end: '300m' },
+  { no: 2, name: '过渡段', start: '300m', end: '600m' },
+  { no: 3, name: '中间段', start: '600m', end: '2200m' },
+  { no: 4, name: '出口段', start: '2200m', end: '2800m' }
+])
+const selectedRows = ref([])
+
+const handleSelection = (val) =&gt; { selectedRows.value = val }
+const handleAdd = () =&gt; { ElMessage.info('新增分段') }
+const handleEdit = (row) =&gt; { ElMessage.info('修改分段: ' + row.name) }
+const handleDelete = (row) =&gt; {
+  ElMessageBox.confirm('确定删除分段【' + row.name + '】?')
+    .then(() =&gt; {
+      sectionList.value = sectionList.value.filter(s =&gt; s.no !== row.no)
+      ElMessage.success('删除成功')
+    })
+}
+const handleBatchDelete = () =&gt; {
+  if(selectedRows.value.length === 0) {
+    ElMessage.warning('请选择要删除的分段')
+    return
+  }
+  ElMessageBox.confirm('确定删除选中的 ' + selectedRows.value.length + ' 个分段?')
+    .then(() =&gt; {
+      const ids = selectedRows.value.map(s =&gt; s.no)
+      sectionList.value = sectionList.value.filter(s =&gt; !ids.includes(s.no))
+      selectedRows.value = []
+      ElMessage.success('批量删除成功')
+    })
+}
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="file-section">
+        <div class="file-header">
+          <h4>TimeSchedule.vue - 时序设置</h4>
+          <span class="file-path">/workspace/src/views/tunnel/TimeSchedule.vue</span>
+        </div>
+        <div class="code-container">
+          <pre><code>&lt;template&gt;
+  &lt;div class="page-container"&gt;
+    &lt;el-button type="primary" @click="handleAddPeriod"&gt;添加时段&lt;/el-button&gt;
+    &lt;el-table :data="timePeriods" border&gt;
+      &lt;el-table-column prop="no" label="序号"/&gt;
+      &lt;el-table-column prop="name" label="时段名称"/&gt;
+      &lt;el-table-column prop="startTime" label="开始时间"/&gt;
+      &lt;el-table-column prop="endTime" label="结束时间"/&gt;
+      &lt;el-table-column prop="brightness" label="亮度(%)"/&gt;
+      &lt;el-table-column label="操作"&gt;
+        &lt;template #default="{row}"&gt;
+          &lt;el-button size="small" @click="handleEdit(row)"&gt;修改&lt;/el-button&gt;
+          &lt;el-button size="small" type="danger" @click="handleDelete(row)"&gt;删除&lt;/el-button&gt;
+        &lt;/template&gt;
+      &lt;/el-table-column&gt;
+    &lt;/el-table&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
+const timePeriods = ref([
+  { no: 1, name: '白天模式', startTime: '06:00', endTime: '18:00', brightness: 80 },
+  { no: 2, name: '黄昏模式', startTime: '18:00', endTime: '19:00', brightness: 60 },
+  { no: 3, name: '夜间模式', startTime: '19:00', endTime: '23:00', brightness: 40 },
+  { no: 4, name: '深夜模式', startTime: '23:00', endTime: '06:00', brightness: 20 }
+])
+
+const handleAddPeriod = () =&gt; { ElMessage.info('添加时段') }
+const handleEdit = (row) =&gt; { ElMessage.info('修改时段: ' + row.name) }
+const handleDelete = (row) =&gt; {
+  ElMessageBox.confirm('确定删除时段【' + row.name + '】?')
+    .then(() =&gt; {
+      timePeriods.value = timePeriods.value.filter(t =&gt; t.no !== row.no)
+      ElMessage.success('删除成功')
+    })
+}
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="power" class="module-section">
+      <h2>⚡ 供电管理模块</h2>
+      <div class="file-section">
+        <div class="file-header">
+          <h4>DistributionBox.vue - 配电柜监测</h4>
+          <span class="file-path">/workspace/src/views/power/DistributionBox.vue</span>
+        </div>
+        <div class="code-container">
+          <pre><code>&lt;template&gt;
+  &lt;div class="page-container"&gt;
+    &lt;el-table :data="distributionBoxes" border&gt;
+      &lt;el-table-column prop="no" label="序号"/&gt;
+      &lt;el-table-column prop="name" label="配电柜名称"/&gt;
+      &lt;el-table-column prop="location" label="位置"/&gt;
+      &lt;el-table-column prop="status" label="状态"&gt;
+        &lt;template #default="{row}"&gt;
+          &lt;el-tag :type="row.status === '正常' ? 'success' : 'danger'"&gt;
+            {{row.status}}
+          &lt;/el-tag&gt;
+        &lt;/template&gt;
+      &lt;/el-table-column&gt;
+      &lt;el-table-column prop="voltage" label="电压(V)"/&gt;
+      &lt;el-table-column prop="current" label="电流(A)"/&gt;
+      &lt;el-table-column prop="power" label="功率(kW)"/&gt;
+      &lt;el-table-column label="操作"&gt;
+        &lt;template #default="{row}"&gt;
+          &lt;el-button size="small" @click="viewDetail(row)"&gt;详情&lt;/el-button&gt;
+        &lt;/template&gt;
+      &lt;/el-table-column&gt;
+    &lt;/el-table&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
+
+const distributionBoxes = ref([
+  { no: 1, name: '1#配电柜', location: '隧道入口', status: '正常', voltage: 380, current: 45.2, power: 17.1 },
+  { no: 2, name: '2#配电柜', location: '隧道中段', status: '正常', voltage: 380, current: 38.5, power: 14.6 },
+  { no: 3, name: '3#配电柜', location: '隧道出口', status: '告警', voltage: 375, current: 52.8, power: 19.8 }
+])
+
+const viewDetail = (row) =&gt; {
+  ElMessage.info('查看配电柜详情: ' + row.name)
+}
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="file-section">
+        <div class="file-header">
+          <h4>CentralControl.vue - 集控设备</h4>
+          <span class="file-path">/workspace/src/views/power/CentralControl.vue</span>
+        </div>
+        <div class="code-container">
+          <pre><code>&lt;template&gt;
+  &lt;div class="page-container"&gt;
+    &lt;el-table :data="centralControls" border&gt;
+      &lt;el-table-column prop="no" label="序号"/&gt;
+      &lt;el-table-column prop="name" label="设备名称"/&gt;
+      &lt;el-table-column prop="model" label="设备型号"/&gt;
+      &lt;el-table-column prop="ip" label="IP地址"/&gt;
+      &lt;el-table-column prop="status" label="状态"&gt;
+        &lt;template #default="{row}"&gt;
+          &lt;el-tag :type="row.status === '在线' ? 'success' : 'danger'"&gt;
+            {{row.status}}
+          &lt;/el-tag&gt;
+        &lt;/template&gt;
+      &lt;/el-table-column&gt;
+      &lt;el-table-column label="操作"&gt;
+        &lt;template #default="{row}"&gt;
+          &lt;el-button size="small" type="danger" @click="handleDelete(row)"&gt;删除&lt;/el-button&gt;
+        &lt;/template&gt;
+      &lt;/el-table-column&gt;
+    &lt;/el-table&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
+const centralControls = ref([
+  { no: 1, name: '梅溪湖隧道集控', model: 'ACU-2000', ip: '192.168.1.101', status: '在线' },
+  { no: 2, name: '梅溪湖隧道集控1', model: 'ACU-2000', ip: '192.168.1.102', status: '在线' },
+  { no: 3, name: '测试128M', model: 'ACU-1000', ip: '192.168.1.103', status: '离线' }
+])
+
+const handleDelete = (row) =&gt; {
+  ElMessageBox.confirm('确定删除集控设备【' + row.name + '】?')
+    .then(() =&gt; {
+      centralControls.value = centralControls.value.filter(c =&gt; c.no !== row.no)
+      ElMessage.success('删除成功')
+    })
+}
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="file-section">
+        <div class="file-header">
+          <h4>LampControlBind.vue - 灯控绑定</h4>
+          <span class="file-path">/workspace/src/views/power/LampControlBind.vue</span>
+        </div>
+        <div class="code-container">
+          <pre><code>&lt;template&gt;
+  &lt;div class="page-container"&gt;
+    &lt;el-tabs v-model="activeTab"&gt;
+      &lt;el-tab-pane label="灯控绑定" name="lamp"&gt;
+        &lt;el-button type="primary" @click="handleAdd"&gt;新增&lt;/el-button&gt;
+        &lt;el-table :data="bindData" border&gt;
+          &lt;el-table-column prop="name" label="集控名称"/&gt;
+          &lt;el-table-column prop="count" label="关联灯控数"/&gt;
+          &lt;el-table-column label="操作"&gt;
+            &lt;template #default="{row}"&gt;
+              &lt;el-button size="small" @click="handleEdit(row)"&gt;修改&lt;/el-button&gt;
+              &lt;el-button size="small" type="danger" @click="handleUnbind(row)"&gt;解绑&lt;/el-button&gt;
+            &lt;/template&gt;
+          &lt;/el-table-column&gt;
+        &lt;/el-table&gt;
+      &lt;/el-tab-pane&gt;
+      &lt;el-tab-pane label="组播分组" name="multicast"&gt;
+        &lt;el-button type="primary" @click="handleAddMulticast"&gt;新增&lt;/el-button&gt;
+        &lt;el-table :data="multicastGroups" border&gt;
+          &lt;el-table-column prop="name" label="组播分组名称"/&gt;
+          &lt;el-table-column prop="groupId" label="组播ID"/&gt;
+          &lt;el-table-column prop="deviceCount" label="关联设备数"/&gt;
+          &lt;el-table-column label="操作"&gt;
+            &lt;template #default="{row}"&gt;
+              &lt;el-button size="small" @click="handleEditMulticast(row)"&gt;修改&lt;/el-button&gt;
+              &lt;el-button size="small" type="warning" @click="handleUnbindDevices(row)"&gt;解绑&lt;/el-button&gt;
+              &lt;el-button size="small" type="danger" @click="handleDeleteMulticast(row)"&gt;删除&lt;/el-button&gt;
+            &lt;/template&gt;
+          &lt;/el-table-column&gt;
+        &lt;/el-table&gt;
+      &lt;/el-tab-pane&gt;
+    &lt;/el-tabs&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
+const activeTab = ref('lamp')
+const bindData = ref([
+  { name: '梅溪湖隧道集控', count: 2 },
+  { name: '测试128M', count: 0 }
+])
+const multicastGroups = ref([
+  { name: '隧道灯组播A组', groupId: '224.1.1.1', deviceCount: 4 },
+  { name: '隧道灯组播B组', groupId: '224.1.1.2', deviceCount: 0 }
+])
+
+const handleAdd = () =&gt; { ElMessage.info('新增灯控绑定') }
+const handleEdit = (row) =&gt; { ElMessage.info('修改绑定: ' + row.name) }
+const handleUnbind = (row) =&gt; {
+  ElMessageBox.confirm('确定解绑【' + row.name + '】?')
+    .then(() =&gt; {
+      row.count = 0
+      ElMessage.success('解绑成功')
+    })
+}
+const handleAddMulticast = () =&gt; { ElMessage.info('新增组播分组') }
+const handleEditMulticast = (row) =&gt; { ElMessage.info('修改组播分组: ' + row.name) }
+const handleUnbindDevices = (row) =&gt; {
+  ElMessageBox.confirm('确定解绑组播分组【' + row.name + '】的所有设备?')
+    .then(() =&gt; {
+      row.deviceCount = 0
+      ElMessage.success('解绑成功')
+    })
+}
+const handleDeleteMulticast = (row) =&gt; {
+  ElMessageBox.confirm('确定删除组播分组【' + row.name + '】?')
+    .then(() =&gt; {
+      multicastGroups.value = multicastGroups.value.filter(g =&gt; g.name !== row.name)
+      ElMessage.success('删除成功')
+    })
+}
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="scene" class="module-section">
+      <h2>🎭 智能场景模块</h2>
+      <div class="file-section">
+        <div class="file-header">
+          <h4>QuickOperation.vue - 快捷操作</h4>
+          <span class="file-path">/workspace/src/views/scene/QuickOperation.vue</span>
+        </div>
+        <div class="code-container">
+          <pre><code>&lt;template&gt;
+  &lt;div class="page-container"&gt;
+    &lt;el-tabs v-model="activeTab"&gt;
+      &lt;el-tab-pane label="场景控制" name="control"&gt;
+        &lt;el-button type="primary" @click="handleAdd"&gt;新增&lt;/el-button&gt;
+        &lt;div class="scene-grid"&gt;
+          &lt;el-card v-for="scene in scenes" :key="scene.id" class="scene-card"&gt;
+            &lt;el-checkbox v-model="scene.selected"/&gt;
+            &lt;span class="scene-name"&gt;{{scene.name}}&lt;/span&gt;
+            &lt;el-switch v-model="scene.show" label="显示"/&gt;
+            &lt;el-button size="small" @click="handleExecute(scene)"&gt;执行&lt;/el-button&gt;
+            &lt;el-button size="small" @click="showResult(scene)"&gt;执行结果&lt;/el-button&gt;
+          &lt;/el-card&gt;
+        &lt;/div&gt;
+      &lt;/el-tab-pane&gt;
+      &lt;el-tab-pane label="场景下发记录" name="history"&gt;
+        &lt;el-table :data="historyRecords" border&gt;
+          &lt;el-table-column prop="no" label="序号"/&gt;
+          &lt;el-table-column prop="sceneName" label="场景名称"/&gt;
+          &lt;el-table-column prop="operator" label="下发人员"/&gt;
+          &lt;el-table-column prop="time" label="下发时间"/&gt;
+        &lt;/el-table&gt;
+      &lt;/el-tab-pane&gt;
+    &lt;/el-tabs&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
+const activeTab = ref('control')
+const scenes = ref([
+  { id: 1, name: '应急开灯', selected: false, show: true },
+  { id: 2, name: '线性灯-100', selected: false, show: true },
+  { id: 3, name: '隧道灯具全关', selected: false, show: true }
+])
+const historyRecords = ref([
+  { no: 1, sceneName: '应急开灯', operator: 'admin', time: '2024-01-09 13:59:26' }
+])
+
+const handleAdd = () =&gt; { ElMessage.info('新增场景') }
+const handleExecute = (scene) =&gt; {
+  ElMessageBox.confirm('确定执行场景【' + scene.name + '】?')
+    .then(() =&gt; {
+      ElMessage.success('场景执行成功')
+    })
+}
+const showResult = (scene) =&gt; {
+  ElMessage.info('场景【' + scene.name + '】执行结果')
+}
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="file-section">
+        <div class="file-header">
+          <h4>SceneLinkage.vue - 场景联动</h4>
+          <span class="file-path">/workspace/src/views/scene/SceneLinkage.vue</span>
+        </div>
+        <div class="code-container">
+          <pre><code>&lt;template&gt;
+  &lt;div class="page-container"&gt;
+    &lt;el-button type="primary" @click="handleAdd"&gt;新增&lt;/el-button&gt;
+    &lt;div class="view-toggle"&gt;
+      &lt;el-button @click="viewMode = 'card'"&gt;卡片模式&lt;/el-button&gt;
+      &lt;el-button @click="viewMode = 'list'"&gt;列表模式&lt;/el-button&gt;
+    &lt;/div&gt;
+    &lt;div v-if="viewMode === 'card'" class="rule-cards"&gt;
+      &lt;el-card v-for="rule in rules" :key="rule.id" class="rule-card"&gt;
+        &lt;span :class="['priority', rule.priority]"&gt;{{rule.priority === 'high' ? '高' : '低'}}&lt;/span&gt;
+        &lt;span class="rule-name"&gt;{{rule.name}}&lt;/span&gt;
+        &lt;el-switch v-model="rule.enabled"/&gt;
+        &lt;span class="date"&gt;{{rule.date}}&lt;/span&gt;
+      &lt;/el-card&gt;
+    &lt;/div&gt;
+    &lt;el-table v-else :data="rules" border&gt;
+      &lt;el-table-column prop="name" label="规则名称"/&gt;
+      &lt;el-table-column prop="priority" label="优先级"/&gt;
+      &lt;el-table-column prop="date" label="执行日期"/&gt;
+    &lt;/el-table&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
+
+const viewMode = ref('card')
+const rules = ref([
+  { id: 1, name: '检测有人开', priority: 'high', enabled: true, date: '2025.09.01-2028.10.31' },
+  { id: 2, name: '漏电自动断电', priority: 'high', enabled: true, date: '一直执行' },
+  { id: 3, name: '光照度亮灯', priority: 'high', enabled: true, date: '一直执行' },
+  { id: 4, name: '关回路', priority: 'low', enabled: true, date: '一直执行' }
+])
+
+const handleAdd = () =&gt; { ElMessage.info('新增联动规则') }
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="config" class="module-section">
+      <h2>⚙️ 配置文件</h2>
+      <div class="file-section">
+        <div class="file-header">
+          <h4>router/index.js - 路由配置</h4>
+          <span class="file-path">/workspace/src/router/index.js</span>
+        </div>
+        <div class="code-container">
+          <pre><code>import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [
+  {
+    path: '/',
+    name: 'TunnelHome',
+    component: () =&gt; import('../views/tunnel/TunnelHome.vue')
+  },
+  // 隧道管理模块
+  { path: '/tunnel/list', name: 'TunnelList', component: () =&gt; import('../views/tunnel/TunnelList.vue') },
+  { path: '/tunnel/lighting', name: 'LightingControl', component: () =&gt; import('../views/tunnel/LightingControl.vue') },
+  { path: '/tunnel/section', name: 'SectionManage', component: () =&gt; import('../views/tunnel/SectionManage.vue') },
+  { path: '/tunnel/time', name: 'TimeSchedule', component: () =&gt; import('../views/tunnel/TimeSchedule.vue') },
+  { path: '/tunnel/circuit-group', name: 'CircuitGroup', component: () =&gt; import('../views/tunnel/CircuitGroup.vue') },
+  { path: '/tunnel/lamp', name: 'LampManage', component: () =&gt; import('../views/tunnel/LampManage.vue') },
+  { path: '/tunnel/fitting', name: 'FittingManage', component: () =&gt; import('../views/tunnel/FittingManage.vue') },
+  
+  // 供电管理模块
+  { path: '/power/distribution', name: 'DistributionBox', component: () =&gt; import('../views/power/DistributionBox.vue') },
+  { path: '/power/line', name: 'LineInfo', component: () =&gt; import('../views/power/LineInfo.vue') },
+  { path: '/power/central', name: 'CentralControl', component: () =&gt; import('../views/power/CentralControl.vue') },
+  { path: '/power/circuit', name: 'CircuitControl', component: () =&gt; import('../views/power/CircuitControl.vue') },
+  { path: '/power/module', name: 'ModuleInfo', component: () =&gt; import('../views/power/ModuleInfo.vue') },
+  { path: '/power/scene', name: 'StrongElectricScene', component: () =&gt; import('../views/power/StrongElectricScene.vue') },
+  { path: '/power/history', name: 'HistoryScene', component: () =&gt; import('../views/power/HistoryScene.vue') },
+  { path: '/power/circuit-group', name: 'PowerCircuitGroup', component: () =&gt; import('../views/power/CircuitGroup.vue') },
+  { path: '/power/bind', name: 'LampControlBind', component: () =&gt; import('../views/power/LampControlBind.vue') },
+  
+  // 智能场景模块
+  { path: '/scene/quick', name: 'QuickOperation', component: () =&gt; import('../views/scene/QuickOperation.vue') },
+  { path: '/scene/manage', name: 'SceneManage', component: () =&gt; import('../views/scene/SceneManage.vue') },
+  { path: '/scene/linkage', name: 'SceneLinkage', component: () =&gt; import('../views/scene/SceneLinkage.vue') },
+  { path: '/scene/linkage-manage', name: 'LinkageManage', component: () =&gt; import('../views/scene/LinkageManage.vue') }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+export default router</code></pre>
+        </div>
+      </div>
+
+      <div class="file-section">
+        <div class="file-header">
+          <h4>package.json - 依赖配置</h4>
+          <span class="file-path">/workspace/package.json</span>
+        </div>
+        <div class="code-container">
+          <pre><code>{
+  "name": "smart-lighting-system",
+  "version": "1.0.0",
+  "description": "城市隧道智慧照明系统",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
+    "element-plus": "^2.6.3",
+    "@element-plus/icons-vue": "^2.3.1",
+    "vueuse": "^10.9.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "sass": "^1.72.0",
+    "vite": "^5.1.6"
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="components" class="module-section">
+      <h2>🧩 公共组件</h2>
+      <div class="file-section">
+        <div class="file-header">
+          <h4>Sidebar.vue - 侧边导航栏</h4>
+          <span class="file-path">/workspace/src/components/Sidebar.vue</span>
+        </div>
+        <div class="code-container">
+          <pre><code>&lt;template&gt;
+  &lt;aside class="sidebar"&gt;
+    &lt;div class="logo"&gt;
+      &lt;span class="logo-text"&gt;隧道照明系统&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;el-menu :default-active="activeMenu" mode="vertical"&gt;
+      &lt;el-sub-menu index="tunnel"&gt;
+        &lt;template #title&gt;
+          &lt;el-icon&gt;&lt;MapLocation/&gt;&lt;/el-icon&gt;
+          &lt;span&gt;隧道管理&lt;/span&gt;
+        &lt;/template&gt;
+        &lt;el-menu-item index="/tunnel/list"&gt;隧道列表&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/tunnel/lighting"&gt;隧道照明&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/tunnel/section"&gt;分段管理&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/tunnel/time"&gt;时序设置&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/tunnel/circuit-group"&gt;回路分组&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/tunnel/lamp"&gt;隧道灯管理&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/tunnel/fitting"&gt;灯具管理&lt;/el-menu-item&gt;
+      &lt;/el-sub-menu&gt;
+      &lt;el-sub-menu index="power"&gt;
+        &lt;template #title&gt;
+          &lt;el-icon&gt;&lt;Zap/&gt;&lt;/el-icon&gt;
+          &lt;span&gt;供电管理&lt;/span&gt;
+        &lt;/template&gt;
+        &lt;el-menu-item index="/power/distribution"&gt;配电柜&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/power/line"&gt;线路信息&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/power/central"&gt;集控设备&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/power/circuit"&gt;回路控制&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/power/module"&gt;模块信息&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/power/scene"&gt;强电场景&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/power/history"&gt;历史下发场景&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/power/circuit-group"&gt;回路分组&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/power/bind"&gt;灯控绑定&lt;/el-menu-item&gt;
+      &lt;/el-sub-menu&gt;
+      &lt;el-sub-menu index="scene"&gt;
+        &lt;template #title&gt;
+          &lt;el-icon&gt;&lt;Sparkles/&gt;&lt;/el-icon&gt;
+          &lt;span&gt;智能场景&lt;/span&gt;
+        &lt;/template&gt;
+        &lt;el-menu-item index="/scene/quick"&gt;快捷操作&lt;/el-menu-item&gt;
+        &lt;el-menu-item index="/scene/linkage"&gt;场景联动&lt;/el-menu-item&gt;
+      &lt;/el-sub-menu&gt;
+    &lt;/el-menu&gt;
+  &lt;/aside&gt;
+&lt;/template&gt;
+&lt;script setup&gt;
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { MapLocation, Zap, Sparkles } from '@element-plus/icons-vue'
+
+const route = useRoute()
+const activeMenu = computed(() =&gt; route.path)
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('城市隧道智慧照明系统 - 源码文档加载完成')
+    })
+  </script>
+</body>
+</html>
