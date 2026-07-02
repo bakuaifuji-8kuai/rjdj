@@ -2,19 +2,51 @@
   <div class="scene-linkage-container">
     <div class="page-header">
       <div class="header-left">
-        <el-tabs v-model="viewMode" class="header-tabs">
-          <el-tab-pane label="卡片模式" name="card">卡片模式</el-tab-pane>
-          <el-tab-pane label="列表模式" name="list">列表模式</el-tab-pane>
-        </el-tabs>
+        <div class="title-wrapper">
+          <div class="title-icon">
+            <el-icon :size="24"><Grid /></el-icon>
+          </div>
+          <div>
+            <h1 class="main-title">场景联动管理</h1>
+            <p class="sub-title">管理照明场景联动规则</p>
+          </div>
+        </div>
       </div>
       <div class="header-right">
-        <el-button type="primary" @click="handleAdd">新增</el-button>
-        <el-button :disabled="selectedRows.length === 0" @click="handleBatchDelete">批量删除</el-button>
+        <el-tabs v-model="viewMode" class="view-tabs">
+          <el-tab-pane label="卡片模式" name="card">
+            <template #label>
+              <el-icon :size="16"><Layout /></el-icon>
+              <span>卡片模式</span>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane label="列表模式" name="list">
+            <template #label>
+              <el-icon :size="16"><List /></el-icon>
+              <span>列表模式</span>
+            </template>
+          </el-tab-pane>
+        </el-tabs>
+        <el-button type="primary" @click="handleAdd" class="add-btn">
+          <el-icon :size="16"><Plus /></el-icon>
+          新增规则
+        </el-button>
+        <el-button :disabled="selectedRows.length === 0" @click="handleBatchDelete" class="batch-btn">
+          <el-icon :size="16"><Delete /></el-icon>
+          批量删除
+        </el-button>
       </div>
     </div>
 
     <div class="filter-bar">
-      <el-input v-model="filterKeyword" placeholder="请输入规则名称查询" class="filter-input" />
+      <div class="search-box">
+        <el-input 
+          v-model="filterKeyword" 
+          placeholder="请输入规则名称查询" 
+          class="filter-input"
+          prefix-icon="Search"
+        />
+      </div>
       <el-select v-model="filterStatus" placeholder="请选择启用状态" class="filter-select">
         <el-option label="全部" value="" />
         <el-option label="启用" value="true" />
@@ -25,44 +57,68 @@
         <el-option label="高" value="high" />
         <el-option label="低" value="low" />
       </el-select>
-      <el-button type="primary" @click="handleSearch">搜索</el-button>
-      <el-button @click="handleReset">重置</el-button>
+      <el-button type="primary" @click="handleSearch" class="search-btn">搜索</el-button>
+      <el-button @click="handleReset" class="reset-btn">重置</el-button>
     </div>
 
     <div v-if="viewMode === 'card'" class="rule-cards">
-      <el-card v-for="rule in filteredRules" :key="rule.id" class="rule-card">
+      <div 
+        v-for="rule in filteredRules" 
+        :key="rule.id" 
+        class="rule-card"
+        :class="{ selected: rule.selected }"
+        @click="toggleSelect(rule)"
+      >
         <div class="card-header">
           <div class="priority-tag" :class="rule.priority">
             <span>{{ rule.priority === 'high' ? '高' : '低' }}</span>
           </div>
-          <label class="checkbox-label">
+          <div class="checkbox-wrapper">
             <el-checkbox v-model="rule.selected" />
-            <span class="rule-name">{{ rule.name }}</span>
-          </label>
+          </div>
+          <span class="rule-name">{{ rule.name }}</span>
           <div class="card-controls">
             <el-switch v-model="rule.enabled" active-text="启用" inactive-text="禁用" @change="handleToggle(rule)" />
           </div>
         </div>
         <div class="card-body">
           <div class="execute-info">
-            <span>执行日期:</span>
-            <span>{{ rule.executeDate }}</span>
+            <span class="info-label">执行日期:</span>
+            <span class="info-value">{{ rule.executeDate }}</span>
           </div>
-          <el-button type="text" @click="handleMore(rule)" class="more-btn">...</el-button>
+          <div class="card-actions">
+            <el-button type="text" size="small" @click.stop="handleEdit(rule)" class="action-btn">
+              <el-icon :size="14"><Edit /></el-icon>
+              编辑
+            </el-button>
+            <el-button type="text" size="small" @click.stop="handleDelete(rule)" class="action-btn delete">
+              <el-icon :size="14"><Delete /></el-icon>
+              删除
+            </el-button>
+          </div>
         </div>
-      </el-card>
+      </div>
     </div>
 
     <div v-else class="list-panel">
       <el-table :data="filteredRules" border class="data-table" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="50"></el-table-column>
-        <el-table-column prop="no" label="No" width="50" align="center"></el-table-column>
-        <el-table-column prop="name" label="规则名称" min-width="150"></el-table-column>
+        <el-table-column type="selection" width="50" align="center"></el-table-column>
+        <el-table-column prop="no" label="#" width="50" align="center">
+          <template #default="{ $index }">
+            <span class="row-number">{{ $index + 1 }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="规则名称" min-width="150">
+          <template #default="{ row }">
+            <span class="rule-name-cell">{{ row.name }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="priority" label="优先级" width="90" align="center">
           <template #default="{ row }">
-            <el-tag :type="row.priority === 'high' ? 'danger' : 'success'" size="small">
+            <div class="priority-badge" :class="row.priority">
+              <span class="priority-dot"></span>
               {{ row.priority === 'high' ? '高' : '低' }}
-            </el-tag>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="enabled" label="状态" width="90" align="center">
@@ -70,11 +126,21 @@
             <el-switch v-model="row.enabled" @change="handleToggle(row)" />
           </template>
         </el-table-column>
-        <el-table-column prop="executeDate" label="执行日期" min-width="180"></el-table-column>
+        <el-table-column prop="executeDate" label="执行日期" min-width="180">
+          <template #default="{ row }">
+            <span class="date-cell">{{ row.executeDate }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="150" align="center">
           <template #default="{ row }">
-            <el-button type="text" size="small" @click="handleEdit(row)">编辑</el-button>
-            <el-button type="text" size="small" @click="handleDelete(row)">删除</el-button>
+            <el-button type="text" size="small" @click="handleEdit(row)" class="table-action-btn">
+              <el-icon :size="14"><Edit /></el-icon>
+              编辑
+            </el-button>
+            <el-button type="text" size="small" @click="handleDelete(row)" class="table-action-btn delete">
+              <el-icon :size="14"><Delete /></el-icon>
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -86,6 +152,7 @@
         v-model:page-size="pageSize"
         :total="total"
         layout="prev, pager, next, jumper, ->, total"
+        class="pagination"
       />
     </div>
   </div>
@@ -95,6 +162,9 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessageBox } from 'element-plus';
+import {
+  Grid, Layout, List, Plus, Delete, Search, Edit
+} from '@element-plus/icons-vue';
 
 const router = useRouter();
 const viewMode = ref('card');
@@ -131,6 +201,10 @@ const filteredRules = computed(() => {
   return data.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value);
 });
 
+const toggleSelect = (rule) => {
+  rule.selected = !rule.selected;
+};
+
 const handleSearch = () => {
   currentPage.value = 1;
 };
@@ -140,6 +214,7 @@ const handleReset = () => {
   filterStatus.value = '';
   filterPriority.value = '';
   currentPage.value = 1;
+  rulesData.value.forEach(rule => rule.selected = false);
 };
 
 const handleSelectionChange = (val) => {
@@ -180,6 +255,7 @@ const handleBatchDelete = () => {
       }
     });
     selectedRows.value = [];
+    rulesData.value.forEach(rule => rule.selected = false);
   }).catch(() => {});
 };
 
@@ -192,127 +268,462 @@ const handleToggle = (rule) => {
     rule.enabled = !rule.enabled;
   });
 };
-
-const handleMore = (rule) => {
-  alert(`更多操作：${rule.name}`);
-};
 </script>
 
 <style scoped>
 .scene-linkage-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(100% - 30px);
-  padding: 15px;
+  min-height: calc(100vh - 120px);
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #ebeef5;
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
+  border-radius: 12px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.title-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00d4ff;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.main-title {
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.sub-title {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 4px 0 0 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.view-tabs {
+  :deep(.el-tabs__item) {
+    font-size: 14px;
+    color: #94a3b8;
+    padding: 8px 16px;
+    
+    &:hover {
+      color: #00d4ff;
+    }
+    
+    &.is-active {
+      color: #00d4ff;
+      font-weight: 600;
+    }
+  }
+  
+  :deep(.el-tabs__active-bar) {
+    background: linear-gradient(90deg, #00d4ff, #7c3aed);
+  }
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.batch-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-color: #2d3a4b;
+  color: #94a3b8;
+  
+  &:hover:not(:disabled) {
+    border-color: #ff4757;
+    color: #ff4757;
+    background: rgba(255, 71, 87, 0.1);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+  }
 }
 
 .filter-bar {
   display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: 12px;
+  margin-bottom: 20px;
   align-items: center;
-  flex-wrap: wrap;
+  padding: 16px 20px;
+  background: #1b2838;
+  border-radius: 12px;
+  border: 1px solid #2d3a4b;
 }
 
-.filter-input, .filter-select {
-  width: 200px;
+.search-box {
+  flex: 1;
+  max-width: 300px;
+}
+
+.filter-input {
+  width: 100%;
+  
+  :deep(.el-input__wrapper) {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: #2d3a4b;
+    border-radius: 8px;
+  }
+  
+  :deep(.el-input__prefix) {
+    color: #64748b;
+  }
+}
+
+.filter-select {
+  width: 160px;
+  
+  :deep(.el-select__wrapper) {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: #2d3a4b;
+    border-radius: 8px;
+  }
+  
+  :deep(.el-select__placeholder) {
+    color: #64748b;
+  }
+}
+
+.search-btn, .reset-btn {
+  padding: 8px 24px;
 }
 
 .rule-cards {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
-  overflow-y: auto;
-  flex: 1;
-  padding-right: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
 }
 
-.rule-card :deep(.el-card__body) {
-  padding: 15px;
+.rule-card {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid #2d3a4b;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.5), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  &:hover {
+    border-color: rgba(0, 212, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+    transform: translateY(-2px);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+  
+  &.selected {
+    border-color: #00d4ff;
+    background: rgba(0, 212, 255, 0.08);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+    
+    &::before {
+      opacity: 1;
+      background: linear-gradient(90deg, #00d4ff, #7c3aed);
+    }
+  }
 }
 
 .card-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ebeef5;
-  margin-bottom: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2d3a4b;
+  margin-bottom: 12px;
 }
 
 .priority-tag {
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: #fff;
+  
+  &.high {
+    background: rgba(255, 71, 87, 0.15);
+    color: #ff4757;
+    border: 1px solid rgba(255, 71, 87, 0.3);
+  }
+  
+  &.low {
+    background: rgba(0, 255, 136, 0.15);
+    color: #00ff88;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+  }
 }
 
-.priority-tag.high {
-  background: rgba(245, 108, 108, 0.2);
-  border: 1px solid #f56c6c;
-}
-
-.priority-tag.low {
-  background: rgba(103, 194, 58, 0.2);
-  border: 1px solid #67c23a;
-}
-
-.checkbox-label {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.checkbox-wrapper {
+  :deep(.el-checkbox__inner) {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: #2d3a4b;
+    
+    &:hover {
+      border-color: #00d4ff;
+    }
+    
+    &.is-checked {
+      background: linear-gradient(135deg, #00d4ff, #7c3aed);
+      border-color: #00d4ff;
+    }
+  }
 }
 
 .rule-name {
-  color: #303133;
+  flex: 1;
   font-size: 14px;
+  font-weight: 600;
+  color: #e8e8e8;
+}
+
+.card-controls {
+  :deep(.el-switch) {
+    --el-switch-on-bg-color: #00d4ff;
+    --el-switch-off-bg-color: #64748b;
+    
+    &:hover {
+      --el-switch-on-bg-color: #7c3aed;
+    }
+  }
 }
 
 .card-body {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .execute-info {
   display: flex;
-  gap: 8px;
-  color: #606266;
-  font-size: 12px;
+  flex-direction: column;
+  gap: 4px;
+  
+  .info-label {
+    font-size: 12px;
+    color: #64748b;
+  }
+  
+  .info-value {
+    font-size: 13px;
+    color: #94a3b8;
+  }
 }
 
-.more-btn {
-  color: #409eff;
-  padding: 4px 8px;
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.action-btn {
+  font-size: 12px;
+  color: #94a3b8;
+  
+  &:hover {
+    color: #00d4ff;
+  }
+  
+  &.delete:hover {
+    color: #ff4757;
+  }
+  
+  :deep(.el-button__text) {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 }
 
 .list-panel {
-  flex: 1;
-  overflow: auto;
+  background: #1b2838;
+  border-radius: 12px;
+  border: 1px solid #2d3a4b;
+  overflow: hidden;
 }
 
 .data-table {
-  width: 100%;
+  :deep(.el-table__header-wrapper) {
+    background: rgba(0, 0, 0, 0.3);
+    
+    th {
+      background: rgba(0, 0, 0, 0.3) !important;
+      color: #94a3b8 !important;
+      font-weight: 600;
+      border-bottom: 1px solid #2d3a4b !important;
+    }
+  }
+  
+  :deep(.el-table__body-wrapper) {
+    tr {
+      &:hover {
+        td {
+          background: rgba(0, 212, 255, 0.05) !important;
+        }
+      }
+    }
+  }
+}
+
+.row-number {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.rule-name-cell {
+  color: #e8e8e8;
+  font-weight: 500;
+}
+
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  
+  &.high {
+    background: rgba(255, 71, 87, 0.15);
+    color: #ff4757;
+    
+    .priority-dot {
+      background: #ff4757;
+      box-shadow: 0 0 8px rgba(255, 71, 87, 0.5);
+    }
+  }
+  
+  &.low {
+    background: rgba(0, 255, 136, 0.15);
+    color: #00ff88;
+    
+    .priority-dot {
+      background: #00ff88;
+      box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+    }
+  }
+  
+  .priority-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+}
+
+.date-cell {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.table-action-btn {
+  font-size: 12px;
+  color: #94a3b8;
+  
+  &:hover {
+    color: #00d4ff;
+  }
+  
+  &.delete:hover {
+    color: #ff4757;
+  }
+  
+  :deep(.el-button__text) {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 }
 
 .pagination-bar {
   display: flex;
   justify-content: center;
-  padding: 15px 0;
+  padding: 20px 0;
+}
+
+.pagination {
+  :deep(.el-pagination__total) {
+    color: #94a3b8;
+  }
+  
+  :deep(.el-pagination__sizes) {
+    :deep(.el-select__wrapper) {
+      background: rgba(0, 0, 0, 0.3);
+      border-color: #2d3a4b;
+    }
+  }
+  
+  :deep(.el-pager li) {
+    color: #94a3b8;
+    
+    &:hover {
+      color: #00d4ff;
+    }
+    
+    &.is-active {
+      background: linear-gradient(135deg, #00d4ff, #7c3aed);
+      color: #fff;
+    }
+  }
+  
+  :deep(.btn-prev), :deep(.btn-next) {
+    color: #94a3b8;
+    
+    &:hover {
+      color: #00d4ff;
+    }
+  }
 }
 </style>

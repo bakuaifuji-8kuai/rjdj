@@ -1,19 +1,48 @@
-$primary-color: #1890ff;
-$success-color: #52c41a;
-$warning-color: #faad14;
-$danger-color: #f5222d;
-$info-color: #1890ff;
+$primary-color: #00d4ff;
+$primary-light: #00d4ff80;
+$primary-glow: rgba(0, 212, 255, 0.3);
 
-$bg-color: #f0f2f5;
-$sidebar-bg: #001529;
-$header-bg: #ffffff;
+$success-color: #00ff88;
+$success-glow: rgba(0, 255, 136, 0.3);
 
-$text-primary: #1f1f1f;
-$text-secondary: #666666;
-$text-light: #999999;
+$warning-color: #ffaa00;
+$warning-glow: rgba(255, 170, 0, 0.3);
 
-$border-color: #e8e8e8;
-$shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$danger-color: #ff4757;
+$danger-glow: rgba(255, 71, 87, 0.3);
+
+$info-color: #7c3aed;
+$info-glow: rgba(124, 58, 237, 0.3);
+
+$bg-color: #0d1b2a;
+$bg-dark: #0a1929;
+$bg-card: #1b2838;
+$bg-card-hover: #243447;
+
+$sidebar-bg: #0a1929;
+$sidebar-hover: #162333;
+
+$header-bg: #0d1b2a;
+
+$text-primary: #e8e8e8;
+$text-secondary: #94a3b8;
+$text-light: #64748b;
+
+$border-color: #2d3a4b;
+$border-glow: rgba(0, 212, 255, 0.2);
+
+$shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+$shadow-glow: 0 0 20px rgba(0, 212, 255, 0.15);
+$shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+
+$gradient-primary: linear-gradient(135deg, #00d4ff, #7c3aed);
+$gradient-success: linear-gradient(135deg, #00ff88, #00d4ff);
+$gradient-warning: linear-gradient(135deg, #ffaa00, #ff6b35);
+$gradient-danger: linear-gradient(135deg, #ff4757, #ff6b81);
+
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
 
 @mixin flex-center {
   display: flex;
@@ -33,33 +62,362 @@ $shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   white-space: nowrap;
 }
 
+@mixin glow-border {
+  border: 1px solid $border-color;
+  box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.05), 0 0 10px rgba(0, 212, 255, 0.1);
+}
+
+@mixin card-glow {
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  box-shadow: $shadow-card, 0 0 30px rgba(0, 212, 255, 0.08);
+  transition: all $transition-normal;
+  
+  &:hover {
+    border-color: $primary-light;
+    box-shadow: $shadow-card, 0 0 30px rgba(0, 212, 255, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+@mixin text-glow {
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+@mixin button-glow {
+  background: $gradient-primary;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all $transition-fast;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left $transition-normal;
+  }
+  
+  &:hover {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    transform: scale(1.02);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+}
+
 .page-container {
-  padding: 20px;
-  background: #fff;
-  border-radius: 4px;
+  padding: 24px;
+  background: $bg-color;
+  border-radius: 12px;
   box-shadow: $shadow;
+  min-height: calc(100vh - 120px);
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
   border-bottom: 1px solid $border-color;
   
   .title {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
     color: $text-primary;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: $gradient-primary;
+      border-radius: 2px;
+    }
   }
 }
 
 .el-table {
-  --el-table-row-hover-bg-color: #fafafa;
+  --el-table-bg-color: $bg-card;
+  --el-table-row-hover-bg-color: $bg-card-hover;
+  --el-table-border-color: $border-color;
+  --el-table-text-color: $text-primary;
+  
+  :deep(.el-table__header-wrapper) {
+    background: $bg-dark;
+    
+    th {
+      background: $bg-dark !important;
+      color: $text-secondary !important;
+      border-bottom: 1px solid $border-color !important;
+      font-weight: 600;
+    }
+  }
+  
+  :deep(.el-table__body-wrapper) {
+    tr {
+      border-bottom: 1px solid rgba($border-color, 0.5);
+      
+      &:hover {
+        td {
+          background: $bg-card-hover !important;
+          box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.05);
+        }
+      }
+    }
+  }
 }
 
 .el-button {
-  --el-button-primary-bg-color: $primary-color;
+  --el-button-primary-bg-color: transparent;
   --el-button-primary-border-color: $primary-color;
+  --el-button-primary-text-color: $primary-color;
+  --el-button-primary-hover-bg-color: rgba(0, 212, 255, 0.1);
+  
+  &.el-button--primary {
+    background: $gradient-primary;
+    border: none;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
+    }
+  }
+  
+  &.el-button--default {
+    border-color: $border-color;
+    color: $text-secondary;
+    
+    &:hover {
+      border-color: $primary-color;
+      color: $primary-color;
+      background: rgba(0, 212, 255, 0.05);
+    }
+  }
+  
+  &.el-button--success {
+    background: $gradient-success;
+    border: none;
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+  }
+  
+  &.el-button--warning {
+    background: $gradient-warning;
+    border: none;
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 170, 0, 0.3);
+  }
+  
+  &.el-button--danger {
+    background: $gradient-danger;
+    border: none;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
+  }
+}
+
+.el-dialog {
+  --el-dialog-bg-color: $bg-card;
+  --el-dialog-header-bg-color: $bg-dark;
+  --el-dialog-title-color: $text-primary;
+  --el-dialog-border-color: $border-color;
+  
+  :deep(.el-dialog__header) {
+    border-bottom: 1px solid $border-color;
+    padding: 20px 24px;
+  }
+  
+  :deep(.el-dialog__body) {
+    padding: 24px;
+    color: $text-secondary;
+  }
+}
+
+.el-card {
+  --el-card-bg-color: $bg-card;
+  --el-card-border-color: $border-color;
+  --el-card-text-color: $text-primary;
+}
+
+.el-input {
+  --el-input-bg-color: $bg-dark;
+  --el-input-border-color: $border-color;
+  --el-input-text-color: $text-primary;
+  --el-input-placeholder-color: $text-light;
+  
+  :deep(.el-input__wrapper) {
+    background: $bg-dark;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    
+    &:hover {
+      border-color: $primary-light;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
+    }
+    
+    &.is-focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+    }
+  }
+}
+
+.el-tag {
+  &.el-tag--success {
+    background: rgba(0, 255, 136, 0.15);
+    border-color: $success-color;
+    color: $success-color;
+  }
+  
+  &.el-tag--danger {
+    background: rgba(255, 71, 87, 0.15);
+    border-color: $danger-color;
+    color: $danger-color;
+  }
+  
+  &.el-tag--warning {
+    background: rgba(255, 170, 0, 0.15);
+    border-color: $warning-color;
+    color: $warning-color;
+  }
+  
+  &.el-tag--info {
+    background: rgba(0, 212, 255, 0.15);
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
+
+.el-progress {
+  --el-progress-bar-bg-color: rgba(0, 212, 255, 0.1);
+  
+  :deep(.el-progress-bar__inner) {
+    background: $gradient-primary;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  }
+}
+
+.el-checkbox {
+  --el-checkbox-border-color: $border-color;
+  --el-checkbox-bg-color: $bg-dark;
+  
+  :deep(.el-checkbox__inner) {
+    background: $bg-dark;
+    border-color: $border-color;
+    
+    &:hover {
+      border-color: $primary-color;
+    }
+    
+    &.is-checked {
+      background: $gradient-primary;
+      border-color: $primary-color;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    }
+  }
+}
+
+.el-tabs {
+  --el-tabs-header-text-color: $text-light;
+  --el-tabs-active-text-color: $primary-color;
+  --el-tabs-border-color: $border-color;
+  --el-tabs-active-bar-color: $primary-color;
+  
+  :deep(.el-tabs__item) {
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes number-scroll {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-number-scroll {
+  animation: number-scroll 0.6s ease-out forwards;
+}
+
+.glow-text {
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5), 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.glow-border {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(45deg, $primary-color, $info-color, $primary-color);
+    background-size: 200% 200%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: border-flow 3s linear infinite;
+  }
 }
