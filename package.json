@@ -1,7 +1,9 @@
 {
-  "name": "smart-lighting-system",
-  "version": "1.0.0",
-  "description": "城市智慧照明系统后台管理系统",
+  "name": "zhiguang-hub",
+  "version": "2.1.0",
+  "description": "智光云枢-城市照明物联管控平台后台管理系统",
+  "author": "智光云枢研发团队",
+  "license": "Proprietary",
   "type": "module",
   "scripts": {
     "dev": "vite",

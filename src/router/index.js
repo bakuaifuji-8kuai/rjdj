@@ -1,296 +1,354 @@
-import { createRouter, createWebHistory } from 'vue-router'
+/**
+ * 智光云枢-路由配置
+ * 业务域驱动：灯网态势 / 能源脉动 / 终端图谱 / 情景编排 / 运维工单 / 管廊照明
+ */
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
   {
     path: '/',
-    redirect: '/lighting/home'
+    redirect: '/lampNet/dashboard'
   },
+  // 灯网态势
   {
-    path: '/lighting',
-    name: 'lighting',
-    redirect: '/lighting/home',
+    path: '/lampNet',
+    name: 'lampNet',
+    redirect: '/lampNet/dashboard',
+    meta: { title: '灯网态势', icon: 'Sunrise' },
     children: [
       {
-        path: 'home',
-        name: 'lighting-home',
-        component: () => import('@/views/lighting/LightingHome.vue')
+        path: 'dashboard',
+        name: 'lampNet.dashboard',
+        component: () => import('@/modules/lampNet/LampNetDashboard.vue'),
+        meta: { title: '灯网驾驶舱' }
       },
       {
-        path: 'map',
-        name: 'lighting-map',
-        component: () => import('@/views/lighting/GisMap.vue')
+        path: 'recipe-composer',
+        name: 'lampNet.recipeComposer',
+        component: () => import('@/modules/lampNet/RecipeComposer.vue'),
+        meta: { title: '光照处方编排' }
       },
       {
-        path: 'strategy',
-        name: 'lighting-strategy',
-        component: () => import('@/views/lighting/LightingStrategy.vue')
+        path: 'recipe-vault',
+        name: 'lampNet.recipeVault',
+        component: () => import('@/modules/lampNet/RecipeVault.vue'),
+        meta: { title: '处方库管理' }
       },
       {
-        path: 'manage',
-        name: 'lighting-manage',
-        component: () => import('@/views/lighting/StrategyManage.vue')
+        path: 'recipe-archive',
+        name: 'lampNet.recipeArchive',
+        component: () => import('@/modules/lampNet/RecipeArchive.vue'),
+        meta: { title: '历史处方' }
       },
       {
-        path: 'history',
-        name: 'lighting-history',
-        component: () => import('@/views/lighting/HistoryStrategy.vue')
+        path: 'lamp-registry',
+        name: 'lampNet.lampRegistry',
+        component: () => import('@/modules/lampNet/LampRegistry.vue'),
+        meta: { title: '光源台账' }
       },
       {
-        path: 'lamp',
-        name: 'lighting-lamp',
-        component: () => import('@/views/lighting/LampManage.vue')
+        path: 'cluster-topology',
+        name: 'lampNet.clusterTopology',
+        component: () => import('@/modules/lampNet/ClusterTopology.vue'),
+        meta: { title: '集群拓扑' }
       },
       {
-        path: 'group',
-        name: 'lighting-group',
-        component: () => import('@/views/lighting/GroupManage.vue')
+        path: 'gis-atlas',
+        name: 'lampNet.gisAtlas',
+        component: () => import('@/modules/lampNet/GisAtlas.vue'),
+        meta: { title: 'GIS灯位图' }
       }
     ]
   },
+  // 能源脉动
   {
-    path: '/power',
-    name: 'power',
-    redirect: '/power/distribution',
+    path: '/energyPulse',
+    name: 'energyPulse',
+    redirect: '/energyPulse/feedCabinet',
+    meta: { title: '能源脉动', icon: 'Lightning' },
     children: [
       {
-        path: 'distribution',
-        name: 'power-distribution',
-        component: () => import('@/views/power/DistributionBox.vue')
+        path: 'feedCabinet',
+        name: 'energyPulse.feedCabinet',
+        component: () => import('@/modules/energyPulse/FeedCabinet.vue'),
+        meta: { title: '馈电柜监测' }
       },
       {
-        path: 'line',
-        name: 'power-line',
-        component: () => import('@/views/power/LineInfo.vue')
+        path: 'lineTrace',
+        name: 'energyPulse.lineTrace',
+        component: () => import('@/modules/energyPulse/LineTrace.vue'),
+        meta: { title: '供电链路' }
       },
       {
-        path: 'central',
-        name: 'power-central',
-        component: () => import('@/views/power/CentralControl.vue')
+        path: 'edgeHost',
+        name: 'energyPulse.edgeHost',
+        component: () => import('@/modules/energyPulse/EdgeHost.vue'),
+        meta: { title: '边缘主机' }
       },
       {
-        path: 'circuit',
-        name: 'power-circuit',
-        component: () => import('@/views/power/CircuitControl.vue')
+        path: 'loopSwitch',
+        name: 'energyPulse.loopSwitch',
+        component: () => import('@/modules/energyPulse/LoopSwitch.vue'),
+        meta: { title: '链路通断' }
       },
       {
-        path: 'load',
-        name: 'power-load',
-        component: () => import('@/views/power/LoadMonitor.vue')
+        path: 'loadProber',
+        name: 'energyPulse.loadProber',
+        component: () => import('@/modules/energyPulse/LoadProber.vue'),
+        meta: { title: '负荷探针' }
       },
       {
-        path: 'module',
-        name: 'power-module',
-        component: () => import('@/views/power/ModuleInfo.vue')
+        path: 'moduleLedger',
+        name: 'energyPulse.moduleLedger',
+        component: () => import('@/modules/energyPulse/ModuleLedger.vue'),
+        meta: { title: '模块台账' }
       },
       {
-        path: 'strong-electric',
-        name: 'power-strong-electric',
-        component: () => import('@/views/power/StrongElectricScene.vue')
+        path: 'strongScene',
+        name: 'energyPulse.strongScene',
+        component: () => import('@/modules/energyPulse/StrongScene.vue'),
+        meta: { title: '强电情景' }
       },
       {
-        path: 'history-scene',
-        name: 'power-history-scene',
-        component: () => import('@/views/power/HistoryScene.vue')
+        path: 'strongSceneArchive',
+        name: 'energyPulse.strongSceneArchive',
+        component: () => import('@/modules/energyPulse/StrongSceneArchive.vue'),
+        meta: { title: '强电情景回溯' }
       },
       {
-        path: 'circuit-group',
-        name: 'power-circuit-group',
-        component: () => import('@/views/power/CircuitGroup.vue')
+        path: 'loopCluster',
+        name: 'energyPulse.loopCluster',
+        component: () => import('@/modules/energyPulse/LoopCluster.vue'),
+        meta: { title: '链路分组' }
       },
       {
-        path: 'lamp-control-bind',
-        name: 'power-lamp-control-bind',
-        component: () => import('@/views/power/LampControlBind.vue')
+        path: 'lampBinding',
+        name: 'energyPulse.lampBinding',
+        component: () => import('@/modules/energyPulse/LampBinding.vue'),
+        meta: { title: '光源绑定' }
       }
     ]
   },
+  // 终端图谱
   {
-    path: '/device',
-    name: 'device',
-    redirect: '/device/lamp-post',
+    path: '/terminalAtlas',
+    name: 'terminalAtlas',
+    redirect: '/terminalAtlas/poleCatalog',
+    meta: { title: '终端图谱', icon: 'Cpu' },
     children: [
       {
-        path: 'list',
-        name: 'device-list',
-        component: () => import('@/views/device/DeviceList.vue')
+        path: 'poleCatalog',
+        name: 'terminalAtlas.poleCatalog',
+        component: () => import('@/modules/terminalAtlas/PoleCatalog.vue'),
+        meta: { title: '杆塔位点' }
       },
       {
-        path: 'lamp',
-        name: 'device-lamp',
-        component: () => import('@/views/device/LampManage.vue')
+        path: 'lampControl',
+        name: 'terminalAtlas.lampControl',
+        component: () => import('@/modules/terminalAtlas/LampControl.vue'),
+        meta: { title: '光源控制器' }
       },
       {
-        path: 'add',
-        name: 'device-add',
-        component: () => import('@/views/device/DeviceAdd.vue')
+        path: 'fixtureList',
+        name: 'terminalAtlas.fixtureList',
+        component: () => import('@/modules/terminalAtlas/FixtureList.vue'),
+        meta: { title: '灯具清单' }
       },
       {
-        path: 'detail/:id',
-        name: 'device-detail',
-        component: () => import('@/views/device/DeviceDetail.vue')
-      },
-      {
-        path: 'lamp-post',
-        name: 'device-lamp-post',
-        component: () => import('@/views/device/PoleManage.vue')
-      },
-      {
-        path: 'lamp-control',
-        name: 'device-lamp-control',
-        component: () => import('@/views/device/LampControlManage.vue')
-      },
-      {
-        path: 'video-recorder',
-        name: 'device-video-recorder',
-        component: () => import('@/views/device/VideoRecorderManage.vue')
+        path: 'recorder',
+        name: 'terminalAtlas.recorder',
+        component: () => import('@/modules/terminalAtlas/Recorder.vue'),
+        meta: { title: '视频记录仪' }
       },
       {
         path: 'camera',
-        name: 'device-camera',
-        component: () => import('@/views/device/CameraManage.vue')
+        name: 'terminalAtlas.camera',
+        component: () => import('@/modules/terminalAtlas/Camera.vue'),
+        meta: { title: '视频采集' }
       },
       {
-        path: 'environment-sensor',
-        name: 'device-environment-sensor',
-        component: () => import('@/views/device/EnvironmentSensorManage.vue')
+        path: 'envProbe',
+        name: 'terminalAtlas.envProbe',
+        component: () => import('@/modules/terminalAtlas/EnvProbe.vue'),
+        meta: { title: '环境探针' }
       },
       {
-        path: 'light-sensor',
-        name: 'device-light-sensor',
-        component: () => import('@/views/device/LightSensorManage.vue')
+        path: 'luminanceProbe',
+        name: 'terminalAtlas.luminanceProbe',
+        component: () => import('@/modules/terminalAtlas/LuminanceProbe.vue'),
+        meta: { title: '照度探针' }
       },
       {
-        path: 'water-sensor',
-        name: 'device-water-sensor',
-        component: () => import('@/views/device/WaterSensorManage.vue')
+        path: 'waterProbe',
+        name: 'terminalAtlas.waterProbe',
+        component: () => import('@/modules/terminalAtlas/WaterProbe.vue'),
+        meta: { title: '浸水探针' }
       },
       {
-        path: 'smoke-sensor',
-        name: 'device-smoke-sensor',
-        component: () => import('@/views/device/SmokeSensorManage.vue')
+        path: 'smokeProbe',
+        name: 'terminalAtlas.smokeProbe',
+        component: () => import('@/modules/terminalAtlas/SmokeProbe.vue'),
+        meta: { title: '烟感探针' }
       }
     ]
   },
+  // 情景编排
   {
-    path: '/scene',
-    name: 'scene',
-    redirect: '/scene/quick-operation',
+    path: '/scenarioOrch',
+    name: 'scenarioOrch',
+    redirect: '/scenarioOrch/presetConsole',
+    meta: { title: '情景编排', icon: 'Grid' },
     children: [
       {
-        path: 'quick-operation',
-        name: 'scene-quick-operation',
-        component: () => import('@/views/scene/QuickOperation.vue')
+        path: 'presetConsole',
+        name: 'scenarioOrch.presetConsole',
+        component: () => import('@/modules/scenarioOrch/PresetConsole.vue'),
+        meta: { title: '预案控制台' }
       },
       {
-        path: 'manage',
-        name: 'scene-manage',
-        component: () => import('@/views/scene/SceneManage.vue')
+        path: 'presetLibrary',
+        name: 'scenarioOrch.presetLibrary',
+        component: () => import('@/modules/scenarioOrch/PresetLibrary.vue'),
+        meta: { title: '预案库' }
       },
       {
-        path: 'linkage',
-        name: 'scene-linkage',
-        component: () => import('@/views/scene/SceneLinkage.vue')
+        path: 'presetLinkage',
+        name: 'scenarioOrch.presetLinkage',
+        component: () => import('@/modules/scenarioOrch/PresetLinkage.vue'),
+        meta: { title: '预案联动' }
       },
       {
-        path: 'linkage-manage',
-        name: 'scene-linkage-manage',
-        component: () => import('@/views/scene/LinkageManage.vue')
+        path: 'linkageManager',
+        name: 'scenarioOrch.linkageManager',
+        component: () => import('@/modules/scenarioOrch/LinkageManager.vue'),
+        meta: { title: '联动管理' }
       },
       {
-        path: 'template',
-        name: 'scene-template',
-        component: () => import('@/views/scene/SceneTemplate.vue')
+        path: 'presetTemplate',
+        name: 'scenarioOrch.presetTemplate',
+        component: () => import('@/modules/scenarioOrch/PresetTemplate.vue'),
+        meta: { title: '预案模板' }
       },
       {
-        path: 'trigger',
-        name: 'scene-trigger',
-        component: () => import('@/views/scene/SceneTrigger.vue')
+        path: 'presetTrigger',
+        name: 'scenarioOrch.presetTrigger',
+        component: () => import('@/modules/scenarioOrch/PresetTrigger.vue'),
+        meta: { title: '触发器' }
       },
       {
-        path: 'schedule',
-        name: 'scene-schedule',
-        component: () => import('@/views/scene/SceneSchedule.vue')
+        path: 'presetSchedule',
+        name: 'scenarioOrch.presetSchedule',
+        component: () => import('@/modules/scenarioOrch/PresetSchedule.vue'),
+        meta: { title: '时间编排' }
       }
     ]
   },
+  // 运维工单
   {
-    path: '/workorder',
-    name: 'workorder',
-    redirect: '/workorder/list',
+    path: '/opsTicket',
+    name: 'opsTicket',
+    redirect: '/opsTicket/dispatchPool',
+    meta: { title: '运维工单', icon: 'List' },
     children: [
       {
-        path: 'list',
-        name: 'workorder-list',
-        component: () => import('@/views/workorder/WorkOrderList.vue')
+        path: 'dispatchPool',
+        name: 'opsTicket.dispatchPool',
+        component: () => import('@/modules/opsTicket/DispatchPool.vue'),
+        meta: { title: '调度池' }
       },
       {
-        path: 'create',
-        name: 'workorder-create',
-        component: () => import('@/views/workorder/WorkOrderCreate.vue')
+        path: 'ticketCreate',
+        name: 'opsTicket.ticketCreate',
+        component: () => import('@/modules/opsTicket/TicketCreate.vue'),
+        meta: { title: '新建处置单' }
       },
       {
-        path: 'detail/:id',
-        name: 'workorder-detail',
-        component: () => import('@/views/workorder/WorkOrderDetail.vue')
+        path: 'ticketDetail/:id',
+        name: 'opsTicket.ticketDetail',
+        component: () => import('@/modules/opsTicket/TicketDetail.vue'),
+        meta: { title: '处置单详情' }
       },
       {
-        path: 'alarm-dispatch',
-        name: 'workorder-alarm-dispatch',
-        component: () => import('@/views/workorder/AlarmDispatch.vue')
+        path: 'autoDispatch',
+        name: 'opsTicket.autoDispatch',
+        component: () => import('@/modules/opsTicket/AutoDispatch.vue'),
+        meta: { title: '告警自动调度' }
+      },
+      {
+        path: 'myDesk',
+        name: 'opsTicket.myDesk',
+        component: () => import('@/modules/opsTicket/MyDesk.vue'),
+        meta: { title: '我的工位' }
+      },
+      {
+        path: 'statBoard',
+        name: 'opsTicket.statBoard',
+        component: () => import('@/modules/opsTicket/StatBoard.vue'),
+        meta: { title: '效能看板' }
       }
     ]
   },
+  // 管廊照明
   {
-    path: '/tunnel',
-    name: 'tunnel',
-    redirect: '/tunnel/home',
+    path: '/tubeLumen',
+    name: 'tubeLumen',
+    redirect: '/tubeLumen/portal',
+    meta: { title: '管廊照明', icon: 'Location' },
     children: [
       {
-        path: 'home',
-        name: 'tunnel-home',
-        component: () => import('@/views/tunnel/TunnelHome.vue')
+        path: 'portal',
+        name: 'tubeLumen.portal',
+        component: () => import('@/modules/tubeLumen/TubePortal.vue'),
+        meta: { title: '管廊门户' }
       },
       {
-        path: 'list',
-        name: 'tunnel-list',
-        component: () => import('@/views/tunnel/TunnelList.vue')
+        path: 'tubeIndex',
+        name: 'tubeLumen.tubeIndex',
+        component: () => import('@/modules/tubeLumen/TubeIndex.vue'),
+        meta: { title: '管廊索引' }
       },
       {
-        path: 'section',
-        name: 'tunnel-section',
-        component: () => import('@/views/tunnel/SectionManage.vue')
+        path: 'sectionManager',
+        name: 'tubeLumen.sectionManager',
+        component: () => import('@/modules/tubeLumen/SectionManager.vue'),
+        meta: { title: '区段管理' }
       },
       {
-        path: 'lamp',
-        name: 'tunnel-lamp',
-        component: () => import('@/views/tunnel/LampManage.vue')
+        path: 'fixtureLedger',
+        name: 'tubeLumen.fixtureLedger',
+        component: () => import('@/modules/tubeLumen/FixtureLedger.vue'),
+        meta: { title: '管廊灯具' }
       },
       {
-        path: 'circuit-group',
-        name: 'tunnel-circuit-group',
-        component: () => import('@/views/tunnel/CircuitGroup.vue')
+        path: 'loopCluster',
+        name: 'tubeLumen.loopCluster',
+        component: () => import('@/modules/tubeLumen/TubeLoopCluster.vue'),
+        meta: { title: '管廊链路' }
       },
       {
-        path: 'fitting',
-        name: 'tunnel-fitting',
-        component: () => import('@/views/tunnel/FittingManage.vue')
+        path: 'opticsManager',
+        name: 'tubeLumen.opticsManager',
+        component: () => import('@/modules/tubeLumen/OpticsManager.vue'),
+        meta: { title: '配光管理' }
       },
       {
-        path: 'lighting-control',
-        name: 'tunnel-lighting-control',
-        component: () => import('@/views/tunnel/LightingControl.vue')
+        path: 'lumenControl',
+        name: 'tubeLumen.lumenControl',
+        component: () => import('@/modules/tubeLumen/LumenControl.vue'),
+        meta: { title: '光通控制' }
       },
       {
-        path: 'time-schedule',
-        name: 'tunnel-time-schedule',
-        component: () => import('@/views/tunnel/TimeSchedule.vue')
+        path: 'cronScheduler',
+        name: 'tubeLumen.cronScheduler',
+        component: () => import('@/modules/tubeLumen/CronScheduler.vue'),
+        meta: { title: '定时调度' }
       }
     ]
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 })
 
