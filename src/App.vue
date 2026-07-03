@@ -7,7 +7,7 @@
     <aside class="zg-shell__rail" :class="{ 'zg-shell__rail--folded': isFolded }">
       <div class="zg-brand">
         <div class="zg-brand__sigil">
-          <el-icon :size="32"><Sunrise /></el-icon>
+          <el-icon :size="32"><Connection /></el-icon>
         </div>
         <transition name="zg-fade">
           <div v-show="!isFolded" class="zg-brand__copy">
@@ -106,12 +106,12 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
-  Sunrise,
-  Lightning,
-  Cpu,
-  Grid,
-  List,
-  Location,
+  Connection,
+  Coin,
+  Histogram,
+  MagicStick,
+  Tickets,
+  Guide,
   ArrowLeft,
   ArrowRight,
   ArrowDown,
@@ -139,7 +139,7 @@ const navList = [
   {
     name: '灯网态势',
     path: '/lampNet',
-    icon: Sunrise,
+    icon: Connection,
     children: [
       { name: '灯网驾驶舱', path: '/lampNet/dashboard' },
       { name: '光照处方编排', path: '/lampNet/recipe-composer' },
@@ -153,7 +153,7 @@ const navList = [
   {
     name: '能源脉动',
     path: '/energyPulse',
-    icon: Lightning,
+    icon: Coin,
     children: [
       { name: '馈电柜监测', path: '/energyPulse/feedCabinet' },
       { name: '供电链路', path: '/energyPulse/lineTrace' },
@@ -170,7 +170,7 @@ const navList = [
   {
     name: '终端图谱',
     path: '/terminalAtlas',
-    icon: Cpu,
+    icon: Histogram,
     children: [
       { name: '杆塔位点', path: '/terminalAtlas/poleCatalog' },
       { name: '光源控制器', path: '/terminalAtlas/lampControl' },
@@ -186,7 +186,7 @@ const navList = [
   {
     name: '情景编排',
     path: '/scenarioOrch',
-    icon: Grid,
+    icon: MagicStick,
     children: [
       { name: '预案控制台', path: '/scenarioOrch/presetConsole' },
       { name: '预案库', path: '/scenarioOrch/presetLibrary' },
@@ -200,7 +200,7 @@ const navList = [
   {
     name: '运维工单',
     path: '/opsTicket',
-    icon: List,
+    icon: Tickets,
     children: [
       { name: '调度池', path: '/opsTicket/dispatchPool' },
       { name: '新建处置单', path: '/opsTicket/ticketCreate' },
@@ -213,7 +213,7 @@ const navList = [
   {
     name: '管廊照明',
     path: '/tubeLumen',
-    icon: Location,
+    icon: Guide,
     children: [
       { name: '管廊门户', path: '/tubeLumen/portal' },
       { name: '管廊索引', path: '/tubeLumen/tubeIndex' },
