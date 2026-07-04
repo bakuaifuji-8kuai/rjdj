@@ -39,8 +39,9 @@
       <article
         v-for="kpi in kpiCells"
         :key="kpi.id"
-        class="zg-kpiquad__cell"
+        class="zg-kpiquad__cell zg-kpiquad__cell--clickable"
         :class="`zg-kpiquad__cell--${kpi.tone}`"
+        @click="openKpiDetail(kpi)"
       >
         <header class="zg-kpiquad__head">
           <span class="zg-kpiquad__glyph">
@@ -170,8 +171,9 @@
             <div
               v-for="cluster in topologyClusters"
               :key="cluster.id"
-              class="zg-topoclusters__tile"
+              class="zg-topoclusters__tile zg-topoclusters__tile--clickable"
               :class="`zg-topoclusters__tile--${cluster.tone}`"
+              @click="goToTopology(cluster)"
             >
               <div class="zg-topoclusters__name">{{ cluster.name }}</div>
               <div class="zg-topoclusters__count">
@@ -208,7 +210,8 @@
             <li
               v-for="alert in activeAlertFeed"
               :key="alert.id"
-              :class="['zg-alertroll__item', `zg-alertroll__item--${alert.severity}`]"
+              :class="['zg-alertroll__item', `zg-alertroll__item--${alert.severity}`, 'zg-alertroll__item--clickable']"
+              @click="openAlertDetail(alert)"
             >
               <span class="zg-alertroll__dot"></span>
               <div class="zg-alertroll__main">
@@ -230,7 +233,10 @@
       <!-- 最近处方投递记录 -->
       <div class="zg-databand__panel">
         <header class="zg-databand__head">
-          <h3 class="zg-databand__title">最近处方投递记录</h3>
+          <h3 class="zg-databand__title zg-databand__title--clickable" @click="goToRecipeLog">
+            最近处方投递记录
+            <el-icon :size="14" class="zg-databand__arrow"><ArrowRight /></el-icon>
+          </h3>
           <span class="zg-databand__aside">
             <el-icon :size="14"><Calendar /></el-icon>
             近 24h
@@ -260,6 +266,34 @@
         </div>
       </div>
     </div>
+
+    <!-- 详情抽屉 -->
+    <el-drawer
+      v-model="drawerOpen"
+      :title="drawerTitle"
+      direction="rtl"
+      size="480px"
+    >
+      <div v-if="drawerContent" class="zg-detail-drawer">
+        <div
+          v-for="(row, idx) in drawerContent.rows"
+          :key="idx"
+          class="zg-detail-drawer__row"
+        >
+          <span class="zg-detail-drawer__label">{{ row.label }}</span>
+          <span class="zg-detail-drawer__value">{{ row.value }}</span>
+        </div>
+        <div v-if="drawerContent.type === 'alert'" class="zg-detail-drawer__actions">
+          <el-button type="primary" size="small">派发工单</el-button>
+          <el-button size="small">标记已读</el-button>
+          <el-button size="small" plain>关闭</el-button>
+        </div>
+        <div v-if="drawerContent.type === 'kpi'" class="zg-detail-drawer__actions">
+          <el-button type="primary" size="small">查看趋势</el-button>
+          <el-button size="small" plain>导出报表</el-button>
+        </div>
+      </div>
+    </el-drawer>
   </section>
 </template>
 
@@ -272,6 +306,8 @@
  * @author 智光云枢研发团队
  */
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import {
   Aim,
   Lightning,
@@ -280,8 +316,80 @@ import {
   Bottom,
   Warning,
   Calendar,
-  Clock
+  Clock,
+  ArrowRight
 } from '@element-plus/icons-vue'
+
+const router = useRouter()
+
+// ---- 详情抽屉 ----
+const drawerOpen = ref(false)
+const drawerTitle = ref('')
+const drawerContent = ref(null)
+
+/**
+ * 打开KPI详情抽屉
+ */
+function openKpiDetail (kpi) {
+  drawerTitle.value = `${kpi.caption} · 指标详情`
+  drawerContent.value = {
+    type: 'kpi',
+    rows: [
+      { label: '指标名称', value: kpi.caption },
+      { label: '当前数值', value: `${kpi.metric} ${kpi.unit}` },
+      { label: '变化趋势', value: kpi.deltaText },
+      { label: '统计口径', value: kpi.hint },
+      { label: '采集时间', value: liveChrono.value }
+    ]
+  }
+  drawerOpen.value = true
+}
+
+/**
+ * 打开告警详情抽屉
+ */
+function openAlertDetail (alert) {
+  drawerTitle.value = `告警详情 · ${alert.tag}`
+  drawerContent.value = {
+    type: 'alert',
+    rows: [
+      { label: '告警编号', value: alert.id },
+      { label: '告警类型', value: alert.tag },
+      { label: '告警时间', value: alert.at },
+      { label: '严重等级', value: severityLabel(alert.severity) },
+      { label: '关联节点', value: alert.nodeSn },
+      { label: '告警描述', value: alert.message },
+      { label: '处置状态', value: '待处置' }
+    ]
+  }
+  drawerOpen.value = true
+}
+
+/**
+ * 严重等级标签
+ */
+function severityLabel (severity) {
+  const map = { critical: '紧急', warn: '警告', info: '提示' }
+  return map[severity] || '未知'
+}
+
+/**
+ * 跳转到集群拓扑页面
+ */
+function goToTopology (cluster) {
+  ElMessage.success(`正在跳转至「${cluster.name}」拓扑视图...`)
+  router.push({
+    path: '/lampNet/cluster-topology',
+    query: { cluster: cluster.id, name: cluster.name }
+  })
+}
+
+/**
+ * 跳转到处方投递记录页面
+ */
+function goToRecipeLog () {
+  router.push('/lampNet/recipe-archive')
+}
 
 // ---- 实时时钟 ----
 const liveChrono = ref(formatChrono())
@@ -360,20 +468,41 @@ const trendChips = [
   { id: 'month', label: '本月' }
 ]
 const trendScope = ref('today')
-const powerTrendSeries = ref([
-  { hour: '00', kwh: 412, percent: 35 },
-  { hour: '02', kwh: 386, percent: 32 },
-  { hour: '04', kwh: 358, percent: 30 },
-  { hour: '06', kwh: 624, percent: 52 },
-  { hour: '08', kwh: 786, percent: 65 },
-  { hour: '10', kwh: 528, percent: 44 },
-  { hour: '12', kwh: 462, percent: 38 },
-  { hour: '14', kwh: 498, percent: 41 },
-  { hour: '16', kwh: 712, percent: 59 },
-  { hour: '18', kwh: 956, percent: 78 },
-  { hour: '20', kwh: 1102, percent: 92 },
-  { hour: '22', kwh: 828, percent: 68 }
-])
+
+// 三组不同的趋势数据
+const trendDataset = {
+  today: [
+    { hour: '00', kwh: 412, percent: 35 },
+    { hour: '02', kwh: 386, percent: 32 },
+    { hour: '04', kwh: 358, percent: 30 },
+    { hour: '06', kwh: 624, percent: 52 },
+    { hour: '08', kwh: 786, percent: 65 },
+    { hour: '10', kwh: 528, percent: 44 },
+    { hour: '12', kwh: 462, percent: 38 },
+    { hour: '14', kwh: 498, percent: 41 },
+    { hour: '16', kwh: 712, percent: 59 },
+    { hour: '18', kwh: 956, percent: 78 },
+    { hour: '20', kwh: 1102, percent: 92 },
+    { hour: '22', kwh: 828, percent: 68 }
+  ],
+  week: [
+    { hour: '周一', kwh: 8652, percent: 72 },
+    { hour: '周二', kwh: 7896, percent: 66 },
+    { hour: '周三', kwh: 9124, percent: 76 },
+    { hour: '周四', kwh: 8432, percent: 70 },
+    { hour: '周五', kwh: 9876, percent: 82 },
+    { hour: '周六', kwh: 10234, percent: 85 },
+    { hour: '周日', kwh: 7968, percent: 66 }
+  ],
+  month: [
+    { hour: 'W1', kwh: 58420, percent: 68 },
+    { hour: 'W2', kwh: 62180, percent: 72 },
+    { hour: 'W3', kwh: 67960, percent: 79 },
+    { hour: 'W4', kwh: 54320, percent: 63 }
+  ]
+}
+
+const powerTrendSeries = computed(() => trendDataset[trendScope.value] || [])
 
 // ---- 活跃告警流 ----
 const activeAlertFeed = ref([
@@ -1227,6 +1356,117 @@ const topologyClusters = ref([
     color: var(--zg-ink-tertiary);
     display: flex;
     gap: 12px;
+  }
+}
+
+/* === 交互效果样式 === */
+
+// KPI卡片可点击
+.zg-kpiquad__cell--clickable {
+  cursor: pointer;
+  transition: transform var(--zg-transition-fast), box-shadow var(--zg-transition-fast);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+// 告警列表项可点击
+.zg-alertroll__item--clickable {
+  cursor: pointer;
+  transition: background var(--zg-transition-fast), border-color var(--zg-transition-fast);
+
+  &:hover {
+    background: var(--zg-brand-tint-50);
+
+    &.zg-alertroll__item--warn { border-left-color: var(--zg-warning); }
+    &.zg-alertroll__item--critical { border-left-color: var(--zg-danger); }
+  }
+}
+
+// 拓扑区段可点击
+.zg-topoclusters__tile--clickable {
+  cursor: pointer;
+  transition: transform var(--zg-transition-fast), box-shadow var(--zg-transition-fast);
+
+  &:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: scale(1.01);
+  }
+}
+
+// 处方投递标题可点击
+.zg-databand__title--clickable {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color var(--zg-transition-fast);
+
+  &:hover {
+    color: var(--zg-brand-primary);
+
+    .zg-databand__arrow {
+      transform: translateX(3px);
+    }
+  }
+}
+
+.zg-databand__arrow {
+  transition: transform var(--zg-transition-fast);
+}
+
+// 趋势图标签切换动画
+.zg-chip {
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+// 详情抽屉样式
+.zg-detail-drawer {
+  padding: 0 4px;
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--zg-line-soft);
+    gap: 16px;
+  }
+
+  &__label {
+    font-size: 13px;
+    color: var(--zg-ink-tertiary);
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+
+  &__value {
+    font-size: 13px;
+    color: var(--zg-ink-primary);
+    font-weight: 500;
+    text-align: right;
+    flex: 1;
+    word-break: break-all;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--zg-line-soft);
   }
 }
 </style>
