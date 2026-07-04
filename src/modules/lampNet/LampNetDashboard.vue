@@ -304,6 +304,7 @@
  * 功能：实时呈现城市照明在网通量、能耗趋势、告警分布与处方投递等核心态势
  * @module lampNet/LampNetDashboard
  * @author 智光云枢研发团队
+ * @version 2.0.0
  */
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
