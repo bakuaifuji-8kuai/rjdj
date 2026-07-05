@@ -1,5 +1,5 @@
 <!--
-  智光云枢 · 灯网态势 · 集群拓扑
+  智光云枢 · 灯网监控 · 集群拓扑
   业务域：lampNet
   功能：灯网集群拓扑可视化与节点监测
         支持拓扑刷新、节点详情抽屉、链路探测
@@ -15,7 +15,7 @@
         <div class="zg-topology__copy">
           <h1 class="zg-topology__title">集群拓扑</h1>
           <p class="zg-topology__sub">
-            灯网态势 · 在役 {{ onlineNodeCount }} 节点 · 离线 {{ offlineNodeCount }} 节点 · 累计链路 {{ totalLinkCount }} 条
+            灯网监控 · 在役 {{ onlineNodeCount }} 节点 · 离线 {{ offlineNodeCount }} 节点 · 累计链路 {{ totalLinkCount }} 条
           </p>
         </div>
       </div>
@@ -184,7 +184,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 灯网态势 · 集群拓扑
+ * 智光云枢 · 灯网监控 · 集群拓扑
  * 业务域：lampNet
  * 功能：灯网集群拓扑可视化与节点监测
  * @module lampNet/ClusterTopology

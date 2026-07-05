@@ -1,7 +1,7 @@
 <!--
-  智光云枢 · 能源脉动 · 强场景
+  智光云枢 · 能耗监测 · 强场景
   业务域：energyPulse
-  功能：城市照明强场景预案的台账编排、处方配置与投递执行
+  功能：城市照明强场景预案的台账编排、策略配置与下发执行
         支持卡片/列表双视图、抽屉式详情与编排、场景激活回执
 -->
 <template>
@@ -16,7 +16,7 @@
           <h1 class="zg-strongscene__title">强场景</h1>
           <p class="zg-strongscene__sub">
             城市照明强场景预案 · 在役 {{ activeSceneCount }} 个 ·
-            未在役 {{ inactiveSceneCount }} 个 · 累计投递 {{ totalDeployCount }} 次
+            未在役 {{ inactiveSceneCount }} 个 · 累计下发 {{ totalDeployCount }} 次
           </p>
         </div>
       </div>
@@ -44,7 +44,7 @@
       </div>
       <div class="zg-metrics__cell zg-metrics__cell--info">
         <span class="zg-metrics__num">{{ totalDeployCount }}</span>
-        <span class="zg-metrics__lbl">累计投递</span>
+        <span class="zg-metrics__lbl">累计下发</span>
       </div>
     </div>
 
@@ -74,7 +74,7 @@
         </el-select>
         <el-select
           v-model="sceneCtl.typeBucket"
-          placeholder="处方类型"
+          placeholder="策略类型"
           clearable
           class="zg-filterband__select"
         >
@@ -129,7 +129,7 @@
           </p>
           <div class="zg-scenecard__stats">
             <span class="zg-scenecard__stat">
-              <em>{{ scene.deployCount }}</em> 次投递
+              <em>{{ scene.deployCount }}</em> 次下发
             </span>
             <span class="zg-scenecard__stat">
               <em>{{ scene.creator }}</em>
@@ -154,7 +154,7 @@
       <el-table :data="sceneCtl.pagedRows" stripe class="zg-datatable">
         <el-table-column prop="no" label="序号" width="60" align="center" />
         <el-table-column prop="name" label="预案名称" min-width="150" />
-        <el-table-column label="处方类型" width="120" align="center">
+        <el-table-column label="策略类型" width="120" align="center">
           <template #default="{ row }">
             <el-tag :type="row.type === 'timer' ? 'primary' : 'success'" size="small">
               {{ row.type === 'timer' ? '定时预案' : '光感预案' }}
@@ -168,7 +168,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="deployCount" label="投递次数" width="100" align="center" />
+        <el-table-column prop="deployCount" label="下发次数" width="100" align="center" />
         <el-table-column prop="creator" label="创建人" width="120" />
         <el-table-column prop="createTime" label="创建时间" width="170" />
         <el-table-column label="处置" width="280" align="center" fixed="right">
@@ -233,14 +233,14 @@
               <span class="val">{{ focusedScene.createTime }}</span>
             </div>
             <div class="zg-inspector__cell">
-              <span class="lbl">投递次数</span>
+              <span class="lbl">下发次数</span>
               <span class="val">{{ focusedScene.deployCount }} 次</span>
             </div>
           </div>
         </div>
 
         <div class="zg-inspector__section">
-          <h4 class="zg-inspector__section-title">处方配置</h4>
+          <h4 class="zg-inspector__section-title">策略配置</h4>
           <div v-if="focusedScene.type === 'timer'" class="zg-recipe">
             <div v-for="(action, index) in focusedScene.actions" :key="index" class="zg-recipe__row">
               <span class="zg-recipe__no">动作 {{ index + 1 }}</span>
@@ -279,7 +279,7 @@
           >
             {{ focusedScene.status === 'active' ? '退役预案' : '激活预案' }}
           </el-button>
-          <el-button type="success" size="large" @click="onDeployScene(focusedScene)">投递</el-button>
+          <el-button type="success" size="large" @click="onDeployScene(focusedScene)">下发</el-button>
         </div>
       </div>
     </el-drawer>
@@ -295,7 +295,7 @@
         <el-form-item label="预案名称" required>
           <el-input v-model="sceneForm.draftPayload.name" placeholder="请输入预案名称" />
         </el-form-item>
-        <el-form-item label="处方类型" required>
+        <el-form-item label="策略类型" required>
           <el-radio-group v-model="sceneForm.draftPayload.type" @change="handleRecipeChange">
             <el-radio value="timer">定时预案</el-radio>
             <el-radio value="light">光感预案</el-radio>
@@ -347,7 +347,7 @@
 
         <!-- 光感预案配置 -->
         <template v-if="sceneForm.draftPayload.type === 'light'">
-          <el-divider content-position="left">光感处方配置</el-divider>
+          <el-divider content-position="left">光感策略配置</el-divider>
           <el-form-item label="光感阈值">
             <el-input-number v-model="sceneForm.draftPayload.lightThreshold" :min="0" :max="1000" placeholder="光照阈值 (lux)" />
             <span class="zg-draftform__unit">lux</span>
@@ -400,9 +400,9 @@
 
 <script setup>
 /**
- * 智光云枢 · 能源脉动 · 强场景
+ * 智光云枢 · 能耗监测 · 强场景
  * 业务域：energyPulse
- * 功能：城市照明强场景预案的台账编排、处方配置与投递执行
+ * 功能：城市照明强场景预案的台账编排、策略配置与下发执行
  * @module energyPulse/StrongScene
  * @author 智光云枢研发团队
  */
@@ -566,7 +566,7 @@ const resolveDevices = (keys) => {
 
 /**
  * 提交草稿：根据编排/修订模式写入数据池
- * 业务流包装：新建生成预案编号，修订同步处方字段
+ * 业务流包装：新建生成预案编号，修订同步策略字段
  */
 const onCommitSceneDraft = async () => {
   const snapshot = await sceneForm.onDraftCommit()
@@ -595,7 +595,7 @@ const onCommitSceneDraft = async () => {
     // 修订：合并更新到原记录
     const origin = sceneForm.originRecord
     sceneCtl.reviseRecord(origin.id, { ...snapshot })
-    ElMessage.success('预案处方已更新')
+    ElMessage.success('预案策略已更新')
   }
 }
 
@@ -636,13 +636,13 @@ const onRetireScene = (scene) => {
 }
 
 /**
- * 投递场景：将预案投递到执行历史
+ * 下发场景：将预案下发到执行历史
  * @param {Object} scene 目标预案
  */
 const onDeployScene = (scene) => {
   ElMessageBox.confirm(
-    `确定要投递预案「${scene.name}」吗？`,
-    '投递确认',
+    `确定要下发预案「${scene.name}」吗？`,
+    '下发确认',
     { type: 'info' }
   )
     .then(() => {
@@ -669,13 +669,13 @@ const onDeployScene = (scene) => {
       localStorage.setItem('sceneDeployHistory', JSON.stringify(historyList))
 
       sceneCtl.reviseRecord(scene.id, { deployCount: (scene.deployCount || 0) + 1 })
-      ElMessage.success(`预案「${scene.name}」投递成功`)
+      ElMessage.success(`预案「${scene.name}」下发成功`)
     })
     .catch(() => {})
 }
 
 /**
- * 处方类型切换时重置默认动作
+ * 策略类型切换时重置默认动作
  */
 const handleRecipeChange = () => {
   if (sceneForm.draftPayload.type === 'timer') {

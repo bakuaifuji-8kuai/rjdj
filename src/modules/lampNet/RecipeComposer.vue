@@ -1,8 +1,8 @@
 <!--
-  智光云枢 · 灯网态势 · 处方编排
+  智光云枢 · 灯网监控 · 策略编排
   业务域：lampNet
-  功能：城市照明光照策略的处方台账管理与生命周期编排
-        支持卡片/列表双视图、抽屉式详情与编排、处方投用/停用回执
+  功能：城市照明光照策略的策略台账管理与生命周期编排
+        支持卡片/列表双视图、抽屉式详情与编排、策略投用/停用回执
 -->
 <template>
   <section class="zg-recipe">
@@ -13,7 +13,7 @@
           <el-icon :size="22"><Edit /></el-icon>
         </div>
         <div class="zg-recipe__copy">
-          <h1 class="zg-recipe__title">处方编排</h1>
+          <h1 class="zg-recipe__title">策略编排</h1>
           <p class="zg-recipe__sub">
             城市照明光照策略中枢 · 在役 {{ activeRecipeCount }} 张 ·
             停用 {{ retiredRecipeCount }} 张 · 累计关联节点 {{ totalNodeCount }} 个
@@ -23,7 +23,7 @@
       <div class="zg-recipe__cta">
         <el-button type="primary" @click="recipeForm.openComposer()">
           <el-icon><Plus /></el-icon>
-          <span>新建处方</span>
+          <span>新建策略</span>
         </el-button>
       </div>
     </header>
@@ -32,15 +32,15 @@
     <div class="zg-metrics">
       <div class="zg-metrics__cell">
         <span class="zg-metrics__num">{{ recipeCtl.totalRows }}</span>
-        <span class="zg-metrics__lbl">处方总数</span>
+        <span class="zg-metrics__lbl">策略总数</span>
       </div>
       <div class="zg-metrics__cell zg-metrics__cell--ok">
         <span class="zg-metrics__num">{{ activeRecipeCount }}</span>
-        <span class="zg-metrics__lbl">在役处方</span>
+        <span class="zg-metrics__lbl">在役策略</span>
       </div>
       <div class="zg-metrics__cell zg-metrics__cell--warn">
         <span class="zg-metrics__num">{{ retiredRecipeCount }}</span>
-        <span class="zg-metrics__lbl">停用处方</span>
+        <span class="zg-metrics__lbl">停用策略</span>
       </div>
       <div class="zg-metrics__cell zg-metrics__cell--info">
         <span class="zg-metrics__num">{{ totalNodeCount }}</span>
@@ -65,7 +65,7 @@
       <div class="zg-filterband__fields">
         <el-select
           v-model="recipeCtl.typeBucket"
-          placeholder="处方类型"
+          placeholder="策略类型"
           clearable
           class="zg-filterband__select"
         >
@@ -86,7 +86,7 @@
         </el-select>
         <el-input
           v-model="recipeCtl.filterLexicon"
-          placeholder="检索处方名称/编号"
+          placeholder="检索策略名称/编号"
           clearable
           class="zg-filterband__search"
           @keyup.enter="recipeCtl.onFilterApply()"
@@ -155,8 +155,8 @@
     <div v-else class="zg-tablewrap">
       <el-table :data="recipeCtl.pagedRows" stripe class="zg-datatable">
         <el-table-column prop="no" label="序号" width="60" align="center" />
-        <el-table-column prop="category" label="处方类型" width="120" />
-        <el-table-column prop="name" label="处方名称" min-width="160" />
+        <el-table-column prop="category" label="策略类型" width="120" />
+        <el-table-column prop="name" label="策略名称" min-width="160" />
         <el-table-column prop="triggerMode" label="触发方式" width="110" />
         <el-table-column label="生命周期" width="100" align="center">
           <template #default="{ row }">
@@ -201,7 +201,7 @@
     <!-- 详情抽屉 -->
     <el-drawer
       v-model="recipeInspector.drawerOpen"
-      :title="'处方详情 · ' + (focusedRecipe?.name || '')"
+      :title="'策略详情 · ' + (focusedRecipe?.name || '')"
       direction="rtl"
       size="680px"
     >
@@ -276,7 +276,7 @@
             size="large"
             @click="onTriggerRecipe(focusedRecipe)"
           >
-            {{ focusedRecipe.status === '在役' ? '停用处方' : '投用处方' }}
+            {{ focusedRecipe.status === '在役' ? '停用策略' : '投用策略' }}
           </el-button>
         </div>
       </div>
@@ -285,13 +285,13 @@
     <!-- 新建/修订抽屉 -->
     <el-drawer
       v-model="recipeForm.drawerOpen"
-      :title="recipeForm.editMode === 'compose' ? '新建处方' : '修订处方'"
+      :title="recipeForm.editMode === 'compose' ? '新建策略' : '修订策略'"
       direction="rtl"
       size="560px"
     >
       <el-form :model="recipeForm.draftPayload" label-width="96px" class="zg-draftform">
-        <el-form-item label="处方类型" required>
-          <el-select v-model="recipeForm.draftPayload.category" placeholder="请选择处方类型" style="width: 100%">
+        <el-form-item label="策略类型" required>
+          <el-select v-model="recipeForm.draftPayload.category" placeholder="请选择策略类型" style="width: 100%">
             <el-option label="调光策略" value="调光策略" />
             <el-option label="开关策略" value="开关策略" />
             <el-option label="巡检策略" value="巡检策略" />
@@ -299,8 +299,8 @@
             <el-option label="节能策略" value="节能策略" />
           </el-select>
         </el-form-item>
-        <el-form-item label="处方名称" required>
-          <el-input v-model="recipeForm.draftPayload.name" placeholder="请输入处方名称" />
+        <el-form-item label="策略名称" required>
+          <el-input v-model="recipeForm.draftPayload.name" placeholder="请输入策略名称" />
         </el-form-item>
         <el-form-item label="触发方式" required>
           <el-select v-model="recipeForm.draftPayload.triggerMode" placeholder="请选择触发方式" style="width: 100%">
@@ -351,10 +351,10 @@
 
 <script setup>
 /**
- * 智光云枢 · 灯网态势 · 处方编排
+ * 智光云枢 · 灯网监控 · 策略编排
  * 业务域：lampNet
- * 功能：城市照明光照策略的处方台账管理与生命周期编排
- *        支持卡片/列表双视图、抽屉式详情与编排、处方投用/停用回执
+ * 功能：城市照明光照策略的策略台账管理与生命周期编排
+ *        支持卡片/列表双视图、抽屉式详情与编排、策略投用/停用回执
  * @module lampNet/RecipeComposer
  * @author 智光云枢研发团队
  */
@@ -495,11 +495,11 @@ const recipeForm = useFormDraft(
   {
     validateFn: (draft) => {
       if (!draft.category) {
-        ElMessage.warning('请选择处方类型')
+        ElMessage.warning('请选择策略类型')
         return false
       }
       if (!draft.name) {
-        ElMessage.warning('请输入处方名称')
+        ElMessage.warning('请输入策略名称')
         return false
       }
       if (!draft.triggerMode) {
@@ -517,7 +517,7 @@ const focusedRecipe = computed(() => recipeInspector.focusedRecord)
 
 /**
  * 提交草稿：根据编排/修订模式写入数据池
- * 业务流包装：新建生成处方编号，修订同步策略字段
+ * 业务流包装：新建生成策略编号，修订同步策略字段
  */
 const onCommitRecipeDraft = async () => {
   const snapshot = await recipeForm.onDraftCommit()
@@ -532,18 +532,18 @@ const onCommitRecipeDraft = async () => {
       runDuration: 0,
       commands: []
     })
-    ElMessage.success('处方创建成功，已并入光照策略台账')
+    ElMessage.success('策略创建成功，已并入光照策略台账')
   } else {
     // 修订：合并更新到原记录
     const origin = recipeForm.originRecord
     recipeCtl.reviseRecord(origin.id, { ...snapshot })
-    ElMessage.success('处方档案已更新')
+    ElMessage.success('策略档案已更新')
   }
 }
 
 /**
- * 触发处方：在役↔停用切换，含幂等回执避免重复触发
- * @param {Object} recipe 目标处方
+ * 触发策略：在役↔停用切换，含幂等回执避免重复触发
+ * @param {Object} recipe 目标策略
  */
 const onTriggerRecipe = (recipe) => {
   const nextStatus = recipe.status === '在役' ? '停用' : '在役'
@@ -554,14 +554,14 @@ const onTriggerRecipe = (recipe) => {
   )
     .then(() => {
       recipeCtl.reviseRecord(recipe.id, { status: nextStatus })
-      ElMessage.success(`处方已${nextStatus === '在役' ? '投用' : '停用'}，策略回执已签收`)
+      ElMessage.success(`策略已${nextStatus === '在役' ? '投用' : '停用'}，策略回执已签收`)
     })
     .catch(() => {})
 }
 
 /**
- * 废止处方：二次确认后从台账中移除
- * @param {Object} recipe 目标处方
+ * 废止策略：二次确认后从台账中移除
+ * @param {Object} recipe 目标策略
  */
 const onRetireRecipe = (recipe) => {
   ElMessageBox.confirm(
@@ -571,7 +571,7 @@ const onRetireRecipe = (recipe) => {
   )
     .then(() => {
       recipeCtl.retireRecord(recipe.id)
-      ElMessage.success('处方已废止，台账已同步')
+      ElMessage.success('策略已废止，台账已同步')
     })
     .catch(() => {})
 }

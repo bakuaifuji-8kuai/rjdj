@@ -1,7 +1,7 @@
 <!--
   智光云枢 · 运维工单 · 创建工单
   业务域：opsTicket
-  功能：运维处置单的新建编排，支持草稿留存与附件挂载
+  功能：运维工单的新建编排，支持草稿留存与附件挂载
 -->
 <template>
   <section class="zg-ticketcreate">
@@ -13,7 +13,7 @@
         </div>
         <div class="zg-ticketcreate__copy">
           <h1 class="zg-ticketcreate__title">创建工单</h1>
-          <p class="zg-ticketcreate__sub">运维工单中枢 · 新建处置单</p>
+          <p class="zg-ticketcreate__sub">运维工单中枢 · 新建工单</p>
         </div>
       </div>
       <div class="zg-ticketcreate__cta">
@@ -40,9 +40,9 @@
               placeholder="请选择工单类型"
               style="width: 100%"
             >
-              <el-option label="故障处置单" value="fault" />
-              <el-option label="维修处置单" value="maintenance" />
-              <el-option label="巡检处置单" value="inspection" />
+              <el-option label="故障工单" value="fault" />
+              <el-option label="维修工单" value="maintenance" />
+              <el-option label="巡检工单" value="inspection" />
             </el-select>
           </el-form-item>
           <el-form-item label="优先级" required>
@@ -144,7 +144,7 @@
 /**
  * 智光云枢 · 运维工单 · 创建工单
  * 业务域：opsTicket
- * 功能：运维处置单的新建编排，支持草稿留存与附件挂载
+ * 功能：运维工单的新建编排，支持草稿留存与附件挂载
  * @module opsTicket/TicketCreate
  * @author 智光云枢研发团队
  */

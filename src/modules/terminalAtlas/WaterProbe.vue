@@ -1,5 +1,5 @@
 <!--
-  智光云枢 · 终端图谱 · 水浸传感器
+  智光云枢 · 终端管理 · 水浸传感器
   业务域：terminalAtlas
   功能：水浸传感器台账与状态监测
         支持卡片/列表双视图、抽屉式详情与编排、水浸状态读取
@@ -15,7 +15,7 @@
         <div class="zg-waterprobe__copy">
           <h1 class="zg-waterprobe__title">水浸传感器</h1>
           <p class="zg-waterprobe__sub">
-            终端图谱 · 在役 {{ activeProbeCount }} 台 ·
+            终端管理 · 在役 {{ activeProbeCount }} 台 ·
             离线 {{ offlineProbeCount }} 台 · 告警 {{ alertProbeCount }} 台
           </p>
         </div>
@@ -351,7 +351,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 终端图谱 · 水浸传感器
+ * 智光云枢 · 终端管理 · 水浸传感器
  * 业务域：terminalAtlas
  * 功能：水浸传感器台账与状态监测
  * @module terminalAtlas/WaterProbe

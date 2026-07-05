@@ -1,7 +1,7 @@
 <!--
-  智光云枢 · 灯网态势 · 处方库
+  智光云枢 · 灯网监控 · 策略库
   业务域：lampNet
-  功能：照明策略处方台账与编排管理
+  功能：照明策略策略台账与编排管理
         支持卡片/列表双视图、抽屉式详情与编排、启停回执
 -->
 <template>
@@ -13,9 +13,9 @@
           <el-icon :size="22"><Document /></el-icon>
         </div>
         <div class="zg-vault__copy">
-          <h1 class="zg-vault__title">处方库</h1>
+          <h1 class="zg-vault__title">策略库</h1>
           <p class="zg-vault__sub">
-            照明策略处方中枢 · 在役 {{ activeRecipeCount }} 条 ·
+            照明策略策略中枢 · 在役 {{ activeRecipeCount }} 条 ·
             停用 {{ inactiveRecipeCount }} 条 · 累计覆盖杆塔 {{ totalPoleCount }} 座
           </p>
         </div>
@@ -32,7 +32,7 @@
     <div class="zg-metrics">
       <div class="zg-metrics__cell">
         <span class="zg-metrics__num">{{ vaultCtl.totalRows }}</span>
-        <span class="zg-metrics__lbl">处方总数</span>
+        <span class="zg-metrics__lbl">策略总数</span>
       </div>
       <div class="zg-metrics__cell zg-metrics__cell--ok">
         <span class="zg-metrics__num">{{ activeRecipeCount }}</span>
@@ -65,7 +65,7 @@
       <div class="zg-filterband__fields">
         <el-select
           v-model="vaultCtl.statusBuckets"
-          placeholder="处方状态"
+          placeholder="策略状态"
           clearable
           class="zg-filterband__select"
         >
@@ -84,7 +84,7 @@
         </el-select>
         <el-input
           v-model="vaultCtl.filterLexicon"
-          placeholder="检索处方名称/编号"
+          placeholder="检索策略名称/编号"
           clearable
           class="zg-filterband__search"
           @keyup.enter="vaultCtl.onFilterApply()"
@@ -154,9 +154,9 @@
       <el-table :data="vaultCtl.pagedRows" stripe class="zg-datatable">
         <el-table-column prop="no" label="序号" width="60" align="center" />
         <el-table-column prop="area" label="所属区域" width="130" />
-        <el-table-column prop="name" label="处方名称" min-width="150" />
+        <el-table-column prop="name" label="策略名称" min-width="150" />
         <el-table-column prop="model" label="策略类型" width="110" />
-        <el-table-column label="处方状态" width="100" align="center">
+        <el-table-column label="策略状态" width="100" align="center">
           <template #default="{ row }">
             <span class="zg-status" :class="row.status === '启用' ? 'online' : 'idle'">
               <i class="dot"></i>{{ row.status }}
@@ -195,7 +195,7 @@
     <!-- 详情抽屉 -->
     <el-drawer
       v-model="vaultInspector.drawerOpen"
-      :title="'处方详情 · ' + (focusedVault?.name || '')"
+      :title="'策略详情 · ' + (focusedVault?.name || '')"
       direction="rtl"
       size="680px"
     >
@@ -283,7 +283,7 @@
             size="large"
             @click="onToggleVault(focusedVault)"
           >
-            {{ focusedVault.status === '启用' ? '停用处方' : '启用处方' }}
+            {{ focusedVault.status === '启用' ? '停用策略' : '启用策略' }}
           </el-button>
         </div>
       </div>
@@ -292,7 +292,7 @@
     <!-- 新建/修订抽屉 -->
     <el-drawer
       v-model="vaultForm.drawerOpen"
-      :title="vaultForm.editMode === 'compose' ? '编排便方' : '修订处方'"
+      :title="vaultForm.editMode === 'compose' ? '编排便方' : '修订策略'"
       direction="rtl"
       size="560px"
     >
@@ -304,8 +304,8 @@
             <el-option label="长沙-开福区" value="长沙-开福区" />
           </el-select>
         </el-form-item>
-        <el-form-item label="处方名称" required>
-          <el-input v-model="vaultForm.draftPayload.name" placeholder="请输入处方名称" />
+        <el-form-item label="策略名称" required>
+          <el-input v-model="vaultForm.draftPayload.name" placeholder="请输入策略名称" />
         </el-form-item>
         <el-form-item label="策略类型" required>
           <el-input v-model="vaultForm.draftPayload.model" placeholder="请输入策略类型" />
@@ -355,9 +355,9 @@
 
 <script setup>
 /**
- * 智光云枢 · 灯网态势 · 处方库
+ * 智光云枢 · 灯网监控 · 策略库
  * 业务域：lampNet
- * 功能：照明策略处方台账与编排管理
+ * 功能：照明策略策略台账与编排管理
  * @module lampNet/RecipeVault
  * @author 智光云枢研发团队
  */
@@ -384,7 +384,7 @@ const initialRecipes = [
     id: 1,
     no: 1,
     area: '长沙-岳麓区',
-    name: '先导路节能处方',
+    name: '先导路节能策略',
     model: '分时段调光',
     status: '启用',
     brightness: 60,
@@ -404,7 +404,7 @@ const initialRecipes = [
     id: 2,
     no: 2,
     area: '长沙-岳麓区',
-    name: '力唯中天景观处方',
+    name: '力唯中天景观策略',
     model: '恒定亮度',
     status: '启用',
     brightness: 80,
@@ -419,7 +419,7 @@ const initialRecipes = [
     id: 3,
     no: 3,
     area: '长沙-天心区',
-    name: '芙蓉路深夜降亮处方',
+    name: '芙蓉路深夜降亮策略',
     model: '分时段调光',
     status: '停用',
     brightness: 30,
@@ -434,7 +434,7 @@ const initialRecipes = [
     id: 4,
     no: 4,
     area: '长沙-天心区',
-    name: '芙蓉路常规处方',
+    name: '芙蓉路常规策略',
     model: '恒定亮度',
     status: '启用',
     brightness: 75,
@@ -449,7 +449,7 @@ const initialRecipes = [
     id: 5,
     no: 5,
     area: '长沙-开福区',
-    name: '湘江路智慧处方',
+    name: '湘江路智慧策略',
     model: '感应调光',
     status: '启用',
     brightness: 50,
@@ -464,7 +464,7 @@ const initialRecipes = [
     id: 6,
     no: 6,
     area: '长沙-开福区',
-    name: '湘江路备用处方',
+    name: '湘江路备用策略',
     model: '恒定亮度',
     status: '停用',
     brightness: 100,
@@ -513,7 +513,7 @@ const vaultForm = useFormDraft(
         return false
       }
       if (!draft.name) {
-        ElMessage.warning('请输入处方名称')
+        ElMessage.warning('请输入策略名称')
         return false
       }
       if (!draft.model) {
@@ -531,7 +531,7 @@ const focusedVault = computed(() => vaultInspector.focusedRecord)
 
 /**
  * 提交草稿：根据编排/修订模式写入数据池
- * 业务流包装：新建生成处方编号，修订同步策略字段
+ * 业务流包装：新建生成策略编号，修订同步策略字段
  */
 const onCommitVaultDraft = async () => {
   const snapshot = await vaultForm.onDraftCommit()
@@ -546,18 +546,18 @@ const onCommitVaultDraft = async () => {
       runDuration: 0,
       poles: []
     })
-    ElMessage.success('处方编排成功，已并入策略台账')
+    ElMessage.success('策略编排成功，已并入策略台账')
   } else {
     // 修订：合并更新到原记录
     const origin = vaultForm.originRecord
     vaultCtl.reviseRecord(origin.id, { ...snapshot })
-    ElMessage.success('处方档案已更新')
+    ElMessage.success('策略档案已更新')
   }
 }
 
 /**
- * 启停处方：启用↔停用切换，含幂等回执避免重复操作
- * @param {Object} recipe 目标处方
+ * 启停策略：启用↔停用切换，含幂等回执避免重复操作
+ * @param {Object} recipe 目标策略
  */
 const onToggleVault = (recipe) => {
   const nextStatus = recipe.status === '启用' ? '停用' : '启用'
@@ -568,14 +568,14 @@ const onToggleVault = (recipe) => {
   )
     .then(() => {
       vaultCtl.reviseRecord(recipe.id, { status: nextStatus })
-      ElMessage.success(`处方已${nextStatus === '启用' ? '启用' : '停用'}，策略回执已签收`)
+      ElMessage.success(`策略已${nextStatus === '启用' ? '启用' : '停用'}，策略回执已签收`)
     })
     .catch(() => {})
 }
 
 /**
- * 废止处方：二次确认后从台账中移除
- * @param {Object} recipe 目标处方
+ * 废止策略：二次确认后从台账中移除
+ * @param {Object} recipe 目标策略
  */
 const onRetireVault = (recipe) => {
   ElMessageBox.confirm(
@@ -585,7 +585,7 @@ const onRetireVault = (recipe) => {
   )
     .then(() => {
       vaultCtl.retireRecord(recipe.id)
-      ElMessage.success('处方已废止，台账已同步')
+      ElMessage.success('策略已废止，台账已同步')
     })
     .catch(() => {})
 }

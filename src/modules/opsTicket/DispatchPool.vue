@@ -1,5 +1,5 @@
 <!--
-  智光云枢 · 运维工单 · 调度池
+  智光云枢 · 运维工单 · 工单池
   业务域：opsTicket
   功能：城市照明运维工单的调度分配与状态流转
         支持卡片/列表双视图、抽屉式详情与编排、工单指派回执
@@ -13,7 +13,7 @@
           <el-icon :size="22"><Tickets /></el-icon>
         </div>
         <div class="zg-dispatch__copy">
-          <h1 class="zg-dispatch__title">调度池</h1>
+          <h1 class="zg-dispatch__title">工单池</h1>
           <p class="zg-dispatch__sub">
             城市照明运维中枢 · 在册 {{ dispatchCtl.totalRows }} 单 ·
             待处理 {{ pendingTicketCount }} 单 · 处理中 {{ activeTicketCount }} 单
@@ -346,7 +346,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 运维工单 · 调度池
+ * 智光云枢 · 运维工单 · 工单池
  * 业务域：opsTicket
  * 功能：城市照明运维工单的调度分配与状态流转
  * @module opsTicket/DispatchPool
@@ -642,18 +642,18 @@ const onAssignTicket = (ticket) => {
 }
 
 /**
- * 废止工单：二次确认后从调度池中移除
+ * 废止工单：二次确认后从工单池中移除
  * @param {Object} ticket 目标工单
  */
 const onRetireTicket = (ticket) => {
   ElMessageBox.confirm(
-    `确定要将工单「${ticket.name}」从调度池中废止吗？`,
+    `确定要将工单「${ticket.name}」从工单池中废止吗？`,
     '废止确认',
     { type: 'warning' }
   )
     .then(() => {
       dispatchCtl.retireRecord(ticket.id)
-      ElMessage.success('工单已废止，调度池已同步')
+      ElMessage.success('工单已废止，工单池已同步')
     })
     .catch(() => {})
 }

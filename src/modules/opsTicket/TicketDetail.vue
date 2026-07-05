@@ -1,8 +1,8 @@
 <!--
-  智光云枢 · 运维工单 · 处置单详情
+  智光云枢 · 运维工单 · 工单详情
   业务域：opsTicket
-  功能：运维处置单详情展示、流程时间线、派发与完成操作
-        支持派发抽屉选择处理人员、创建类似处置单
+  功能：运维工单详情展示、流程时间线、派发与完成操作
+        支持派发抽屉选择处理人员、创建类似工单
 -->
 <template>
   <section class="zg-ticketdetail">
@@ -13,7 +13,7 @@
           <el-icon :size="22"><Tickets /></el-icon>
         </div>
         <div class="zg-ticketdetail__copy">
-          <h1 class="zg-ticketdetail__title">处置单详情</h1>
+          <h1 class="zg-ticketdetail__title">工单详情</h1>
           <p class="zg-ticketdetail__sub">运维工单 · {{ focusedTicket?.id || '' }}</p>
         </div>
       </div>
@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="zg-ticketcard__meta">
-        <span class="zg-ticketcard__id">处置单编号: {{ focusedTicket.id }}</span>
+        <span class="zg-ticketcard__id">工单编号: {{ focusedTicket.id }}</span>
       </div>
     </div>
 
@@ -58,7 +58,7 @@
         </div>
         <div class="zg-ticketdetail__card-body">
           <div class="zg-ticketdetail__row">
-            <span class="zg-ticketdetail__lbl">处置单类型</span>
+            <span class="zg-ticketdetail__lbl">工单类型</span>
             <el-tag :type="resolveTypeTag(focusedTicket.type)">
               {{ resolveTypeLabel(focusedTicket.type) }}
             </el-tag>
@@ -127,17 +127,17 @@
       </article>
     </div>
 
-    <!-- 流程时间线：处置单流程 -->
+    <!-- 流程时间线：工单流程 -->
     <div v-if="focusedTicket" class="zg-ticketdetail__timeline">
       <div class="zg-ticketdetail__timeline-head">
-        <span class="zg-ticketdetail__timeline-title">处置单流程</span>
+        <span class="zg-ticketdetail__timeline-title">工单流程</span>
       </div>
       <el-timeline>
         <el-timeline-item timestamp="创建">{{ focusedTicket.title }} 已创建，等待处理</el-timeline-item>
         <el-timeline-item v-if="focusedTicket.status !== 'pending'" timestamp="派发">
-          处置单已派发给 {{ focusedTicket.assignee || '处理人员' }}
+          工单已派发给 {{ focusedTicket.assignee || '处理人员' }}
         </el-timeline-item>
-        <el-timeline-item v-if="focusedTicket.status === 'completed'" timestamp="完成">处置单已完成</el-timeline-item>
+        <el-timeline-item v-if="focusedTicket.status === 'completed'" timestamp="完成">工单已完成</el-timeline-item>
       </el-timeline>
     </div>
 
@@ -149,25 +149,25 @@
         @click="onAssign"
       >
         <el-icon><User /></el-icon>
-        <span>派发处置单</span>
+        <span>派发工单</span>
       </el-button>
       <el-button
         v-if="focusedTicket.status === 'processing'"
         type="success"
         @click="onComplete"
       >
-        <span>完成处置单</span>
+        <span>完成工单</span>
       </el-button>
       <el-button @click="onCreateSimilar">
         <el-icon><Tickets /></el-icon>
-        <span>创建类似处置单</span>
+        <span>创建类似工单</span>
       </el-button>
     </div>
 
     <!-- 派发抽屉：选择处理人员 -->
     <el-drawer
       v-model="ticketInspector.drawerOpen"
-      title="派发处置单"
+      title="派发工单"
       :size="ticketInspector.drawerSize.value"
       :direction="ticketInspector.drawerDirection.value"
     >
@@ -191,9 +191,9 @@
 
 <script setup>
 /**
- * 智光云枢 · 运维工单 · 处置单详情
+ * 智光云枢 · 运维工单 · 工单详情
  * 业务域：opsTicket
- * 功能：运维处置单详情展示、流程时间线、派发与完成操作
+ * 功能：运维工单详情展示、流程时间线、派发与完成操作
  * @module opsTicket/TicketDetail
  * @author 智光云枢研发团队
  */
@@ -256,7 +256,7 @@ const initialTickets = [
   }
 ]
 
-// ---- 当前聚焦的处置单 ----
+// ---- 当前聚焦的工单 ----
 const focusedTicket = ref(null)
 
 // ---- 派发表单 ----
@@ -276,7 +276,7 @@ const goBackToList = () => {
 }
 
 /**
- * 解析处置单类型标签样式
+ * 解析工单类型标签样式
  * @param {string} type 类型值
  * @returns {string} 标签类型
  */
@@ -289,14 +289,14 @@ const resolveTypeTag = (type) => {
 }
 
 /**
- * 解析处置单类型显示标签
+ * 解析工单类型显示标签
  * @param {string} type 类型值
  * @returns {string} 显示文本
  */
 const resolveTypeLabel = (type) => {
   switch (type) {
-    case 'fault': return '故障处置单'
-    case 'maintenance': return '维修处置单'
+    case 'fault': return '故障工单'
+    case 'maintenance': return '维修工单'
     default: return type
   }
 }
@@ -358,7 +358,7 @@ const resolveStatusLabel = (status) => {
 }
 
 /**
- * 打开派发抽屉：准备派发处置单给处理人员
+ * 打开派发抽屉：准备派发工单给处理人员
  */
 const onAssign = () => {
   assignForm.value = { assignee: '' }
@@ -366,7 +366,7 @@ const onAssign = () => {
 }
 
 /**
- * 完成处置单：二次确认后将状态变更为已完成
+ * 完成工单：二次确认后将状态变更为已完成
  */
 const onComplete = () => {
   ElMessageBox.confirm(
@@ -377,17 +377,17 @@ const onComplete = () => {
     .then(() => {
       focusedTicket.value.status = 'completed'
       focusedTicket.value.updateTime = new Date().toLocaleString('zh-CN')
-      ElMessage.success('处置单已完成')
+      ElMessage.success('工单已完成')
     })
     .catch(() => {})
 }
 
 /**
- * 创建类似处置单：跳转到新建页面，携带当前工单信息
+ * 创建类似工单：跳转到新建页面，携带当前工单信息
  */
 const onCreateSimilar = () => {
   router.push('/workorder/create')
-  ElMessage.info('正在创建类似处置单...')
+  ElMessage.info('正在创建类似工单...')
 }
 
 /**
@@ -402,7 +402,7 @@ const confirmAssign = () => {
   focusedTicket.value.assignee = assignForm.value.assignee
   focusedTicket.value.status = 'processing'
   focusedTicket.value.updateTime = new Date().toLocaleString('zh-CN')
-  ElMessage.success('派发成功，处置单已进入处理状态')
+  ElMessage.success('派发成功，工单已进入处理状态')
   ticketInspector.closeInspector()
 }
 </script>

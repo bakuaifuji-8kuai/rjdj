@@ -1,5 +1,5 @@
 <!--
-  智光云枢 · 终端图谱 · 光源台账
+  智光云枢 · 终端管理 · 光源台账
   业务域：terminalAtlas
   功能：城市照明光源设备的台账管理与远程控制
         支持左树右表布局、卡片/列表双视图、抽屉式详情与调光、开关灯记录查询
@@ -240,7 +240,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="lastOnline" label="最后在线" min-width="160" />
-            <el-table-column prop="strategy" label="当前处方" min-width="120" />
+            <el-table-column prop="strategy" label="当前策略" min-width="120" />
             <el-table-column label="可用状态" width="100" align="center">
               <template #default="{ row }">
                 <span class="zg-status" :class="row.available === '在役' ? 'online' : 'idle'">
@@ -312,7 +312,7 @@
               <span class="val">{{ focusedFixture.imei }}</span>
             </div>
             <div class="zg-inspector__cell">
-              <span class="lbl">当前处方</span>
+              <span class="lbl">当前策略</span>
               <span class="val">{{ focusedFixture.strategy || '-' }}</span>
             </div>
             <div class="zg-inspector__cell">
@@ -419,7 +419,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 终端图谱 · 光源台账
+ * 智光云枢 · 终端管理 · 光源台账
  * 业务域：terminalAtlas
  * 功能：城市照明光源设备的台账管理与远程控制
  *       支持左树右表布局、卡片/列表双视图、抽屉式详情与调光、开关灯记录查询

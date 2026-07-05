@@ -1,7 +1,7 @@
 <!--
-  智光云枢 · 灯网态势 · 态势看板
+  智光云枢 · 灯网监控 · 态势看板
   业务域：lampNet
-  功能：实时呈现城市照明在网通量、能耗趋势、告警分布与处方投递等核心态势
+  功能：实时呈现城市照明在网通量、能耗趋势、告警分布与策略下发等核心态势
   @version 2.0.1 - forced rebuild
 -->
 <template>
@@ -13,7 +13,7 @@
           <el-icon :size="22"><Aim /></el-icon>
         </div>
         <div class="zg-pulseboard__copy">
-          <h1 class="zg-pulseboard__title">灯网态势看板</h1>
+          <h1 class="zg-pulseboard__title">灯网监控看板</h1>
           <p class="zg-pulseboard__sub">
             城市照明物联 · 实时在网态势 · {{ liveChrono }}
           </p>
@@ -128,10 +128,10 @@
         </div>
       </div>
 
-      <!-- 处方投递成功率折线图 -->
+      <!-- 策略下发成功率折线图 -->
       <div class="zg-chartdeck__panel">
         <header class="zg-chartdeck__head">
-          <h3 class="zg-chartdeck__title">处方投递成功率</h3>
+          <h3 class="zg-chartdeck__title">策略下发成功率</h3>
           <span class="zg-chartdeck__aside">近 7 日</span>
         </header>
         <div class="zg-chartdeck__body">
@@ -231,11 +231,11 @@
         </div>
       </div>
 
-      <!-- 最近处方投递记录 -->
+      <!-- 最近策略下发记录 -->
       <div class="zg-databand__panel">
         <header class="zg-databand__head">
           <h3 class="zg-databand__title zg-databand__title--clickable" @click="goToRecipeLog">
-            最近处方投递记录
+            最近策略下发记录
             <el-icon :size="14" class="zg-databand__arrow"><ArrowRight /></el-icon>
           </h3>
           <span class="zg-databand__aside">
@@ -300,9 +300,9 @@
 
 <script setup>
 /**
- * 智光云枢 · 灯网态势 · 态势看板
+ * 智光云枢 · 灯网监控 · 态势看板
  * 业务域：lampNet
- * 功能：实时呈现城市照明在网通量、能耗趋势、告警分布与处方投递等核心态势
+ * 功能：实时呈现城市照明在网通量、能耗趋势、告警分布与策略下发等核心态势
  * @module lampNet/LampNetDashboard
  * @author 智光云枢研发团队
  * @version 2.0.0
@@ -387,7 +387,7 @@ function goToTopology (cluster) {
 }
 
 /**
- * 跳转到处方投递记录页面
+ * 跳转到策略下发记录页面
  */
 function goToRecipeLog () {
   router.push('/lampNet/recipe-archive')
@@ -452,14 +452,14 @@ const kpiCells = ref([
   },
   {
     id: 'kpi-dispatch',
-    caption: '处方投递成功率',
+    caption: '策略下发成功率',
     metric: '99.2',
     unit: '%',
     deltaText: '近 7 日均值',
     deltaTone: 'flat',
     tone: 'success',
     glyph: Calendar,
-    hint: '处方投递总数 1,283 次'
+    hint: '策略下发总数 1,283 次'
   }
 ])
 
@@ -587,21 +587,21 @@ const donutStyle = computed(() => {
   return { background: `conic-gradient(${stops})` }
 })
 
-// ---- 处方投递日志 ----
+// ---- 策略下发日志 ----
 const recipeDeliveryLog = ref([
   {
     title: '晨曦唤醒 · 主干道',
     at: '05:30',
     tone: 'success',
-    detail: '处方 PRST-CN-001 投递成功，激活 248 节点，色温 3000K。',
-    trigger: '时间编排',
+    detail: '策略 PRST-CN-001 下发成功，激活 248 节点，色温 3000K。',
+    trigger: '定时计划',
     coverage: 248
   },
   {
     title: '傍晚柔光 · 次干道',
     at: '18:45',
     tone: 'success',
-    detail: '处方 PRST-CN-014 投递成功，激活 162 节点，色温 2700K。',
+    detail: '策略 PRST-CN-014 下发成功，激活 162 节点，色温 2700K。',
     trigger: '照度探针联动',
     coverage: 162
   },
@@ -609,14 +609,14 @@ const recipeDeliveryLog = ref([
     title: '深夜节能 · 全域',
     at: '23:00',
     tone: 'pending',
-    detail: '处方 PRST-CN-019 排队中，等待运维窗口',
+    detail: '策略 PRST-CN-019 排队中，等待运维窗口',
     trigger: '定时',
     coverage: 0
   }
 ])
 
 /**
- * 将处方投递日志映射为折线图坐标点
+ * 将策略下发日志映射为折线图坐标点
  * 以覆盖节点数为纵轴，时间序列为横轴，归一化到百分比
  * @returns {Array<{x:number, y:number, at:string, tone:string}>}
  */
@@ -664,28 +664,29 @@ const topologyClusters = ref([
 
 <style scoped lang="scss">
 .zg-pulseboard {
-  padding: 24px;
-  background: var(--zg-gradient-surface);
+  padding: var(--zg-space-6);
+  background: var(--zg-canvas-mist);
   min-height: 100%;
+  font-family: var(--zg-font-sans);
 
   &__head {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 18px;
+    margin-bottom: var(--zg-space-5);
+    padding-bottom: var(--zg-space-4);
     border-bottom: 1px solid var(--zg-line-soft);
   }
 
   &__headline {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: var(--zg-space-3);
   }
 
   &__sigil {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: var(--zg-radius-md);
     background: var(--zg-gradient-primary);
     color: #fff;
@@ -698,40 +699,48 @@ const topologyClusters = ref([
   &__copy {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
   }
 
   &__title {
-    font-size: 20px;
+    font-size: var(--zg-text-display-sm);
     font-weight: 600;
     color: var(--zg-ink-primary);
     margin: 0;
+    letter-spacing: -0.01em;
   }
 
   &__sub {
-    font-size: 13px;
+    font-size: var(--zg-text-body-sm);
     color: var(--zg-ink-tertiary);
     margin: 0;
   }
 }
 
+// === 态势脉冲条（4 个关键指标） ===
 .zg-pulsebar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: var(--zg-space-3);
+  margin-bottom: var(--zg-space-5);
 
   &__cell {
     background: var(--zg-surface-card);
-    border: 1px solid var(--zg-line-soft);
+    border: 1px solid var(--zg-line-strong);
     border-radius: var(--zg-radius-lg);
-    padding: 16px 18px;
+    padding: var(--zg-space-4) var(--zg-space-5);
     display: flex;
     flex-direction: column;
     gap: 6px;
     box-shadow: var(--zg-shadow-card);
     position: relative;
     overflow: hidden;
+    transition: all var(--zg-transition-normal);
+
+    &:hover {
+      box-shadow: var(--zg-shadow-card-hover);
+      transform: translateY(-1px);
+    }
 
     &::before {
       content: '';
@@ -740,50 +749,55 @@ const topologyClusters = ref([
       top: 0;
       width: 3px;
       height: 100%;
-      background: var(--zg-brand-primary);
+      background: var(--zg-amber-glow);
     }
 
-    &--up::before { background: var(--zg-success); }
-    &--down::before { background: var(--zg-warning); }
-    &--warn::before { background: var(--zg-danger); }
+    &--up::before { background: var(--zg-emerald-success); }
+    &--down::before { background: var(--zg-amber-glow); }
+    &--warn::before { background: var(--zg-rose-danger); }
   }
 
   &__lbl {
-    font-size: 12px;
+    font-size: var(--zg-text-caption);
     color: var(--zg-ink-tertiary);
+    font-weight: 500;
   }
 
   &__val {
     font-size: 26px;
     font-weight: 700;
     color: var(--zg-ink-primary);
-    line-height: 1;
+    line-height: 1.2;
+    font-family: var(--zg-font-mono);
+    letter-spacing: -0.02em;
   }
 
   &__delta {
-    font-size: 12px;
+    font-size: var(--zg-text-caption);
     font-weight: 500;
 
-    &.up { color: var(--zg-success); }
-    &.down { color: var(--zg-warning); }
-    &.warn { color: var(--zg-danger); }
+    &.up { color: var(--zg-emerald-success); }
+    &.down { color: var(--zg-amber-glow); }
+    &.warn { color: var(--zg-rose-danger); }
   }
 }
 
+// === 四象限 KPI 卡 ===
 .zg-kpiquad {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: var(--zg-space-4);
+  margin-bottom: var(--zg-space-5);
 
   &__cell {
     background: var(--zg-surface-card);
     border-radius: var(--zg-radius-lg);
-    padding: 18px 20px;
+    padding: var(--zg-space-5);
     box-shadow: var(--zg-shadow-card);
-    border: 1px solid var(--zg-line-brand);
+    border: 1px solid var(--zg-line-strong);
     position: relative;
     overflow: hidden;
+    transition: all var(--zg-transition-normal);
 
     &::before {
       content: '';
@@ -791,8 +805,9 @@ const topologyClusters = ref([
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
+      height: 2px;
       background: var(--zg-gradient-primary);
+      opacity: 0.8;
     }
 
     &--aux::before { background: var(--zg-gradient-warning); }
@@ -800,42 +815,59 @@ const topologyClusters = ref([
     &--success::before { background: var(--zg-gradient-success); }
   }
 
+  &__cell--clickable {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--zg-shadow-card-hover);
+    }
+
+    &:active {
+      transform: translateY(-0.5px);
+    }
+  }
+
   &__head {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--zg-space-2);
   }
 
   &__glyph {
-    width: 30px;
-    height: 30px;
-    border-radius: var(--zg-radius-sm);
-    background: var(--zg-brand-tint-50);
-    color: var(--zg-brand-primary);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--zg-radius-md);
+    background: var(--zg-amber-50);
+    color: var(--zg-amber-glow);
     display: grid;
     place-items: center;
   }
 
   &__caption {
-    font-size: 13px;
+    font-size: var(--zg-text-body-sm);
     color: var(--zg-ink-secondary);
+    font-weight: 500;
   }
 
   &__metric {
-    margin: 10px 0 6px;
+    margin: 12px 0 6px;
     display: flex;
     align-items: baseline;
     gap: 6px;
   }
 
   &__number {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 700;
     color: var(--zg-ink-primary);
+    font-family: var(--zg-font-mono);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
 
   &__unit {
-    font-size: 12px;
+    font-size: var(--zg-text-caption);
     color: var(--zg-ink-tertiary);
   }
 
@@ -846,55 +878,63 @@ const topologyClusters = ref([
   }
 
   &__delta {
-    font-size: 12px;
+    font-size: var(--zg-text-caption);
     font-weight: 500;
     display: inline-flex;
     align-items: center;
     gap: 2px;
 
-    &.up { color: var(--zg-success); }
-    &.down { color: var(--zg-warning); }
-    &.warn { color: var(--zg-danger); }
+    &.up { color: var(--zg-emerald-success); }
+    &.down { color: var(--zg-amber-glow); }
+    &.warn { color: var(--zg-rose-danger); }
     &.flat { color: var(--zg-ink-placeholder); }
   }
 
   &__hint {
-    font-size: 11px;
+    font-size: var(--zg-text-micro);
     color: var(--zg-ink-placeholder);
   }
 }
 
+// === 图表区域 ===
 .zg-chartdeck {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: var(--zg-space-4);
+  margin-bottom: var(--zg-space-5);
 
   &__panel {
     background: var(--zg-surface-card);
     border-radius: var(--zg-radius-lg);
-    border: 1px solid var(--zg-line-brand);
+    border: 1px solid var(--zg-line-strong);
     box-shadow: var(--zg-shadow-card);
+    transition: all var(--zg-transition-normal);
+
+    &:hover {
+      box-shadow: var(--zg-shadow-card-hover);
+    }
   }
 
   &__head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 20px;
+    padding: var(--zg-space-4) var(--zg-space-5);
     border-bottom: 1px solid var(--zg-line-soft);
   }
 
   &__title {
-    font-size: 14px;
+    font-size: var(--zg-text-body-lg);
     font-weight: 600;
     color: var(--zg-ink-primary);
     margin: 0;
+    letter-spacing: -0.01em;
   }
 
   &__aside {
-    font-size: 12px;
-    color: var(--zg-ink-placeholder);
+    font-size: var(--zg-text-caption);
+    color: var(--zg-ink-tertiary);
+    font-weight: 500;
   }
 
   &__tabs {
@@ -903,46 +943,65 @@ const topologyClusters = ref([
   }
 
   &__body {
-    padding: 16px 20px;
+    padding: var(--zg-space-4) var(--zg-space-5);
   }
 }
 
+// === Chip 标签 ===
 .zg-chip {
-  padding: 4px 12px;
-  font-size: 12px;
-  border-radius: var(--zg-radius-sm);
-  border: 1px solid var(--zg-brand-tint-100);
+  padding: 5px 14px;
+  font-size: var(--zg-text-caption);
+  border-radius: var(--zg-radius-md);
+  border: 1px solid var(--zg-line-strong);
   background: var(--zg-surface-card);
-  color: var(--zg-brand-primary);
+  color: var(--zg-ink-secondary);
   cursor: pointer;
   transition: all var(--zg-transition-fast);
+  font-weight: 500;
+  font-family: var(--zg-font-sans);
 
   &:hover {
-    background: var(--zg-brand-tint-50);
+    border-color: var(--zg-amber-200);
+    color: var(--zg-amber-glow);
+    background: var(--zg-amber-50);
+  }
+
+  &:active {
+    transform: scale(0.96);
   }
 
   &--on {
-    background: var(--zg-brand-primary);
+    background: var(--zg-amber-glow);
     color: #fff;
-    border-color: var(--zg-brand-primary);
+    border-color: var(--zg-amber-glow);
+    box-shadow: var(--zg-shadow-btn);
+
+    &:hover {
+      background: var(--zg-amber-deep);
+      border-color: var(--zg-amber-deep);
+      color: #fff;
+    }
   }
 }
 
+// === 能耗趋势柱状图 ===
 .zg-trendchart {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 
   &__bar {
     display: grid;
-    grid-template-columns: 36px 1fr 60px;
+    grid-template-columns: 40px 1fr 70px;
     align-items: center;
-    gap: 10px;
+    gap: var(--zg-space-3);
   }
 
   &__hour {
-    font-size: 11px;
-    color: var(--zg-ink-placeholder);
+    font-size: var(--zg-text-caption);
+    color: var(--zg-ink-tertiary);
+    font-family: var(--zg-font-mono);
+    font-weight: 500;
   }
 
   &__track {
@@ -960,20 +1019,23 @@ const topologyClusters = ref([
   }
 
   &__val {
-    font-size: 12px;
-    color: var(--zg-ink-tertiary);
+    font-size: var(--zg-text-caption);
+    color: var(--zg-ink-secondary);
     text-align: right;
+    font-family: var(--zg-font-mono);
+    font-weight: 500;
   }
 }
 
+// === 告警饼图 ===
 .zg-piechart {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: var(--zg-space-6);
 
   &__donut {
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
     border-radius: 50%;
     position: relative;
     flex-shrink: 0;
@@ -981,27 +1043,29 @@ const topologyClusters = ref([
 
   &__core {
     position: absolute;
-    inset: 28px;
+    inset: 30px;
     border-radius: 50%;
     background: var(--zg-surface-card);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.04);
   }
 
   &__coreval {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--zg-ink-primary);
-    line-height: 1;
+    line-height: 1.1;
+    font-family: var(--zg-font-mono);
+    letter-spacing: -0.02em;
   }
 
   &__corelbl {
-    font-size: 11px;
-    color: var(--zg-ink-placeholder);
-    margin-top: 2px;
+    font-size: var(--zg-text-micro);
+    color: var(--zg-ink-tertiary);
+    margin-top: 3px;
+    font-weight: 500;
   }
 
   &__legend {
@@ -1010,20 +1074,20 @@ const topologyClusters = ref([
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     flex: 1;
 
     li {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
+      gap: var(--zg-space-2);
+      font-size: var(--zg-text-body-sm);
     }
   }
 
   &__dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     flex-shrink: 0;
   }
@@ -1031,17 +1095,20 @@ const topologyClusters = ref([
   &__tag {
     color: var(--zg-ink-secondary);
     flex: 1;
+    font-weight: 500;
   }
 
   &__pct {
     color: var(--zg-ink-primary);
     font-weight: 600;
+    font-family: var(--zg-font-mono);
   }
 }
 
+// === 策略下发折线图 ===
 .zg-linechart {
   position: relative;
-  height: 160px;
+  height: 170px;
 
   &__axis {
     position: absolute;
@@ -1059,7 +1126,7 @@ const topologyClusters = ref([
 
   &__plot {
     position: absolute;
-    inset: 0 0 20px 0;
+    inset: 0 0 24px 0;
   }
 
   &__svg {
@@ -1070,13 +1137,15 @@ const topologyClusters = ref([
 
   &__poly {
     fill: none;
-    stroke: var(--zg-brand-primary);
-    stroke-width: 2;
+    stroke: var(--zg-amber-glow);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   &__area {
-    fill: var(--zg-brand-tint-50);
-    opacity: 0.6;
+    fill: var(--zg-amber-50);
+    opacity: 0.7;
   }
 
   &__dots {
@@ -1086,17 +1155,22 @@ const topologyClusters = ref([
 
   &__dot {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: var(--zg-brand-primary);
+    background: var(--zg-amber-glow);
     border: 2px solid var(--zg-surface-card);
     transform: translate(-50%, 50%);
-    box-shadow: 0 0 0 2px var(--zg-brand-tint-200);
+    box-shadow: 0 0 0 3px var(--zg-amber-100);
+    transition: all var(--zg-transition-fast);
 
-    &.success { background: var(--zg-success); }
-    &.pending { background: var(--zg-warning); }
-    &.warn { background: var(--zg-danger); }
+    &:hover {
+      transform: translate(-50%, 50%) scale(1.2);
+    }
+
+    &.success { background: var(--zg-emerald-success); box-shadow: 0 0 0 3px var(--zg-emerald-soft); }
+    &.pending { background: var(--zg-amber-glow); box-shadow: 0 0 0 3px var(--zg-amber-soft); }
+    &.warn { background: var(--zg-rose-danger); box-shadow: 0 0 0 3px var(--zg-rose-soft); }
   }
 
   &__xaxis {
@@ -1106,50 +1180,70 @@ const topologyClusters = ref([
     right: 0;
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
-    color: var(--zg-ink-placeholder);
+    font-size: var(--zg-text-caption);
+    color: var(--zg-ink-tertiary);
+    font-family: var(--zg-font-mono);
+    font-weight: 500;
   }
 }
 
+// === 在网拓扑区段 ===
 .zg-topoclusters {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: var(--zg-space-3);
 
   &__tile {
-    padding: 12px 14px;
+    padding: var(--zg-space-3) var(--zg-space-4);
     border-radius: var(--zg-radius-md);
-    background: var(--zg-brand-tint-50);
-    border: 1px solid var(--zg-brand-tint-100);
+    background: var(--zg-amber-50);
+    border: 1px solid var(--zg-amber-100);
+    transition: all var(--zg-transition-fast);
 
     &--aux {
-      background: var(--zg-warning-soft);
-      border-color: var(--zg-warning-soft);
+      background: var(--zg-amber-50);
+      border-color: var(--zg-amber-100);
     }
 
     &--success {
-      background: var(--zg-success-soft);
-      border-color: var(--zg-success-soft);
+      background: var(--zg-emerald-50);
+      border-color: var(--zg-emerald-soft);
+    }
+  }
+
+  &__tile--clickable {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px -4px rgba(217, 119, 6, 0.2);
+    }
+
+    &:active {
+      transform: translateY(0);
     }
   }
 
   &__name {
-    font-size: 13px;
+    font-size: var(--zg-text-body-sm);
     color: var(--zg-ink-primary);
-    font-weight: 500;
+    font-weight: 600;
   }
 
   &__count {
     display: flex;
     align-items: baseline;
-    gap: 2px;
-    margin: 6px 0;
+    gap: 3px;
+    margin: 8px 0 6px;
   }
 
   &__online {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
-    color: var(--zg-brand-primary);
+    color: var(--zg-amber-glow);
+    font-family: var(--zg-font-mono);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
 
   &__divider {
@@ -1157,13 +1251,14 @@ const topologyClusters = ref([
   }
 
   &__total {
-    font-size: 12px;
+    font-size: var(--zg-text-caption);
     color: var(--zg-ink-tertiary);
+    font-family: var(--zg-font-mono);
   }
 
   &__bar {
     height: 4px;
-    background: var(--zg-brand-tint-100);
+    background: var(--zg-amber-100);
     border-radius: 2px;
     overflow: hidden;
   }
@@ -1171,76 +1266,116 @@ const topologyClusters = ref([
   &__fill {
     height: 100%;
     background: var(--zg-gradient-primary);
+    border-radius: 2px;
   }
 
   &__hint {
-    font-size: 11px;
+    font-size: var(--zg-text-micro);
     color: var(--zg-ink-tertiary);
-    margin-top: 4px;
+    margin-top: 5px;
+    font-weight: 500;
   }
 }
 
+// === 底部数据区 ===
 .zg-databand {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--zg-space-4);
 
   &__panel {
     background: var(--zg-surface-card);
     border-radius: var(--zg-radius-lg);
-    border: 1px solid var(--zg-line-brand);
+    border: 1px solid var(--zg-line-strong);
     box-shadow: var(--zg-shadow-card);
+    transition: all var(--zg-transition-normal);
+
+    &:hover {
+      box-shadow: var(--zg-shadow-card-hover);
+    }
   }
 
   &__head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 20px;
+    padding: var(--zg-space-4) var(--zg-space-5);
     border-bottom: 1px solid var(--zg-line-soft);
   }
 
   &__title {
-    font-size: 14px;
+    font-size: var(--zg-text-body-lg);
     font-weight: 600;
     color: var(--zg-ink-primary);
     margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  &__title--clickable {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color var(--zg-transition-fast);
+
+    &:hover {
+      color: var(--zg-amber-glow);
+
+      .zg-databand__arrow {
+        transform: translateX(3px);
+      }
+    }
+  }
+
+  &__arrow {
+    transition: transform var(--zg-transition-fast);
   }
 
   &__aside {
-    font-size: 12px;
-    color: var(--zg-ink-placeholder);
+    font-size: var(--zg-text-caption);
+    color: var(--zg-ink-tertiary);
     display: flex;
     align-items: center;
     gap: 4px;
+    font-weight: 500;
   }
 
   &__body {
-    padding: 16px 20px;
+    padding: var(--zg-space-4) var(--zg-space-5);
   }
 }
 
+// === 活跃告警列表 ===
 .zg-alertroll {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--zg-space-2);
 
   &__item {
     display: grid;
-    grid-template-columns: 8px 1fr auto;
-    gap: 12px;
-    padding: 10px 12px;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--zg-space-3);
+    padding: var(--zg-space-3);
     border-radius: var(--zg-radius-md);
     background: var(--zg-surface-muted);
     border-left: 3px solid var(--zg-line-strong);
-    align-items: center;
+    align-items: start;
+    transition: all var(--zg-transition-fast);
 
-    &--warn { border-left-color: var(--zg-warning); }
-    &--critical { border-left-color: var(--zg-danger); }
-    &--info { border-left-color: var(--zg-brand-primary); }
+    &--warn { border-left-color: var(--zg-amber-glow); }
+    &--critical { border-left-color: var(--zg-rose-danger); }
+    &--info { border-left-color: var(--zg-sky-info); }
+  }
+
+  &__item--clickable {
+    cursor: pointer;
+
+    &:hover {
+      background: var(--zg-amber-50);
+    }
   }
 
   &__dot {
@@ -1248,66 +1383,74 @@ const topologyClusters = ref([
     height: 8px;
     border-radius: 50%;
     background: var(--zg-line-strong);
+    margin-top: 5px;
   }
 
   &__line {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--zg-space-2);
   }
 
   &__tag {
-    font-size: 11px;
-    padding: 1px 8px;
-    border-radius: var(--zg-radius-pill);
-    background: var(--zg-brand-tint-50);
-    color: var(--zg-brand-primary);
+    font-size: var(--zg-text-micro);
+    padding: 2px 8px;
+    border-radius: var(--zg-radius-sm);
+    background: var(--zg-amber-50);
+    color: var(--zg-amber-glow);
+    font-weight: 600;
   }
 
   &__time {
-    font-size: 11px;
-    color: var(--zg-ink-placeholder);
+    font-size: var(--zg-text-micro);
+    color: var(--zg-ink-tertiary);
     display: flex;
     align-items: center;
     gap: 2px;
+    font-family: var(--zg-font-mono);
+    font-weight: 500;
   }
 
   &__msg {
-    font-size: 13px;
+    font-size: var(--zg-text-body-sm);
     color: var(--zg-ink-primary);
-    margin: 4px 0 0;
+    margin: 5px 0 0;
+    line-height: 1.5;
   }
 
   &__node {
-    font-size: 11px;
-    color: var(--zg-brand-primary);
+    font-size: var(--zg-text-micro);
+    color: var(--zg-amber-glow);
     font-family: var(--zg-font-mono);
+    font-weight: 500;
+    margin-top: 2px;
   }
 }
 
+// === 策略下发时间线 ===
 .zg-reciperoll {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--zg-space-4);
   position: relative;
 
   &__step {
     display: grid;
-    grid-template-columns: 14px 1fr;
-    gap: 12px;
+    grid-template-columns: 16px 1fr;
+    gap: var(--zg-space-3);
     position: relative;
 
     &::before {
       content: '';
       position: absolute;
-      left: 6px;
-      top: 14px;
-      bottom: -14px;
+      left: 7px;
+      top: 16px;
+      bottom: -16px;
       width: 2px;
-      background: var(--zg-line-brand);
+      background: var(--zg-line-soft);
     }
 
     &:last-child::before {
@@ -1316,16 +1459,17 @@ const topologyClusters = ref([
   }
 
   &__node {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background: var(--zg-line-strong);
-    margin-top: 4px;
-    box-shadow: 0 0 0 3px var(--zg-brand-tint-50);
+    margin-top: 3px;
+    box-shadow: 0 0 0 4px var(--zg-amber-50);
+    flex-shrink: 0;
 
-    &.success { background: var(--zg-success); }
-    &.pending { background: var(--zg-warning); }
-    &.warn { background: var(--zg-danger); }
+    &.success { background: var(--zg-emerald-success); box-shadow: 0 0 0 4px var(--zg-emerald-soft); }
+    &.pending { background: var(--zg-amber-glow); box-shadow: 0 0 0 4px var(--zg-amber-soft); }
+    &.warn { background: var(--zg-rose-danger); box-shadow: 0 0 0 4px var(--zg-rose-soft); }
   }
 
   &__head {
@@ -1335,106 +1479,36 @@ const topologyClusters = ref([
   }
 
   &__title {
-    font-size: 13px;
+    font-size: var(--zg-text-body-sm);
     font-weight: 600;
     color: var(--zg-ink-primary);
+    letter-spacing: -0.01em;
   }
 
   &__chrono {
-    font-size: 11px;
-    color: var(--zg-ink-placeholder);
+    font-size: var(--zg-text-caption);
+    color: var(--zg-ink-tertiary);
     font-family: var(--zg-font-mono);
+    font-weight: 500;
   }
 
   &__msg {
-    font-size: 12px;
-    color: var(--zg-ink-tertiary);
-    margin: 4px 0 6px;
+    font-size: var(--zg-text-body-sm);
+    color: var(--zg-ink-secondary);
+    margin: 5px 0 6px;
     line-height: 1.6;
   }
 
   &__meta {
-    font-size: 11px;
+    font-size: var(--zg-text-caption);
     color: var(--zg-ink-tertiary);
     display: flex;
-    gap: 12px;
+    gap: var(--zg-space-4);
+    font-weight: 500;
   }
 }
 
-/* === 交互效果样式 === */
-
-// KPI卡片可点击
-.zg-kpiquad__cell--clickable {
-  cursor: pointer;
-  transition: transform var(--zg-transition-fast), box-shadow var(--zg-transition-fast);
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  }
-
-  &:active {
-    transform: translateY(-1px);
-  }
-}
-
-// 告警列表项可点击
-.zg-alertroll__item--clickable {
-  cursor: pointer;
-  transition: background var(--zg-transition-fast), border-color var(--zg-transition-fast);
-
-  &:hover {
-    background: var(--zg-brand-tint-50);
-
-    &.zg-alertroll__item--warn { border-left-color: var(--zg-warning); }
-    &.zg-alertroll__item--critical { border-left-color: var(--zg-danger); }
-  }
-}
-
-// 拓扑区段可点击
-.zg-topoclusters__tile--clickable {
-  cursor: pointer;
-  transition: transform var(--zg-transition-fast), box-shadow var(--zg-transition-fast);
-
-  &:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  }
-
-  &:active {
-    transform: scale(1.01);
-  }
-}
-
-// 处方投递标题可点击
-.zg-databand__title--clickable {
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: color var(--zg-transition-fast);
-
-  &:hover {
-    color: var(--zg-brand-primary);
-
-    .zg-databand__arrow {
-      transform: translateX(3px);
-    }
-  }
-}
-
-.zg-databand__arrow {
-  transition: transform var(--zg-transition-fast);
-}
-
-// 趋势图标签切换动画
-.zg-chip {
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-// 详情抽屉样式
+// === 详情抽屉样式 ===
 .zg-detail-drawer {
   padding: 0 4px;
 
@@ -1442,20 +1516,21 @@ const topologyClusters = ref([
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 12px 0;
+    padding: var(--zg-space-3) 0;
     border-bottom: 1px solid var(--zg-line-soft);
-    gap: 16px;
+    gap: var(--zg-space-4);
   }
 
   &__label {
-    font-size: 13px;
+    font-size: var(--zg-text-body-sm);
     color: var(--zg-ink-tertiary);
     flex-shrink: 0;
-    min-width: 80px;
+    min-width: 90px;
+    font-weight: 500;
   }
 
   &__value {
-    font-size: 13px;
+    font-size: var(--zg-text-body-sm);
     color: var(--zg-ink-primary);
     font-weight: 500;
     text-align: right;
@@ -1465,9 +1540,9 @@ const topologyClusters = ref([
 
   &__actions {
     display: flex;
-    gap: 8px;
-    margin-top: 20px;
-    padding-top: 16px;
+    gap: var(--zg-space-2);
+    margin-top: var(--zg-space-5);
+    padding-top: var(--zg-space-4);
     border-top: 1px solid var(--zg-line-soft);
   }
 }

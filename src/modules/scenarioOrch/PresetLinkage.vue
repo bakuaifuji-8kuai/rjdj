@@ -1,7 +1,7 @@
 <!--
-  智光云枢 · 情景编排 · 预案联动
+  智光云枢 · 情景管理 · 预案联动
   业务域：scenarioOrch
-  功能：情景编排预案联动的台账管理与触发控制
+  功能：情景管理预案联动的台账管理与触发控制
         支持卡片/列表双视图、抽屉式详情与编排、联动触发回执
 -->
 <template>
@@ -15,7 +15,7 @@
         <div class="zg-linkage__copy">
           <h1 class="zg-linkage__title">预案联动</h1>
           <p class="zg-linkage__sub">
-            情景编排联动中枢 · 在役 {{ activeLinkageCount }} 条 ·
+            情景管理联动中枢 · 在役 {{ activeLinkageCount }} 条 ·
             停用 {{ idleLinkageCount }} 条 · 累计触发 {{ totalTriggerCount }} 次
           </p>
         </div>
@@ -362,9 +362,9 @@
 
 <script setup>
 /**
- * 智光云枢 · 情景编排 · 预案联动
+ * 智光云枢 · 情景管理 · 预案联动
  * 业务域：scenarioOrch
- * 功能：情景编排预案联动的台账管理与触发控制
+ * 功能：情景管理预案联动的台账管理与触发控制
  * @module scenarioOrch/PresetLinkage
  * @author 智光云枢研发团队
  */

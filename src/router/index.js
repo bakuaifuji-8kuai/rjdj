@@ -1,6 +1,6 @@
 /**
  * 智光云枢-路由配置
- * 业务域驱动：灯网态势 / 能源脉动 / 终端图谱 / 情景编排 / 运维工单 / 管廊照明
+ * 业务域驱动：灯网监控 / 能耗监测 / 终端管理 / 情景管理 / 运维工单 / 管廊照明
  */
 import { createRouter, createWebHashHistory } from 'vue-router'
 import ZhiGuangApp from '@/App.vue'
@@ -14,25 +14,25 @@ const routes = [
     path: '/lampNet/dashboard',
     name: 'lampNet.dashboard',
     component: () => import('@/modules/lampNet/LampNetDashboard.vue'),
-    meta: { title: '灯网驾驶舱' }
+    meta: { title: '灯网总览' }
   },
   {
     path: '/lampNet/recipe-composer',
     name: 'lampNet.recipeComposer',
     component: () => import('@/modules/lampNet/RecipeComposer.vue'),
-    meta: { title: '光照处方编排' }
+    meta: { title: '光照策略编排' }
   },
   {
     path: '/lampNet/recipe-vault',
     name: 'lampNet.recipeVault',
     component: () => import('@/modules/lampNet/RecipeVault.vue'),
-    meta: { title: '处方库管理' }
+    meta: { title: '策略库管理' }
   },
   {
     path: '/lampNet/recipe-archive',
     name: 'lampNet.recipeArchive',
     component: () => import('@/modules/lampNet/RecipeArchive.vue'),
-    meta: { title: '历史处方' }
+    meta: { title: '历史策略' }
   },
   {
     path: '/lampNet/lamp-registry',
@@ -74,13 +74,13 @@ const routes = [
     path: '/energyPulse/loopSwitch',
     name: 'energyPulse.loopSwitch',
     component: () => import('@/modules/energyPulse/LoopSwitch.vue'),
-    meta: { title: '链路通断' }
+    meta: { title: '通断监测' }
   },
   {
     path: '/energyPulse/loadProber',
     name: 'energyPulse.loadProber',
     component: () => import('@/modules/energyPulse/LoadProber.vue'),
-    meta: { title: '负荷探针' }
+    meta: { title: '负荷监测' }
   },
   {
     path: '/energyPulse/moduleLedger',
@@ -92,13 +92,13 @@ const routes = [
     path: '/energyPulse/strongScene',
     name: 'energyPulse.strongScene',
     component: () => import('@/modules/energyPulse/StrongScene.vue'),
-    meta: { title: '强电情景' }
+    meta: { title: '强电场景' }
   },
   {
     path: '/energyPulse/strongSceneArchive',
     name: 'energyPulse.strongSceneArchive',
     component: () => import('@/modules/energyPulse/StrongSceneArchive.vue'),
-    meta: { title: '强电情景回溯' }
+    meta: { title: '强电场景回溯' }
   },
   {
     path: '/energyPulse/loopCluster',
@@ -116,7 +116,7 @@ const routes = [
     path: '/terminalAtlas/poleCatalog',
     name: 'terminalAtlas.poleCatalog',
     component: () => import('@/modules/terminalAtlas/PoleCatalog.vue'),
-    meta: { title: '杆塔位点' }
+    meta: { title: '杆塔台账' }
   },
   {
     path: '/terminalAtlas/lampControl',
@@ -146,31 +146,31 @@ const routes = [
     path: '/terminalAtlas/envProbe',
     name: 'terminalAtlas.envProbe',
     component: () => import('@/modules/terminalAtlas/EnvProbe.vue'),
-    meta: { title: '环境探针' }
+    meta: { title: '环境监测' }
   },
   {
     path: '/terminalAtlas/luminanceProbe',
     name: 'terminalAtlas.luminanceProbe',
     component: () => import('@/modules/terminalAtlas/LuminanceProbe.vue'),
-    meta: { title: '照度探针' }
+    meta: { title: '照度监测' }
   },
   {
     path: '/terminalAtlas/waterProbe',
     name: 'terminalAtlas.waterProbe',
     component: () => import('@/modules/terminalAtlas/WaterProbe.vue'),
-    meta: { title: '浸水探针' }
+    meta: { title: '浸水监测' }
   },
   {
     path: '/terminalAtlas/smokeProbe',
     name: 'terminalAtlas.smokeProbe',
     component: () => import('@/modules/terminalAtlas/SmokeProbe.vue'),
-    meta: { title: '烟感探针' }
+    meta: { title: '烟感监测' }
   },
   {
     path: '/scenarioOrch/presetConsole',
     name: 'scenarioOrch.presetConsole',
     component: () => import('@/modules/scenarioOrch/PresetConsole.vue'),
-    meta: { title: '预案控制台' }
+    meta: { title: '预案管理' }
   },
   {
     path: '/scenarioOrch/presetLibrary',
@@ -206,37 +206,37 @@ const routes = [
     path: '/scenarioOrch/presetSchedule',
     name: 'scenarioOrch.presetSchedule',
     component: () => import('@/modules/scenarioOrch/PresetSchedule.vue'),
-    meta: { title: '时间编排' }
+    meta: { title: '定时计划' }
   },
   {
     path: '/opsTicket/dispatchPool',
     name: 'opsTicket.dispatchPool',
     component: () => import('@/modules/opsTicket/DispatchPool.vue'),
-    meta: { title: '调度池' }
+    meta: { title: '工单池' }
   },
   {
     path: '/opsTicket/ticketCreate',
     name: 'opsTicket.ticketCreate',
     component: () => import('@/modules/opsTicket/TicketCreate.vue'),
-    meta: { title: '新建处置单' }
+    meta: { title: '新建工单' }
   },
   {
     path: '/opsTicket/ticketDetail/:id',
     name: 'opsTicket.ticketDetail',
     component: () => import('@/modules/opsTicket/TicketDetail.vue'),
-    meta: { title: '处置单详情' }
+    meta: { title: '工单详情' }
   },
   {
     path: '/opsTicket/autoDispatch',
     name: 'opsTicket.autoDispatch',
     component: () => import('@/modules/opsTicket/AutoDispatch.vue'),
-    meta: { title: '告警自动调度' }
+    meta: { title: '自动派单' }
   },
   {
     path: '/opsTicket/myDesk',
     name: 'opsTicket.myDesk',
     component: () => import('@/modules/opsTicket/MyDesk.vue'),
-    meta: { title: '我的工位' }
+    meta: { title: '我的工单' }
   },
   {
     path: '/opsTicket/statBoard',
@@ -248,13 +248,13 @@ const routes = [
     path: '/tubeLumen/portal',
     name: 'tubeLumen.portal',
     component: () => import('@/modules/tubeLumen/TubePortal.vue'),
-    meta: { title: '管廊门户' }
+    meta: { title: '管廊总览' }
   },
   {
     path: '/tubeLumen/tubeIndex',
     name: 'tubeLumen.tubeIndex',
     component: () => import('@/modules/tubeLumen/TubeIndex.vue'),
-    meta: { title: '管廊索引' }
+    meta: { title: '管廊列表' }
   },
   {
     path: '/tubeLumen/sectionManager',

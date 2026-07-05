@@ -62,7 +62,7 @@
     <div class="zg-contentgrid">
       <div class="zg-contentgrid__item tunnel-list">
         <div class="zg-panel__head">
-          <h3>管廊索引</h3>
+          <h3>管廊列表</h3>
           <el-button type="primary" size="small" @click="portalForm.openComposer()">新增隧道</el-button>
         </div>
         <el-table :data="portalCtl.pagedRows" border class="zg-table">
@@ -215,7 +215,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 管廊照明 · 管廊门户
+ * 智光云枢 · 管廊照明 · 管廊总览
  * 业务域：tubeLumen
  * 功能：页面级业务组件
  * @module tubeLumen/TubePortal

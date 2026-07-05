@@ -1,5 +1,5 @@
 <!--
-  智光云枢 · 情景编排 · 联动管理
+  智光云枢 · 情景管理 · 联动管理
   业务域：scenarioOrch
   功能：联动规则编排与管理，支持触发条件与执行动作配置
         支持卡片/列表双视图、抽屉式详情与编排、规则测试验证
@@ -15,7 +15,7 @@
         <div class="zg-linkagemgr__copy">
           <h1 class="zg-linkagemgr__title">联动管理</h1>
           <p class="zg-linkagemgr__sub">
-            情景编排规则引擎 · 已启用 {{ activeLinkageCount }} 条 ·
+            情景管理规则引擎 · 已启用 {{ activeLinkageCount }} 条 ·
             已停用 {{ idleLinkageCount }} 条 · 累计触发 {{ totalTriggerCount }} 次
           </p>
         </div>
@@ -454,7 +454,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 情景编排 · 联动管理
+ * 智光云枢 · 情景管理 · 联动管理
  * 业务域：scenarioOrch
  * 功能：联动规则编排与管理，支持触发条件与执行动作配置
  * @module scenarioOrch/LinkageManager

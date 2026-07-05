@@ -1,5 +1,5 @@
 <!--
-  智光云枢 · 情景编排 · 预案模板管理
+  智光云枢 · 情景管理 · 预案模板管理
   业务域：scenarioOrch
   功能：预案模板的台账管理、执行调度、生命周期管控
         支持卡片/列表双视图、抽屉式详情与编排、批量废止
@@ -14,7 +14,7 @@
         <div class="zg-template__copy">
           <h1 class="zg-template__title">预案模板管理</h1>
           <p class="zg-template__sub">
-            情景编排中枢 · 在线 {{ activeTemplateCount }} 个 ·
+            情景管理中枢 · 在线 {{ activeTemplateCount }} 个 ·
             应急 {{ emergencyTemplateCount }} 个 · 累计设备 {{ totalDeviceCount }} 台
           </p>
         </div>
@@ -298,7 +298,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 情景编排 · 预案模板管理
+ * 智光云枢 · 情景管理 · 预案模板管理
  * 业务域：scenarioOrch
  * 功能：预案模板的台账管理、执行调度、生命周期管控
  * @module scenarioOrch/PresetTemplate
@@ -513,7 +513,7 @@ const onCommitTemplateDraft = async () => {
 }
 
 /**
- * 执行预案：触发情景编排调度，含执行确认回执
+ * 执行预案：触发情景管理调度，含执行确认回执
  * @param {Object} template 目标预案模板
  */
 const onExecuteTemplate = (template) => {

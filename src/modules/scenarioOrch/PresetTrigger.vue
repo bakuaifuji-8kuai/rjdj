@@ -1,5 +1,5 @@
 <!--
-  智光云枢 · 情景编排 · 预案触发器
+  智光云枢 · 情景管理 · 预案触发器
   业务域：scenarioOrch
   功能：预案触发器管理与触发控制台
         支持卡片/列表双视图、抽屉式详情与编排、触发器启停测试
@@ -15,7 +15,7 @@
         <div class="zg-trigger__copy">
           <h1 class="zg-trigger__title">预案触发器</h1>
           <p class="zg-trigger__sub">
-            情景编排中枢 · 已启用 {{ activeTriggerCount }} 个 ·
+            情景管理中枢 · 已启用 {{ activeTriggerCount }} 个 ·
             已停用 {{ inactiveTriggerCount }} 个 · 累计触发 {{ totalTriggerCount }} 次
           </p>
         </div>
@@ -362,7 +362,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 情景编排 · 预案触发器
+ * 智光云枢 · 情景管理 · 预案触发器
  * 业务域：scenarioOrch
  * 功能：预案触发器管理与触发控制台
  * @module scenarioOrch/PresetTrigger

@@ -157,7 +157,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="alarmType" label="告警类型" min-width="200" />
-        <el-table-column prop="workOrderType" label="处置单类型" width="130" align="center" />
+        <el-table-column prop="workOrderType" label="工单类型" width="130" align="center" />
         <el-table-column label="状态" width="100" align="center">
           <template #default="{ row }">
             <span class="zg-status" :class="row.status === '在役' ? 'online' : 'offline'">
@@ -223,7 +223,7 @@
               <span class="val">{{ focusedRule.deviceType }}</span>
             </div>
             <div class="zg-inspector__cell">
-              <span class="lbl">处置单类型</span>
+              <span class="lbl">工单类型</span>
               <span class="val">{{ focusedRule.workOrderType }}</span>
             </div>
             <div class="zg-inspector__cell">
@@ -293,8 +293,8 @@
             <el-option label="非计划异常亮灯" value="非计划异常亮灯" />
           </el-select>
         </el-form-item>
-        <el-form-item label="处置单类型" required>
-          <el-select v-model="ruleForm.draftPayload.workOrderType" placeholder="请选择处置单类型" style="width: 100%">
+        <el-form-item label="工单类型" required>
+          <el-select v-model="ruleForm.draftPayload.workOrderType" placeholder="请选择工单类型" style="width: 100%">
             <el-option label="爱克园区巡检" value="爱克园区巡检" />
             <el-option label="光源故障模板" value="光源故障模板" />
             <el-option label="巡检模板" value="巡检模板" />
@@ -462,7 +462,7 @@ const ruleForm = useFormDraft(
         return false
       }
       if (!draft.workOrderType) {
-        ElMessage.warning('请选择处置单类型')
+        ElMessage.warning('请选择工单类型')
         return false
       }
       return true

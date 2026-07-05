@@ -1,5 +1,5 @@
 <!--
-  智光云枢 · 能源脉动 · 强场景归档
+  智光云枢 · 能耗监测 · 强场景归档
   业务域：energyPulse
   功能：照明场景预案的归档台账管理
         支持卡片/列表双视图、抽屉式详情、还原与批量清退
@@ -77,7 +77,7 @@
         </el-select>
         <el-input
           v-model="archiveCtl.filterLexicon"
-          placeholder="检索预案名称/投递人员"
+          placeholder="检索预案名称/下发人员"
           clearable
           class="zg-filterband__search"
           @keyup.enter="archiveCtl.onFilterApply()"
@@ -158,7 +158,7 @@
         <el-table-column prop="no" label="序号" width="60" align="center" />
         <el-table-column prop="archiveName" label="预案名称" min-width="180" />
         <el-table-column prop="category" label="场景分类" width="120" />
-        <el-table-column prop="operator" label="投递人员" width="120" />
+        <el-table-column prop="operator" label="下发人员" width="120" />
         <el-table-column prop="archiveTime" label="归档时间" width="170" />
         <el-table-column label="预案类型" width="110" align="center">
           <template #default="{ row }">
@@ -252,7 +252,7 @@
               <span class="val">{{ focusedArchive.archiveTime }}</span>
             </div>
             <div class="zg-inspector__cell">
-              <span class="lbl">投递人员</span>
+              <span class="lbl">下发人员</span>
               <span class="val">{{ focusedArchive.operator }}</span>
             </div>
             <div class="zg-inspector__cell">
@@ -271,10 +271,10 @@
         </div>
 
         <div class="zg-inspector__section">
-          <h4 class="zg-inspector__section-title">投递履历</h4>
+          <h4 class="zg-inspector__section-title">下发履历</h4>
           <div class="zg-datagrid">
             <div class="zg-datacard">
-              <div class="zg-datacard__lbl">投递次数</div>
+              <div class="zg-datacard__lbl">下发次数</div>
               <div class="zg-datacard__val">{{ focusedArchive.deployCount }}<em>次</em></div>
             </div>
             <div class="zg-datacard">
@@ -282,7 +282,7 @@
               <div class="zg-datacard__val">{{ focusedArchive.successCount }}<em>次</em></div>
             </div>
             <div class="zg-datacard">
-              <div class="zg-datacard__lbl">最近投递</div>
+              <div class="zg-datacard__lbl">最近下发</div>
               <div class="zg-datacard__val">{{ focusedArchive.lastDeploy || '-' }}</div>
             </div>
             <div class="zg-datacard">
@@ -326,7 +326,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 能源脉动 · 强场景归档
+ * 智光云枢 · 能耗监测 · 强场景归档
  * 业务域：energyPulse
  * 功能：照明场景预案的归档台账管理
  * @module energyPulse/StrongSceneArchive
@@ -652,7 +652,7 @@ const onRestoreArchive = (arc) => {
   )
     .then(() => {
       archiveCtl.reviseRecord(arc.id, { status: '已还原' })
-      ElMessage.success(`场景「${arc.archiveName}」已还原，可重新投递`)
+      ElMessage.success(`场景「${arc.archiveName}」已还原，可重新下发`)
     })
     .catch(() => {})
 }

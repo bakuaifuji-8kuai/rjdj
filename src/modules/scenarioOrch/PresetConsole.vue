@@ -1,8 +1,8 @@
 <!--
-  智光云枢 · 情景编排 · 预案控制台
+  智光云枢 · 情景管理 · 预案管理
   业务域：scenarioOrch
-  功能：预案快速投递与执行回执管理
-        支持场景网格多选批量执行、投递记录抽屉式检视
+  功能：预案快速下发与执行回执管理
+        支持场景网格多选批量执行、下发记录抽屉式检视
 -->
 <template>
   <section class="zg-console">
@@ -13,10 +13,10 @@
           <el-icon :size="22"><Lightning /></el-icon>
         </div>
         <div class="zg-console__copy">
-          <h1 class="zg-console__title">预案控制台</h1>
+          <h1 class="zg-console__title">预案管理</h1>
           <p class="zg-console__sub">
             快速执行预设预案 · 在册 {{ consoleCtl.totalRows }} 个 ·
-            已选 {{ selectedTally }} 个 · 累计投递 {{ recordCtl.totalRows }} 条
+            已选 {{ selectedTally }} 个 · 累计下发 {{ recordCtl.totalRows }} 条
           </p>
         </div>
       </div>
@@ -40,11 +40,11 @@
       </div>
       <div class="zg-metrics__cell zg-metrics__cell--ok">
         <span class="zg-metrics__num">{{ successTally }}</span>
-        <span class="zg-metrics__lbl">投递成功</span>
+        <span class="zg-metrics__lbl">下发成功</span>
       </div>
       <div class="zg-metrics__cell zg-metrics__cell--warn">
         <span class="zg-metrics__num">{{ failureTally }}</span>
-        <span class="zg-metrics__lbl">投递失败</span>
+        <span class="zg-metrics__lbl">下发失败</span>
       </div>
     </div>
 
@@ -137,11 +137,11 @@
           </div>
         </el-tab-pane>
 
-        <!-- 投递记录 -->
-        <el-tab-pane label="投递记录" name="records">
+        <!-- 下发记录 -->
+        <el-tab-pane label="下发记录" name="records">
           <div class="zg-tablewrap">
             <div class="zg-tablewrap__head">
-              <h3 class="zg-tablewrap__title">投递记录列表</h3>
+              <h3 class="zg-tablewrap__title">下发记录列表</h3>
               <el-button @click="onRefreshRecords()">
                 <el-icon><Refresh /></el-icon>
                 <span>刷新</span>
@@ -150,7 +150,7 @@
             <el-table :data="recordCtl.pagedRows" stripe class="zg-datatable">
               <el-table-column prop="no" label="#" width="60" align="center" />
               <el-table-column prop="presetLabel" label="预案名称" min-width="160" />
-              <el-table-column prop="executeTime" label="投递时间" min-width="160" />
+              <el-table-column prop="executeTime" label="下发时间" min-width="160" />
               <el-table-column label="状态" width="100" align="center">
                 <template #default="{ row }">
                   <span class="zg-status" :class="row.status === 'success' ? 'success' : 'danger'">
@@ -241,7 +241,7 @@
     <!-- 记录详情抽屉 -->
     <el-drawer
       v-model="recordInspector.drawerOpen"
-      :title="'投递详情 · ' + (focusedRecord?.presetLabel || '')"
+      :title="'下发详情 · ' + (focusedRecord?.presetLabel || '')"
       direction="rtl"
       size="560px"
     >
@@ -261,14 +261,14 @@
         </div>
 
         <div class="zg-inspector__section">
-          <h4 class="zg-inspector__section-title">投递明细</h4>
+          <h4 class="zg-inspector__section-title">下发明细</h4>
           <div class="zg-inspector__grid">
             <div class="zg-inspector__cell">
               <span class="lbl">预案名称</span>
               <span class="val">{{ focusedRecord.presetLabel }}</span>
             </div>
             <div class="zg-inspector__cell">
-              <span class="lbl">投递时间</span>
+              <span class="lbl">下发时间</span>
               <span class="val">{{ focusedRecord.executeTime }}</span>
             </div>
             <div class="zg-inspector__cell">
@@ -296,10 +296,10 @@
 
 <script setup>
 /**
- * 智光云枢 · 情景编排 · 预案控制台
+ * 智光云枢 · 情景管理 · 预案管理
  * 业务域：scenarioOrch
- * 功能：预案快速投递与执行回执管理
- *        支持场景网格多选批量执行、投递记录抽屉式检视
+ * 功能：预案快速下发与执行回执管理
+ *        支持场景网格多选批量执行、下发记录抽屉式检视
  * @module scenarioOrch/PresetConsole
  * @author 智光云枢研发团队
  */
@@ -359,7 +359,7 @@ const consoleCtl = usePresetTable(null, {
   initialData: initialScenes
 })
 
-// ---- 投递记录数据容器（usePresetTable） ----
+// ---- 下发记录数据容器（usePresetTable） ----
 const recordCtl = usePresetTable(null, {
   defaultPageSpan: 10,
   initialData: initialRecords
@@ -435,13 +435,13 @@ const onComposePreset = () => {
 }
 
 /**
- * 触发投递：将单个预案投递到执行队列并回显结果
+ * 触发下发：将单个预案下发到执行队列并回显结果
  * @param {Object} scene 目标预案
  */
 const onTriggerScene = (scene) => {
   ElMessageBox.confirm(
     `确定要执行预案「${scene.name}」吗？`,
-    '投递确认',
+    '下发确认',
     { confirmButtonText: '确定', cancelButtonText: '取消', type: 'info' }
   )
     .then(() => {
@@ -458,14 +458,14 @@ const onTriggerScene = (scene) => {
 }
 
 /**
- * 批量触发：将已选预案批量投递到执行队列
+ * 批量触发：将已选预案批量下发到执行队列
  */
 const onBatchTrigger = () => {
   const tally = selectedTally.value
   if (tally === 0) return
   ElMessageBox.confirm(
     `确定要批量执行 ${tally} 个预案吗？`,
-    '批量投递确认',
+    '批量下发确认',
     { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }
   )
     .then(() => {
@@ -498,15 +498,15 @@ const onViewResult = (scene) => {
 }
 
 /**
- * 刷新记录：重新加载投递记录数据池
+ * 刷新记录：重新加载下发记录数据池
  */
 const onRefreshRecords = () => {
   recordCtl.refreshPlaybook()
-  ElMessage.success('投递记录已刷新')
+  ElMessage.success('下发记录已刷新')
 }
 
 /**
- * 检视记录：打开投递记录详情抽屉
+ * 检视记录：打开下发记录详情抽屉
  * @param {Object} row 目标记录行
  */
 const onInspectRecord = (row) => {

@@ -63,7 +63,7 @@
         <div class="zg-presetcard__foot">
           <span class="zg-presetcard__time">{{ preset?.createTime }}</span>
           <div class="zg-presetcard__actions">
-            <el-button link type="primary" size="small" @click.stop="onTriggerPreset(preset)">投递</el-button>
+            <el-button link type="primary" size="small" @click.stop="onTriggerPreset(preset)">下发</el-button>
             <el-button link type="primary" size="small" @click.stop="presetForm.openReviser(preset)">修订</el-button>
             <el-button link type="danger" size="small" @click.stop="onRetirePreset(preset)">废止</el-button>
           </div>
@@ -93,7 +93,7 @@
         <p>{{ presetInspector.focusedRecord.description }}</p>
         <div class="zg-inspector__actions">
           <el-button @click="presetInspector.closeInspector()">关闭</el-button>
-          <el-button type="primary" @click="onTriggerPreset(presetInspector.focusedRecord)">立即投递</el-button>
+          <el-button type="primary" @click="onTriggerPreset(presetInspector.focusedRecord)">立即下发</el-button>
         </div>
       </div>
     </el-drawer>
@@ -176,7 +176,7 @@ const presetInspector = useDrawerInspector({ size: '640px', direction: 'rtl' })
 
 const onTriggerPreset = (preset) => {
   if (!preset) return
-  ElMessage.success(`预案 "${preset.name}" 投递成功`)
+  ElMessage.success(`预案 "${preset.name}" 下发成功`)
 }
 
 const onRetirePreset = (preset) => {

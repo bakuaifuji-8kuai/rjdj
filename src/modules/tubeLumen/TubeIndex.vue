@@ -5,7 +5,7 @@
         <el-icon :size="24"><Guide /></el-icon>
       </div>
       <div class="zg-tubeindex__copy">
-        <h1 class="zg-tubeindex__title">管廊索引</h1>
+        <h1 class="zg-tubeindex__title">管廊列表</h1>
         <p class="zg-tubeindex__subtitle">隧道台账与分段配置管理</p>
       </div>
       <div class="zg-tubeindex__actions">
@@ -342,7 +342,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 管廊照明 · 管廊索引
+ * 智光云枢 · 管廊照明 · 管廊列表
  * 业务域：tubeLumen
  * 功能：页面级业务组件
  * @module tubeLumen/TubeIndex

@@ -1,5 +1,5 @@
 <!--
-  智光云枢 · 终端图谱 · 烟雾传感器
+  智光云枢 · 终端管理 · 烟雾传感器
   业务域：terminalAtlas
   功能：城市照明终端烟雾监测设备的台账与状态管控
         支持卡片/列表双视图、抽屉式详情与编排、状态读取回执
@@ -15,7 +15,7 @@
         <div class="zg-smokeprobe__copy">
           <h1 class="zg-smokeprobe__title">烟雾传感器</h1>
           <p class="zg-smokeprobe__sub">
-            终端图谱监测节点 · 正常 {{ normalProbeCount }} 台 ·
+            终端管理监测节点 · 正常 {{ normalProbeCount }} 台 ·
             异常 {{ abnormalProbeCount }} 台 · 在线 {{ activeProbeCount }} 台
           </p>
         </div>
@@ -371,7 +371,7 @@
 
 <script setup>
 /**
- * 智光云枢 · 终端图谱 · 烟雾传感器
+ * 智光云枢 · 终端管理 · 烟雾传感器
  * 业务域：terminalAtlas
  * 功能：城市照明终端烟雾监测设备的台账与状态管控
  * @module terminalAtlas/SmokeProbe

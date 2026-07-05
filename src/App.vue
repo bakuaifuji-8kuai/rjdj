@@ -137,64 +137,64 @@ const todayLabel = computed(() => {
 // 业务域导航（新）
 const navList = [
   {
-    name: '灯网态势',
+    name: '灯网监控',
     path: '/lampNet',
     icon: Connection,
     children: [
-      { name: '灯网驾驶舱', path: '/lampNet/dashboard' },
-      { name: '光照处方编排', path: '/lampNet/recipe-composer' },
-      { name: '处方库管理', path: '/lampNet/recipe-vault' },
-      { name: '历史处方', path: '/lampNet/recipe-archive' },
+      { name: '灯网总览', path: '/lampNet/dashboard' },
+      { name: '光照策略编排', path: '/lampNet/recipe-composer' },
+      { name: '策略库管理', path: '/lampNet/recipe-vault' },
+      { name: '历史策略', path: '/lampNet/recipe-archive' },
       { name: '光源台账', path: '/lampNet/lamp-registry' },
       { name: '集群拓扑', path: '/lampNet/cluster-topology' },
       { name: 'GIS灯位图', path: '/lampNet/gis-atlas' }
     ]
   },
   {
-    name: '能源脉动',
+    name: '能耗监测',
     path: '/energyPulse',
     icon: Coin,
     children: [
       { name: '馈电柜监测', path: '/energyPulse/feedCabinet' },
       { name: '供电链路', path: '/energyPulse/lineTrace' },
       { name: '边缘主机', path: '/energyPulse/edgeHost' },
-      { name: '链路通断', path: '/energyPulse/loopSwitch' },
-      { name: '负荷探针', path: '/energyPulse/loadProber' },
+      { name: '通断监测', path: '/energyPulse/loopSwitch' },
+      { name: '负荷监测', path: '/energyPulse/loadProber' },
       { name: '模块台账', path: '/energyPulse/moduleLedger' },
-      { name: '强电情景', path: '/energyPulse/strongScene' },
-      { name: '强电情景回溯', path: '/energyPulse/strongSceneArchive' },
+      { name: '强电场景', path: '/energyPulse/strongScene' },
+      { name: '强电场景回溯', path: '/energyPulse/strongSceneArchive' },
       { name: '链路分组', path: '/energyPulse/loopCluster' },
       { name: '光源绑定', path: '/energyPulse/lampBinding' }
     ]
   },
   {
-    name: '终端图谱',
+    name: '终端管理',
     path: '/terminalAtlas',
     icon: Histogram,
     children: [
-      { name: '杆塔位点', path: '/terminalAtlas/poleCatalog' },
+      { name: '杆塔台账', path: '/terminalAtlas/poleCatalog' },
       { name: '光源控制器', path: '/terminalAtlas/lampControl' },
       { name: '灯具清单', path: '/terminalAtlas/fixtureList' },
       { name: '视频记录仪', path: '/terminalAtlas/recorder' },
       { name: '视频采集', path: '/terminalAtlas/camera' },
-      { name: '环境探针', path: '/terminalAtlas/envProbe' },
-      { name: '照度探针', path: '/terminalAtlas/luminanceProbe' },
-      { name: '浸水探针', path: '/terminalAtlas/waterProbe' },
-      { name: '烟感探针', path: '/terminalAtlas/smokeProbe' }
+      { name: '环境监测', path: '/terminalAtlas/envProbe' },
+      { name: '照度监测', path: '/terminalAtlas/luminanceProbe' },
+      { name: '浸水监测', path: '/terminalAtlas/waterProbe' },
+      { name: '烟感监测', path: '/terminalAtlas/smokeProbe' }
     ]
   },
   {
-    name: '情景编排',
+    name: '情景管理',
     path: '/scenarioOrch',
     icon: MagicStick,
     children: [
-      { name: '预案控制台', path: '/scenarioOrch/presetConsole' },
+      { name: '预案管理', path: '/scenarioOrch/presetConsole' },
       { name: '预案库', path: '/scenarioOrch/presetLibrary' },
       { name: '预案联动', path: '/scenarioOrch/presetLinkage' },
       { name: '联动管理', path: '/scenarioOrch/linkageManager' },
       { name: '预案模板', path: '/scenarioOrch/presetTemplate' },
       { name: '触发器', path: '/scenarioOrch/presetTrigger' },
-      { name: '时间编排', path: '/scenarioOrch/presetSchedule' }
+      { name: '定时计划', path: '/scenarioOrch/presetSchedule' }
     ]
   },
   {
@@ -202,11 +202,11 @@ const navList = [
     path: '/opsTicket',
     icon: Tickets,
     children: [
-      { name: '调度池', path: '/opsTicket/dispatchPool' },
-      { name: '新建处置单', path: '/opsTicket/ticketCreate' },
-      { name: '处置单详情', path: '/opsTicket/ticketDetail/1' },
-      { name: '告警自动调度', path: '/opsTicket/autoDispatch' },
-      { name: '我的工位', path: '/opsTicket/myDesk' },
+      { name: '工单池', path: '/opsTicket/dispatchPool' },
+      { name: '新建工单', path: '/opsTicket/ticketCreate' },
+      { name: '工单详情', path: '/opsTicket/ticketDetail/1' },
+      { name: '自动派单', path: '/opsTicket/autoDispatch' },
+      { name: '我的工单', path: '/opsTicket/myDesk' },
       { name: '效能看板', path: '/opsTicket/statBoard' }
     ]
   },
@@ -215,8 +215,8 @@ const navList = [
     path: '/tubeLumen',
     icon: Guide,
     children: [
-      { name: '管廊门户', path: '/tubeLumen/portal' },
-      { name: '管廊索引', path: '/tubeLumen/tubeIndex' },
+      { name: '管廊总览', path: '/tubeLumen/portal' },
+      { name: '管廊列表', path: '/tubeLumen/tubeIndex' },
       { name: '区段管理', path: '/tubeLumen/sectionManager' },
       { name: '管廊灯具', path: '/tubeLumen/fixtureLedger' },
       { name: '管廊链路', path: '/tubeLumen/loopCluster' },
@@ -258,27 +258,28 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 /* =============================================================
- * 智光云枢-主壳样式
- * 视觉规范：深青侧栏 + 浅色主体 + 极简信息层级
+ * 智光云枢-主壳样式 v3.0
+ * 设计规范：Zinc 深色侧栏 + 琥珀强调 + 极简信息层级
  * ============================================================ */
 
 .zg-shell {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: #f0fdfa;
+  background: var(--zg-canvas-mist);
+  font-family: var(--zg-font-sans);
 
   /* ---------- 侧栏 ---------- */
   &__rail {
-    width: 244px;
-    background: linear-gradient(180deg, #0c4a6e 0%, #082f49 60%, #052033 100%);
-    color: #cbd5e1;
+    width: 240px;
+    background: var(--zg-gradient-rail);
+    color: #a1a1aa;
     display: flex;
     flex-direction: column;
     position: relative;
-    transition: width 0.3s ease;
+    transition: width var(--zg-transition-normal);
     flex-shrink: 0;
-    box-shadow: 4px 0 16px -8px rgba(8, 47, 73, 0.4);
+    box-shadow: var(--zg-shadow-rail);
 
     &--folded { width: 64px; }
   }
@@ -293,144 +294,250 @@ onUnmounted(() => {
 
 /* ---------- 品牌区 ---------- */
 .zg-brand {
-  padding: 20px 18px 18px;
+  padding: 18px 16px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid rgba(148, 197, 230, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
   &__sigil {
-    width: 42px; height: 42px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #0891b2, #06b6d4);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--zg-radius-md);
+    background: var(--zg-gradient-primary);
     color: #ffffff;
-    display: grid; place-items: center;
-    box-shadow: 0 4px 14px -2px rgba(8, 145, 178, 0.6);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 4px 12px -4px rgba(217, 119, 6, 0.4);
   }
-  &__cn { font-size: 16px; font-weight: 600; color: #f0f9ff; letter-spacing: 1px; }
-  &__en { font-size: 10px; color: #67e8f9; letter-spacing: 0.5px; margin-top: 2px; }
+
+  &__cn {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fafafa;
+    letter-spacing: 0.5px;
+  }
+
+  &__en {
+    font-size: 10px;
+    color: var(--zg-amber-200);
+    letter-spacing: 0.3px;
+    margin-top: 2px;
+    opacity: 0.8;
+  }
 }
 
 /* ---------- 侧栏导航 ---------- */
 .zg-railnav {
   flex: 1;
   overflow-y: auto;
-  padding: 12px 10px;
+  padding: 10px 8px;
 
   &__menu {
     border-right: none !important;
+    background: transparent !important;
 
     :deep(.el-sub-menu__title),
     :deep(.el-menu-item) {
-      border-radius: 10px !important;
-      margin: 3px 6px !important;
-      height: 42px !important;
-      line-height: 42px !important;
-      padding: 0 14px !important;
-      transition: all 0.25s ease;
-      color: #cbd5e1 !important;
+      border-radius: var(--zg-radius-md) !important;
+      margin: 2px 4px !important;
+      height: 40px !important;
+      line-height: 40px !important;
+      padding: 0 12px !important;
+      transition: all var(--zg-transition-fast);
+      color: #a1a1aa !important;
       font-weight: 500;
-      font-size: 13px;
+      font-size: var(--zg-text-body-sm);
+      position: relative;
+      overflow: hidden;
     }
+
     :deep(.el-sub-menu__title:hover),
     :deep(.el-menu-item:hover) {
-      background: rgba(8, 145, 178, 0.18) !important;
-      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.06) !important;
+      color: #fafafa !important;
     }
+
     :deep(.el-menu-item.is-active) {
-      background: linear-gradient(90deg, #0891b2, #06b6d4) !important;
-      color: #ffffff !important;
-      box-shadow: 0 4px 12px -2px rgba(8, 145, 178, 0.4);
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: #fafafa !important;
+      box-shadow: none;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 20px;
+        background: var(--zg-amber-glow);
+        border-radius: 0 2px 2px 0;
+      }
     }
+
     :deep(.el-sub-menu .el-menu-item) {
-      padding-left: 38px !important;
-      font-size: 12px;
+      padding-left: 36px !important;
+      font-size: var(--zg-text-caption);
       height: 36px !important;
       line-height: 36px !important;
+
+      &.is-active::before {
+        left: 12px;
+        height: 16px;
+      }
+    }
+
+    :deep(.el-sub-menu__icon-arrow) {
+      color: #71717a;
     }
   }
+
   &__glyph {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 22px; height: 22px;
-    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
   }
-  &__label { letter-spacing: 0.5px; }
+
+  &__label {
+    letter-spacing: 0.2px;
+  }
 }
 
 /* ---------- 折叠按钮 ---------- */
 .zg-foldtoggle {
   position: absolute;
-  right: -14px; top: 64px;
-  width: 28px; height: 28px;
+  right: -12px;
+  top: 56px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  display: grid; place-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: grid;
+  place-items: center;
   cursor: pointer;
-  color: #0e7490;
+  color: var(--zg-steel-muted);
   z-index: 10;
-  border: 1px solid #cffafe;
-  transition: all 0.2s;
-  &:hover { color: #0891b2; transform: scale(1.05); }
+  border: 1px solid var(--zg-line-strong);
+  transition: all var(--zg-transition-fast);
+
+  &:hover {
+    color: var(--zg-amber-glow);
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
 }
 
 /* ---------- 顶栏 ---------- */
 .zg-topbar {
-  height: 64px;
+  height: 56px;
   background: #ffffff;
-  border-bottom: 1px solid #e0f7fa;
+  border-bottom: 1px solid var(--zg-line-soft);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
   flex-shrink: 0;
 
-  &__lead { display: flex; align-items: center; gap: 14px; }
-  &__sigil {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #0891b2, #06b6d4);
-    color: #ffffff;
-    display: grid; place-items: center;
-    font-size: 13px; font-weight: 700;
-    letter-spacing: 1px;
+  &__lead {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-  &__title { font-size: 15px; font-weight: 600; color: #0f172a; }
-  &__hint { font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-  &__trail { display: flex; align-items: center; gap: 20px; }
+
+  &__sigil {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--zg-radius-md);
+    background: var(--zg-gradient-primary);
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: var(--zg-shadow-btn);
+  }
+
+  &__title {
+    font-size: var(--zg-text-body-lg);
+    font-weight: 600;
+    color: var(--zg-charcoal-ink);
+    letter-spacing: -0.01em;
+  }
+
+  &__hint {
+    font-size: var(--zg-text-caption);
+    color: var(--zg-whisper-tertiary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  &__trail {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
 }
 
 .zg-pulse {
   display: inline-block;
-  width: 8px; height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #10b981;
+  background: var(--zg-emerald-success);
   position: relative;
+
   &::after {
     content: '';
     position: absolute;
     inset: -3px;
     border-radius: 50%;
-    background: #10b981;
+    background: var(--zg-emerald-success);
     opacity: 0.4;
-    animation: zg-pulse 1.6s ease-out infinite;
+    animation: zg-pulse 2s ease-out infinite;
   }
 }
 
 @keyframes zg-pulse {
-  0% { transform: scale(0.6); opacity: 0.6; }
-  100% { transform: scale(2.2); opacity: 0; }
+  0% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
 .zg-bell {
   cursor: pointer;
-  color: #475569;
+  color: var(--zg-whisper-tertiary);
   padding: 8px;
-  border-radius: 8px;
-  transition: all 0.2s;
-  &:hover { background: #ecfeff; color: #0891b2; }
+  border-radius: var(--zg-radius-sm);
+  transition: all var(--zg-transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: var(--zg-amber-50);
+    color: var(--zg-amber-glow);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
 }
 
 .zg-profile {
@@ -438,33 +545,63 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 8px;
-  transition: all 0.2s;
-  &:hover { background: #ecfeff; }
-  &__avatar {
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #0891b2, #06b6d4);
-    color: #ffffff;
-    display: grid; place-items: center;
-    font-size: 13px; font-weight: 600;
+  padding: 4px 10px 4px 4px;
+  border-radius: var(--zg-radius-md);
+  transition: all var(--zg-transition-fast);
+
+  &:hover {
+    background: var(--zg-amber-50);
   }
-  &__name { font-size: 13px; color: #334155; }
+
+  &__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--zg-gradient-primary);
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  &__name {
+    font-size: var(--zg-text-body-sm);
+    color: var(--zg-steel-muted);
+    font-weight: 500;
+  }
 }
 
 /* ---------- 路由画布 ---------- */
 .zg-canvas {
   flex: 1;
   overflow-y: auto;
-  background: #f0fdfa;
+  background: var(--zg-canvas-mist);
 }
 
 /* ---------- 过渡 ---------- */
-.zg-fade-enter-active, .zg-fade-leave-active { transition: opacity 0.2s ease; }
-.zg-fade-enter-from, .zg-fade-leave-to { opacity: 0; }
+.zg-fade-enter-active,
+.zg-fade-leave-active {
+  transition: opacity var(--zg-transition-fast);
+}
 
-.zg-routefade-enter-active, .zg-routefade-leave-active { transition: all 0.28s ease; }
-.zg-routefade-enter-from { opacity: 0; transform: translateY(6px); }
-.zg-routefade-leave-to { opacity: 0; transform: translateY(-4px); }
+.zg-fade-enter-from,
+.zg-fade-leave-to {
+  opacity: 0;
+}
+
+.zg-routefade-enter-active,
+.zg-routefade-leave-active {
+  transition: all var(--zg-transition-normal);
+}
+
+.zg-routefade-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.zg-routefade-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
 </style>

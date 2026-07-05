@@ -1,7 +1,7 @@
 <!--
-  智光云枢 · 灯网态势 · 处方归档
+  智光云枢 · 灯网监控 · 策略归档
   业务域：lampNet
-  功能：灯网态势处方沉淀中心的归档管理与还原处置
+  功能：灯网监控策略沉淀中心的归档管理与还原处置
         支持卡片/列表双视图、抽屉式详情、归档还原与批量清理
 -->
 <template>
@@ -13,9 +13,9 @@
           <el-icon :size="22"><DocumentChecked /></el-icon>
         </div>
         <div class="zg-archive__copy">
-          <h1 class="zg-archive__title">处方归档</h1>
+          <h1 class="zg-archive__title">策略归档</h1>
           <p class="zg-archive__sub">
-            灯网态势处方沉淀中心 · 在役归档 {{ activeArchiveCount }} 条 ·
+            灯网监控策略沉淀中心 · 在役归档 {{ activeArchiveCount }} 条 ·
             已还原 {{ restoredArchiveCount }} 条 · 累计关联设备 {{ totalDeviceCount }} 台
           </p>
         </div>
@@ -26,7 +26,7 @@
     <div class="zg-metrics">
       <div class="zg-metrics__cell">
         <span class="zg-metrics__num">{{ archiveCtl.totalRows }}</span>
-        <span class="zg-metrics__lbl">归档处方总数</span>
+        <span class="zg-metrics__lbl">归档策略总数</span>
       </div>
       <div class="zg-metrics__cell zg-metrics__cell--ok">
         <span class="zg-metrics__num">{{ activeArchiveCount }}</span>
@@ -68,7 +68,7 @@
         </el-select>
         <el-select
           v-model="archiveCtl.typeBucket"
-          placeholder="处方类型"
+          placeholder="策略类型"
           clearable
           class="zg-filterband__select"
         >
@@ -87,7 +87,7 @@
         />
         <el-input
           v-model="archiveCtl.filterLexicon"
-          placeholder="检索处方名称/动作"
+          placeholder="检索策略名称/动作"
           clearable
           class="zg-filterband__search"
           @keyup.enter="onArchiveFilterApply()"
@@ -168,8 +168,8 @@
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column prop="no" label="序号" width="60" align="center" />
-        <el-table-column prop="name" label="处方名称" min-width="150" />
-        <el-table-column label="处方类型" width="120">
+        <el-table-column prop="name" label="策略名称" min-width="150" />
+        <el-table-column label="策略类型" width="120">
           <template #default="{ row }">
             <el-tag :type="getTypeTag(row.type)" size="small">{{ getTypeText(row.type) }}</el-tag>
           </template>
@@ -235,7 +235,7 @@
           <h4 class="zg-inspector__section-title">基本档案</h4>
           <div class="zg-inspector__grid">
             <div class="zg-inspector__cell">
-              <span class="lbl">处方类型</span>
+              <span class="lbl">策略类型</span>
               <span class="val">{{ getTypeText(focusedArchive.type) }}</span>
             </div>
             <div class="zg-inspector__cell">
@@ -277,7 +277,7 @@
               <div class="zg-datacard__val">{{ focusedArchive.brightness }}<em>%</em></div>
             </div>
             <div class="zg-datacard">
-              <div class="zg-datacard__lbl">处方状态</div>
+              <div class="zg-datacard__lbl">策略状态</div>
               <div class="zg-datacard__val">{{ focusedArchive.enabled ? '在役' : '停用' }}<em></em></div>
             </div>
             <div class="zg-datacard">
@@ -295,7 +295,7 @@
             @click="onRestoreArchive(focusedArchive)"
           >
             <el-icon><RefreshRight /></el-icon>
-            <span>还原处方</span>
+            <span>还原策略</span>
           </el-button>
         </div>
       </div>
@@ -305,9 +305,9 @@
 
 <script setup>
 /**
- * 智光云枢 · 灯网态势 · 处方归档
+ * 智光云枢 · 灯网监控 · 策略归档
  * 业务域：lampNet
- * 功能：灯网态势处方沉淀中心的归档管理与还原处置
+ * 功能：灯网监控策略沉淀中心的归档管理与还原处置
  *        支持卡片/列表双视图、抽屉式详情、归档还原与批量清理
  * @module lampNet/RecipeArchive
  * @author 智光云枢研发团队
@@ -375,7 +375,7 @@ const initialArchives = [
   {
     id: 3,
     no: 3,
-    name: '日出日落处方',
+    name: '日出日落策略',
     type: 'coordinate',
     action: 'dim',
     brightness: 80,
@@ -507,22 +507,22 @@ const handleSelectionChange = (rows) => {
 }
 
 /**
- * 还原归档处方：将已归档处方还原至在役库
+ * 还原归档策略：将已归档策略还原至在役库
  * @param {Object} archive 目标归档记录
  */
 const onRestoreArchive = (archive) => {
   if (archive.status === '已还原') {
-    ElMessage.warning('该处方已还原，无需重复操作')
+    ElMessage.warning('该策略已还原，无需重复操作')
     return
   }
   ElMessageBox.confirm(
-    `确认将「${archive.name}」还原到在役处方库？`,
+    `确认将「${archive.name}」还原到在役策略库？`,
     '还原确认',
     { type: 'warning' }
   )
     .then(() => {
       archiveCtl.reviseRecord(archive.id, { status: '已还原', enabled: false })
-      ElMessage.success(`「${archive.name}」已还原至在役处方库`)
+      ElMessage.success(`「${archive.name}」已还原至在役策略库`)
     })
     .catch(() => {})
 }

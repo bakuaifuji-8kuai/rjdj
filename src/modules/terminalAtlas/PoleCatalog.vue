@@ -1,7 +1,7 @@
 <!--
-  智光云枢 · 终端图谱 · 杆塔位点
+  智光云枢 · 终端管理 · 杆塔台账
   业务域：terminalAtlas
-  功能：城市照明杆塔位点的台账与挂载设备管理
+  功能：城市照明杆塔台账的台账与挂载设备管理
         支持卡片/列表双视图、抽屉式详情与编排、位点上下线投切
 -->
 <template>
@@ -13,9 +13,9 @@
           <el-icon :size="22"><LocationInformation /></el-icon>
         </div>
         <div class="zg-pole__copy">
-          <h1 class="zg-pole__title">杆塔位点</h1>
+          <h1 class="zg-pole__title">杆塔台账</h1>
           <p class="zg-pole__sub">
-            城市照明终端图谱 · 在役 {{ onlinePoleCount }} 处 ·
+            城市照明终端管理 · 在役 {{ onlinePoleCount }} 处 ·
             离线 {{ offlinePoleCount }} 处 · 累计挂载 {{ totalLampCount }} 设备
           </p>
         </div>
@@ -23,7 +23,7 @@
       <div class="zg-pole__cta">
         <el-button type="primary" @click="poleForm.openComposer()">
           <el-icon><Plus /></el-icon>
-          <span>登记杆塔位点</span>
+          <span>登记杆塔台账</span>
         </el-button>
       </div>
     </header>
@@ -205,7 +205,7 @@
     <!-- 详情抽屉 -->
     <el-drawer
       v-model="poleInspector.drawerOpen"
-      :title="'杆塔位点详情 · ' + (focusedPole?.name || '')"
+      :title="'杆塔台账详情 · ' + (focusedPole?.name || '')"
       direction="rtl"
       size="680px"
     >
@@ -304,7 +304,7 @@
     <!-- 新建/修订抽屉 -->
     <el-drawer
       v-model="poleForm.drawerOpen"
-      :title="poleForm.editMode === 'compose' ? '登记杆塔位点' : '修订杆塔位点'"
+      :title="poleForm.editMode === 'compose' ? '登记杆塔台账' : '修订杆塔台账'"
       direction="rtl"
       size="560px"
     >
@@ -375,9 +375,9 @@
 
 <script setup>
 /**
- * 智光云枢 · 终端图谱 · 杆塔位点
+ * 智光云枢 · 终端管理 · 杆塔台账
  * 业务域：terminalAtlas
- * 功能：城市照明杆塔位点的台账与挂载设备管理
+ * 功能：城市照明杆塔台账的台账与挂载设备管理
  * @module terminalAtlas/PoleCatalog
  * @author 智光云枢研发团队
  */
@@ -401,7 +401,7 @@ const densityMode = ref('card')
 // ---- 本地区域过滤（叠加在 composable 分页之上） ----
 const poleAreaFilter = ref('')
 
-// ---- 初始 mock 数据池：城市照明杆塔位点台账 ----
+// ---- 初始 mock 数据池：城市照明杆塔台账台账 ----
 const initialPoles = [
   {
     id: 1,
@@ -763,18 +763,18 @@ const onCommitPoleDraft = async () => {
       lampCount: 0,
       mountedDevices: []
     })
-    ElMessage.success('杆塔位点登记成功，已纳入终端图谱')
+    ElMessage.success('杆塔台账登记成功，已纳入终端管理')
   } else {
     // 修订：合并更新到原位点档案
     const origin = poleForm.originRecord
     poleCtl.reviseRecord(origin.id, { ...snapshot })
-    ElMessage.success('杆塔位点档案已更新')
+    ElMessage.success('杆塔台账档案已更新')
   }
 }
 
 /**
  * 位点投切：在线↔离线切换，含二次确认与挂载链路联动回执
- * @param {Object} pole 目标杆塔位点
+ * @param {Object} pole 目标杆塔台账
  */
 const onTogglePole = (pole) => {
   const nextStatus = pole.status === '在线' ? '离线' : '在线'
@@ -791,12 +791,12 @@ const onTogglePole = (pole) => {
 }
 
 /**
- * 废止位点：二次确认后从终端图谱台账中移除
- * @param {Object} pole 目标杆塔位点
+ * 废止位点：二次确认后从终端管理台账中移除
+ * @param {Object} pole 目标杆塔台账
  */
 const onRetirePole = (pole) => {
   ElMessageBox.confirm(
-    `确定要将「${pole.name}」从终端图谱台账中废止吗？废止后挂载设备将一并解绑。`,
+    `确定要将「${pole.name}」从终端管理台账中废止吗？废止后挂载设备将一并解绑。`,
     '废止确认',
     { type: 'warning' }
   )

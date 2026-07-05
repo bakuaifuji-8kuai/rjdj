@@ -1,7 +1,7 @@
 <!--
   智光云枢 · 管廊照明 · 隧道照明
   业务域：tubeLumen
-  功能：隧道照明的调光控制与链路通断监测
+  功能：隧道照明的调光控制与通断监测
         支持卡片/列表双视图、抽屉式详情与编排、链路控制回执
 -->
 <template>
@@ -200,8 +200,8 @@
         </div>
       </el-tab-pane>
 
-      <!-- 链路通断 Tab -->
-      <el-tab-pane label="链路通断" name="circuit">
+      <!-- 通断监测 Tab -->
+      <el-tab-pane label="通断监测" name="circuit">
         <!-- 链路过滤工具栏 -->
         <div class="zg-filterband">
           <div class="zg-filterband__density">
@@ -623,7 +623,7 @@
 /**
  * 智光云枢 · 管廊照明 · 隧道照明
  * 业务域：tubeLumen
- * 功能：隧道照明的调光控制与链路通断监测
+ * 功能：隧道照明的调光控制与通断监测
  * @module tubeLumen/LumenControl
  * @author 智光云枢研发团队
  */
@@ -698,7 +698,7 @@ const initialDimming = [
   }
 ]
 
-// ---- 初始 mock 数据池 - 链路通断 ----
+// ---- 初始 mock 数据池 - 通断监测 ----
 const initialCircuits = [
   {
     id: 'HL-001',

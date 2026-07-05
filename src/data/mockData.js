@@ -19,10 +19,10 @@ export const lightStatusData = [
 ]
 
 export const timingStrategies = [
-  { presetSn: 'PRST001', label: '日常灯网处方', activateAt: '18:30', deactivateAt: '06:00', luminancePct: 100, enabled: true, createdAt: '2024-01-01' },
-  { presetSn: 'PRST002', label: '节能模式处方', activateAt: '22:00', deactivateAt: '05:00', luminancePct: 50, enabled: true, createdAt: '2024-01-05' },
-  { presetSn: 'PRST003', label: '周末灯网处方', activateAt: '19:00', deactivateAt: '07:00', luminancePct: 90, enabled: false, createdAt: '2024-01-10' },
-  { presetSn: 'PRST004', label: '节假日处方', activateAt: '18:00', deactivateAt: '08:00', luminancePct: 100, enabled: false, createdAt: '2024-01-12' }
+  { presetSn: 'PRST001', label: '日常灯网策略', activateAt: '18:30', deactivateAt: '06:00', luminancePct: 100, enabled: true, createdAt: '2024-01-01' },
+  { presetSn: 'PRST002', label: '节能模式策略', activateAt: '22:00', deactivateAt: '05:00', luminancePct: 50, enabled: true, createdAt: '2024-01-05' },
+  { presetSn: 'PRST003', label: '周末灯网策略', activateAt: '19:00', deactivateAt: '07:00', luminancePct: 90, enabled: false, createdAt: '2024-01-10' },
+  { presetSn: 'PRST004', label: '节假日策略', activateAt: '18:00', deactivateAt: '08:00', luminancePct: 100, enabled: false, createdAt: '2024-01-12' }
 ]
 
 export const distributionBoxes = [
