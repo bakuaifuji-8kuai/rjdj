@@ -22,11 +22,12 @@
 
     <div class="zg-filterband">
       <div class="zg-filterband__fields">
-        <el-select v-model="clusterCtl.filterLexicon" placeholder="展厅隧道" style="width: 150px;">
-          <el-option label="展厅隧道" value="展厅隧道" />
-        </el-select>
+        <el-input v-model="clusterCtl.filterLexicon" placeholder="请输入分组名称" style="width: 200px;">
+          <template #prefix>
+            <el-icon :size="14"><Search /></el-icon>
+          </template>
+        </el-input>
         <el-button type="primary" @click="clusterCtl.onFilterApply()">
-          <el-icon :size="14"><Search /></el-icon>
           查询
         </el-button>
         <el-button @click="clusterCtl.onFilterReset()">
