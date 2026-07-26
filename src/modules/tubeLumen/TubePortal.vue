@@ -22,7 +22,7 @@
           <el-icon :size="24"><Guide /></el-icon>
         </div>
         <div class="zg-metrics__info">
-          <div class="zg-metrics__value">{{ stats.totalTunnels }}</div>
+          <div class="zg-metrics__value">{{ tubeStore.totalTunnels.value }}</div>
           <div class="zg-metrics__label">隧道总数</div>
         </div>
       </div>
@@ -31,7 +31,7 @@
           <el-icon :size="24"><SuccessFilled /></el-icon>
         </div>
         <div class="zg-metrics__info">
-          <div class="zg-metrics__value">{{ stats.onlineTunnels }}</div>
+          <div class="zg-metrics__value">{{ tubeStore.onlineTunnels.value }}</div>
           <div class="zg-metrics__label">在线隧道</div>
         </div>
       </div>
@@ -40,7 +40,7 @@
           <el-icon :size="24"><WarningFilled /></el-icon>
         </div>
         <div class="zg-metrics__info">
-          <div class="zg-metrics__value">{{ stats.alarms }}</div>
+          <div class="zg-metrics__value">{{ tubeStore.alarmCount.value }}</div>
           <div class="zg-metrics__label">告警数量</div>
         </div>
       </div>
@@ -60,13 +60,13 @@
         <div class="zg-panel__head">
           <h3>管廊列表</h3>
         </div>
-        <el-table :data="portalCtl.pagedRows" border class="zg-table">
+        <el-table :data="visibleTubes" border class="zg-table">
           <el-table-column prop="name" label="隧道名称" width="150" />
-          <el-table-column prop="location" label="所在区域" width="120" />
+          <el-table-column prop="level" label="所在区域" width="180" />
           <el-table-column prop="length" label="长度(m)" width="100" />
           <el-table-column prop="status" label="状态" width="80">
             <template #default="{ row }">
-              <el-tag :type="row.status === '在线' ? 'success' : 'danger'" size="small">{{ row.status }}</el-tag>
+              <el-tag :type="row.status === '正常' ? 'success' : 'warning'" size="small">{{ row.status }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="devices" label="设备数量" width="100" />
@@ -140,35 +140,22 @@
         </div>
       </div>
     </div>
-
   </section>
 </template>
 
 <script setup>
-/**
- * 智光云枢 · 管廊照明 · 管廊总览
- * 业务域：tubeLumen
- * 功能：页面级业务组件
- * @module tubeLumen/TubePortal
- * @author 智光云枢研发团队
- */
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Guide, SuccessFilled, WarningFilled, PieChart, Warning, RefreshLeft } from '@element-plus/icons-vue'
-import { usePresetTable } from '@/shared/composables/usePresetTable'
+import { useTubeStore } from '@/shared/stores/tubeStore'
+
+const tubeStore = useTubeStore()
 
 const energyTimeRange = ref('today')
 
 const stats = ref({
-  totalTunnels: 12,
-  onlineTunnels: 10,
-  alarms: 3,
   energyConsumption: 45230
 })
-
-const initialTubes = [
-  { id: 1, name: '先导路', location: '长沙-岳麓区-先导路', length: 1000, status: '在线', devices: 156 }
-]
 
 const recentAlarms = ref([
   { id: 1, title: '照明设备故障', tunnel: '先导路', time: '10:25', level: 'warning' },
@@ -178,11 +165,10 @@ const recentAlarms = ref([
 
 const energyData = ref([45, 52, 38, 42, 55, 68, 75, 82, 78, 65, 58, 48])
 
-const portalCtl = usePresetTable(null, { defaultPageSpan: 10, initialData: initialTubes })
+const visibleTubes = computed(() => {
+  return tubeStore.tubes.slice(0, 10)
+})
 
-/**
- * 刷新统计数据
- */
 const onRefreshData = () => {
   ElMessage.success('数据刷新成功')
 }
@@ -310,6 +296,10 @@ const onRefreshData = () => {
   box-shadow: var(--zg-shadow-card);
 }
 
+.tunnel-list {
+  grid-column: span 2;
+}
+
 .zg-panel__head {
   display: flex;
   justify-content: space-between;
@@ -324,10 +314,6 @@ const onRefreshData = () => {
   font-size: var(--zg-text-body-lg);
   font-weight: 600;
   color: var(--zg-ink-primary);
-}
-
-.tunnel-list {
-  grid-column: span 2;
 }
 
 .zg-table {
@@ -419,11 +405,11 @@ const onRefreshData = () => {
 }
 
 .zg-alarmitem__icon.warning {
-  background: var(--zg-gradient-warning);
+  background: var(--zg-amber-glow);
 }
 
 .zg-alarmitem__icon.danger {
-  background: var(--zg-gradient-danger);
+  background: var(--zg-rose-danger);
 }
 
 .zg-alarmitem__content {
@@ -485,23 +471,5 @@ const onRefreshData = () => {
   font-size: var(--zg-text-caption);
   color: var(--zg-whisper-tertiary);
   margin-top: 6px;
-}
-
-.zg-inspector {
-  padding: var(--zg-space-3);
-}
-
-.zg-inspector__desc {
-  margin-bottom: var(--zg-space-4);
-}
-
-.zg-inspector__actions {
-  display: flex;
-  gap: var(--zg-space-3);
-  justify-content: flex-end;
-}
-
-.zg-form {
-  padding: var(--zg-space-3);
 }
 </style>

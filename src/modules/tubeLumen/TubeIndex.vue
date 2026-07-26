@@ -18,7 +18,7 @@
 
     <div class="zg-metrics">
       <div class="zg-metrics__cell">
-        <div class="zg-metrics__value">{{ tubeCtl.totalRows }}</div>
+        <div class="zg-metrics__value">{{ totalRows }}</div>
         <div class="zg-metrics__label">隧道总数</div>
       </div>
       <div class="zg-metrics__cell">
@@ -49,27 +49,27 @@
         </el-button-group>
       </div>
       <div class="zg-filterband__fields">
-        <el-select v-model="tubeCtl.statusBuckets" placeholder="全部状态" class="zg-filterband__select">
+        <el-select v-model="statusBuckets" placeholder="全部状态" class="zg-filterband__select">
           <el-option label="全部" value=""></el-option>
           <el-option label="正常" value="正常"></el-option>
           <el-option label="维护中" value="维护中"></el-option>
         </el-select>
         <el-input
-          v-model="tubeCtl.filterLexicon"
+          v-model="filterLexicon"
           placeholder="搜索隧道名称"
           class="zg-filterband__input"
-          @keyup.enter="tubeCtl.onFilterApply()"
+          @keyup.enter="onFilterApply()"
         >
           <template #prefix><el-icon><Search /></el-icon></template>
         </el-input>
-        <el-button type="primary" @click="tubeCtl.onFilterApply()">检索</el-button>
-        <el-button @click="tubeCtl.onFilterReset()">重置</el-button>
+        <el-button type="primary" @click="onFilterApply()">检索</el-button>
+        <el-button @click="onFilterReset()">重置</el-button>
       </div>
     </div>
 
     <div class="zg-tubegrid" v-if="densityMode === 'card'">
       <div
-        v-for="tube in tubeCtl.pagedRows"
+        v-for="tube in pagedRows"
         :key="tube.id"
         class="zg-tubecard"
         @click="tubeInspector.openInspector(tube)"
@@ -102,7 +102,7 @@
     </div>
 
     <div class="zg-tablewrap" v-else>
-      <el-table :data="tubeCtl.pagedRows" border class="zg-table">
+      <el-table :data="pagedRows" border class="zg-table">
         <el-table-column prop="id" label="ID" width="60" />
         <el-table-column prop="name" label="隧道名称" />
         <el-table-column prop="length" label="隧道长度(米)" />
@@ -127,9 +127,9 @@
 
     <div class="zg-pagerbar">
       <el-pagination
-        v-model:current-page="tubeCtl.pagingCursor"
-        v-model:page-size="tubeCtl.pageSpan"
-        :total="tubeCtl.totalRows"
+        v-model:current-page="pageCursor"
+        v-model:page-size="pageSpan"
+        :total="totalRows"
         :page-sizes="[10, 20, 50, 100]"
         layout="total, sizes, prev, pager, next, jumper"
       />
@@ -351,47 +351,18 @@
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Guide, Plus, Grid, List, Search } from '@element-plus/icons-vue'
-import { usePresetTable } from '@/shared/composables/usePresetTable'
 import { useFormDraft } from '@/shared/composables/useFormDraft'
 import { useDrawerInspector } from '@/shared/composables/useDrawerInspector'
+import { useTubeStore } from '@/shared/stores/tubeStore'
+
+const tubeStore = useTubeStore()
 
 const densityMode = ref('list')
 const activeTab = ref('basic')
-
-const initialTubes = [
-  {
-    id: 1,
-    name: '先导路',
-    length: 2800,
-    lanes: 4,
-    area: '岳麓区',
-    level: '长沙-岳麓区-先导路',
-    status: '正常',
-    createTime: '2024-01-15 10:30:00'
-  },
-  {
-    id: 2,
-    name: '麓景路隧道',
-    length: 1500,
-    lanes: 2,
-    area: '岳麓区',
-    level: '长沙-岳麓区-麓景路隧道',
-    status: '正常',
-    createTime: '2024-02-20 14:20:00'
-  },
-  {
-    id: 3,
-    name: '西二环隧道',
-    length: 3200,
-    lanes: 6,
-    area: '岳麓区',
-    level: '长沙-岳麓区-西二环隧道',
-    status: '维护中',
-    createTime: '2024-03-10 09:15:00'
-  }
-]
-
-const tubeCtl = usePresetTable(null, { defaultPageSpan: 10, initialData: initialTubes })
+const pageCursor = ref(1)
+const pageSpan = ref(10)
+const filterLexicon = ref('')
+const statusBuckets = ref('')
 
 const tubeForm = useFormDraft({
   basic: {
@@ -428,17 +399,38 @@ const tubeInspector = useDrawerInspector({ size: '680px', direction: 'rtl' })
 
 const focusedTube = computed(() => tubeInspector.focusedRecord)
 
-const normalCount = computed(() =>
-  tubeCtl.presetPlaybook.filter(r => r.status === '正常').length
-)
+const filteredTubes = computed(() => {
+  let list = tubeStore.tubes.slice()
+  if (statusBuckets.value) {
+    list = list.filter(t => t.status === statusBuckets.value)
+  }
+  if (filterLexicon.value) {
+    const kw = filterLexicon.value.toLowerCase()
+    list = list.filter(t => t.name.toLowerCase().includes(kw))
+  }
+  return list
+})
 
-const maintenanceCount = computed(() =>
-  tubeCtl.presetPlaybook.filter(r => r.status === '维护中').length
-)
+const totalRows = computed(() => filteredTubes.value.length)
 
-const totalLength = computed(() =>
-  tubeCtl.presetPlaybook.reduce((sum, r) => sum + (r.length || 0), 0)
-)
+const pagedRows = computed(() => {
+  const start = (pageCursor.value - 1) * pageSpan.value
+  return filteredTubes.value.slice(start, start + pageSpan.value)
+})
+
+const normalCount = computed(() => tubeStore.normalCount.value)
+const maintenanceCount = computed(() => tubeStore.maintenanceCount.value)
+const totalLength = computed(() => tubeStore.totalLength.value)
+
+const onFilterApply = () => {
+  pageCursor.value = 1
+}
+
+const onFilterReset = () => {
+  filterLexicon.value = ''
+  statusBuckets.value = ''
+  pageCursor.value = 1
+}
 
 /**
  * 提交隧道草稿
@@ -448,22 +440,20 @@ const onCommitTubeDraft = async () => {
   if (result) {
     if (tubeForm.editMode === 'compose') {
       const tubeLabel = result.basic.name
-      result.basic.level = `${result.basic.level}-${tubeLabel}`
-      tubeCtl.appendRecord({
-        id: Date.now(),
+      const level = `${result.basic.level}-${tubeLabel}`
+      tubeStore.addTube({
         name: tubeLabel,
-        length: result.basic.length,
+        length: Number(result.basic.length) || 0,
         lanes: result.tunnel.lanes,
         area: '岳麓区',
-        level: result.basic.level,
-        status: '正常',
-        createTime: new Date().toLocaleString()
+        level: level,
+        status: '正常'
       })
       ElMessage.success('隧道编排成功')
     } else {
-      tubeCtl.reviseRecord(tubeForm.originRecord.id, {
+      tubeStore.updateTube(tubeForm.originRecord.id, {
         name: result.basic.name,
-        length: result.basic.length,
+        length: Number(result.basic.length) || 0,
         lanes: result.tunnel.lanes
       })
       ElMessage.success('隧道修订成功')
@@ -480,7 +470,7 @@ const onToggleTube = (tube) => {
   ElMessageBox.confirm(`确定要将隧道状态变更为${targetStatus}吗？`, '提示', {
     type: 'warning'
   }).then(() => {
-    tubeCtl.reviseRecord(tube.id, { status: targetStatus })
+    tubeStore.updateTube(tube.id, { status: targetStatus })
     ElMessage.success(`隧道已${targetStatus}`)
   }).catch(() => {})
 }
@@ -493,7 +483,7 @@ const onRetireTube = (tube) => {
   ElMessageBox.confirm('确定要废止此隧道吗？', '提示', {
     type: 'warning'
   }).then(() => {
-    tubeCtl.retireRecord(tube.id)
+    tubeStore.deleteTube(tube.id)
     ElMessage.success('隧道已废止')
   }).catch(() => {})
 }
@@ -528,16 +518,16 @@ const onRemoveSection = (row) => {
 
 <style scoped lang="scss">
 .zg-tubeindex {
-  background: var(--zg-bg-page);
+  background: var(--zg-canvas-mist);
   min-height: 100%;
-  padding: var(--zg-spacing-lg);
+  padding: var(--zg-space-6);
 }
 
 .zg-tubeindex__head {
   display: flex;
   align-items: center;
-  gap: var(--zg-spacing-md);
-  margin-bottom: var(--zg-spacing-lg);
+  gap: var(--zg-space-4);
+  margin-bottom: var(--zg-space-6);
 }
 
 .zg-tubeindex__sigil {
@@ -557,47 +547,47 @@ const onRemoveSection = (row) => {
 
 .zg-tubeindex__title {
   margin: 0;
-  font-size: var(--zg-font-size-xl);
+  font-size: var(--zg-text-display-md);
   font-weight: 600;
-  color: var(--zg-text-primary);
+  color: var(--zg-ink-primary);
   letter-spacing: -0.3px;
 }
 
 .zg-tubeindex__subtitle {
   margin: 4px 0 0;
-  font-size: var(--zg-font-size-sm);
-  color: var(--zg-text-secondary);
+  font-size: var(--zg-text-body-sm);
+  color: var(--zg-ink-secondary);
 }
 
 .zg-tubeindex__actions {
   display: flex;
-  gap: var(--zg-spacing-sm);
+  gap: var(--zg-space-3);
 }
 
 .zg-metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--zg-spacing-md);
-  margin-bottom: var(--zg-spacing-lg);
+  gap: var(--zg-space-4);
+  margin-bottom: var(--zg-space-6);
 }
 
 .zg-metrics__cell {
   background: #fff;
   border-radius: var(--zg-radius-lg);
-  padding: var(--zg-spacing-md);
+  padding: var(--zg-space-4);
   text-align: center;
-  box-shadow: var(--zg-shadow-sm);
+  box-shadow: var(--zg-shadow-card);
 }
 
 .zg-metrics__value {
-  font-size: var(--zg-font-size-2xl);
+  font-size: var(--zg-text-display-lg);
   font-weight: 700;
-  color: var(--zg-text-primary);
+  color: var(--zg-ink-primary);
 }
 
 .zg-metrics__label {
-  font-size: var(--zg-font-size-sm);
-  color: var(--zg-text-secondary);
+  font-size: var(--zg-text-body-sm);
+  color: var(--zg-ink-secondary);
   margin-top: 4px;
 }
 
@@ -607,19 +597,19 @@ const onRemoveSection = (row) => {
   align-items: center;
   background: #fff;
   border-radius: var(--zg-radius-lg);
-  padding: var(--zg-spacing-md);
-  margin-bottom: var(--zg-spacing-md);
-  box-shadow: var(--zg-shadow-sm);
+  padding: var(--zg-space-4);
+  margin-bottom: var(--zg-space-4);
+  box-shadow: var(--zg-shadow-card);
 }
 
 .zg-filterband__view {
   display: flex;
-  gap: var(--zg-spacing-sm);
+  gap: var(--zg-space-3);
 }
 
 .zg-filterband__fields {
   display: flex;
-  gap: var(--zg-spacing-sm);
+  gap: var(--zg-space-3);
   align-items: center;
 }
 
@@ -634,21 +624,21 @@ const onRemoveSection = (row) => {
 .zg-tubegrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--zg-spacing-md);
-  margin-bottom: var(--zg-spacing-md);
+  gap: var(--zg-space-4);
+  margin-bottom: var(--zg-space-4);
 }
 
 .zg-tubecard {
   background: #fff;
   border-radius: var(--zg-radius-lg);
-  padding: var(--zg-spacing-md);
-  box-shadow: var(--zg-shadow-sm);
+  padding: var(--zg-space-4);
+  box-shadow: var(--zg-shadow-card);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .zg-tubecard:hover {
-  box-shadow: var(--zg-shadow-md);
+  box-shadow: var(--zg-shadow-floating);
   transform: translateY(-2px);
 }
 
@@ -656,16 +646,16 @@ const onRemoveSection = (row) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--zg-spacing-sm);
+  margin-bottom: var(--zg-space-3);
 }
 
 .zg-tubecard__title {
   font-weight: 600;
-  color: var(--zg-text-primary);
+  color: var(--zg-ink-primary);
 }
 
 .zg-tubecard__body {
-  margin-bottom: var(--zg-spacing-sm);
+  margin-bottom: var(--zg-space-3);
 }
 
 .zg-tubecard__info {
@@ -675,35 +665,35 @@ const onRemoveSection = (row) => {
 }
 
 .zg-tubecard__label {
-  font-size: var(--zg-font-size-sm);
-  color: var(--zg-text-secondary);
+  font-size: var(--zg-text-body-sm);
+  color: var(--zg-ink-secondary);
 }
 
 .zg-tubecard__value {
-  font-size: var(--zg-font-size-sm);
+  font-size: var(--zg-text-body-sm);
   font-weight: 500;
-  color: var(--zg-text-primary);
+  color: var(--zg-ink-primary);
 }
 
 .zg-tubecard__foot {
   display: flex;
-  gap: var(--zg-spacing-sm);
+  gap: var(--zg-space-3);
   justify-content: flex-end;
 }
 
 .zg-tablewrap {
   background: #fff;
   border-radius: var(--zg-radius-lg);
-  padding: var(--zg-spacing-md);
-  box-shadow: var(--zg-shadow-sm);
-  margin-bottom: var(--zg-spacing-md);
+  padding: var(--zg-space-4);
+  box-shadow: var(--zg-shadow-card);
+  margin-bottom: var(--zg-space-4);
 }
 
 .zg-table {
-  --el-table-header-bg-color: var(--zg-bg-muted);
-  --el-table-header-text-color: var(--zg-text-secondary);
-  --el-table-row-hover-bg-color: var(--zg-bg-hover);
-  --el-table-border-color: var(--zg-border-color);
+  --el-table-header-bg-color: var(--zg-surface-muted);
+  --el-table-header-text-color: var(--zg-ink-secondary);
+  --el-table-row-hover-bg-color: var(--zg-canvas-mist);
+  --el-table-border-color: var(--zg-ghost-border);
   border-radius: var(--zg-radius-md);
   overflow: hidden;
 }
@@ -714,34 +704,34 @@ const onRemoveSection = (row) => {
   align-items: center;
   background: #fff;
   border-radius: var(--zg-radius-lg);
-  padding: var(--zg-spacing-md);
-  box-shadow: var(--zg-shadow-sm);
+  padding: var(--zg-space-4);
+  box-shadow: var(--zg-shadow-card);
 }
 
 .zg-inspector {
-  padding: var(--zg-spacing-sm);
+  padding: var(--zg-space-3);
 }
 
 .zg-inspector__desc {
-  margin-bottom: var(--zg-spacing-md);
+  margin-bottom: var(--zg-space-4);
 }
 
 .zg-inspector__actions {
   display: flex;
-  gap: var(--zg-spacing-sm);
+  gap: var(--zg-space-3);
   justify-content: flex-end;
 }
 
 .zg-form {
-  padding: var(--zg-spacing-sm);
+  padding: var(--zg-space-3);
 }
 
 .zg-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--zg-spacing-md);
+  margin-bottom: var(--zg-space-4);
   font-weight: 600;
-  color: var(--zg-color-primary);
+  color: var(--zg-amber-glow);
 }
 </style>
