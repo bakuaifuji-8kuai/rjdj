@@ -7,7 +7,7 @@ import { resolve } from 'path'
  * 基于 Vite 5 构建工具链
  */
 export default defineConfig({
-  base: '/rjdj/',
+  base: './',
   plugins: [vue()],
   resolve: {
     alias: {
