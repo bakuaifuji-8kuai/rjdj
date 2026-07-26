@@ -70,12 +70,6 @@
             </template>
           </el-table-column>
           <el-table-column prop="devices" label="设备数量" width="100" />
-          <el-table-column label="处置" width="180">
-            <template #default="{ row }">
-              <el-button type="primary" size="small" @click="portalInspector.openInspector(row)">查看</el-button>
-              <el-button type="text" size="small" @click="portalForm.openReviser(row)">编辑</el-button>
-            </template>
-          </el-table-column>
         </el-table>
       </div>
 
@@ -147,62 +141,6 @@
       </div>
     </div>
 
-    <el-drawer
-      :title="portalForm.editMode === 'compose' ? '编排隧道' : '修订隧道'"
-      v-model="portalForm.drawerOpen"
-      :size="'560px'"
-      direction="rtl"
-      @close="portalForm.onDraftDiscard()"
-    >
-      <el-form :model="portalForm.draftPayload" label-width="100px" class="zg-form">
-        <el-form-item label="隧道名称">
-          <el-input v-model="portalForm.draftPayload.name" placeholder="请输入隧道名称" />
-        </el-form-item>
-        <el-form-item label="所在区域">
-          <el-select v-model="portalForm.draftPayload.region" placeholder="请选择区域">
-            <el-option label="长沙" value="长沙" />
-            <el-option label="长沙/岳麓区" value="长沙/岳麓区" />
-            <el-option label="长沙-岳麓区-先导路" value="长沙-岳麓区-先导路" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="隧道长度(m)">
-          <el-input-number v-model="portalForm.draftPayload.length" :min="0" />
-        </el-form-item>
-        <el-form-item label="车道数量">
-          <el-input-number v-model="portalForm.draftPayload.lanes" :min="1" :max="10" />
-        </el-form-item>
-        <el-form-item label="设计时速">
-          <el-input-number v-model="portalForm.draftPayload.speed" :min="0" /> km/h
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="portalForm.onDraftDiscard()">取消</el-button>
-        <el-button type="primary" :loading="portalForm.submitting" @click="onCommitTunnelDraft()">确定</el-button>
-      </template>
-    </el-drawer>
-
-    <el-drawer
-      :title="portalInspector.loading ? '加载中...' : '隧道详情'"
-      v-model="portalInspector.drawerOpen"
-      :size="portalInspector.drawerSize"
-      :direction="portalInspector.drawerDirection"
-      @close="portalInspector.closeInspector()"
-    >
-      <div v-if="focusedTunnel" class="zg-inspector">
-        <el-descriptions :column="2" border class="zg-inspector__desc">
-          <el-descriptions-item label="隧道名称">{{ focusedTunnel.name }}</el-descriptions-item>
-          <el-descriptions-item label="状态">
-            <el-tag :type="focusedTunnel.status === '在线' ? 'success' : 'danger'">{{ focusedTunnel.status }}</el-tag>
-          </el-descriptions-item>
-          <el-descriptions-item label="所在区域">{{ focusedTunnel.location }}</el-descriptions-item>
-          <el-descriptions-item label="隧道长度">{{ focusedTunnel.length }}m</el-descriptions-item>
-          <el-descriptions-item label="设备数量">{{ focusedTunnel.devices }}台</el-descriptions-item>
-        </el-descriptions>
-        <div class="zg-inspector__actions">
-          <el-button type="primary" @click="portalForm.openReviser(focusedTunnel)">修订</el-button>
-        </div>
-      </div>
-    </el-drawer>
   </section>
 </template>
 
@@ -214,12 +152,10 @@
  * @module tubeLumen/TubePortal
  * @author 智光云枢研发团队
  */
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Guide, SuccessFilled, WarningFilled, PieChart, Warning, RefreshLeft } from '@element-plus/icons-vue'
 import { usePresetTable } from '@/shared/composables/usePresetTable'
-import { useFormDraft } from '@/shared/composables/useFormDraft'
-import { useDrawerInspector } from '@/shared/composables/useDrawerInspector'
 
 const energyTimeRange = ref('today')
 
@@ -244,34 +180,11 @@ const energyData = ref([45, 52, 38, 42, 55, 68, 75, 82, 78, 65, 58, 48])
 
 const portalCtl = usePresetTable(null, { defaultPageSpan: 10, initialData: initialTubes })
 
-const portalForm = useFormDraft({
-  name: '',
-  region: '',
-  length: 0,
-  lanes: 2,
-  speed: 60
-})
-
-const portalInspector = useDrawerInspector({ size: '560px', direction: 'rtl' })
-
-const focusedTunnel = computed(() => portalInspector.focusedRecord)
-
 /**
  * 刷新统计数据
  */
 const onRefreshData = () => {
   ElMessage.success('数据刷新成功')
-}
-
-/**
- * 提交隧道草稿
- */
-const onCommitTunnelDraft = async () => {
-  const result = await portalForm.onDraftCommit()
-  if (result) {
-    portalCtl.reviseRecord(portalForm.originRecord.id, result)
-    ElMessage.success('隧道修订成功')
-  }
 }
 </script>
 
