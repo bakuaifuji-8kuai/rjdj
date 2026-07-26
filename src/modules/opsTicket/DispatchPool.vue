@@ -509,8 +509,8 @@ const closedTicketCount = computed(
 
 // ---- 卡片/列表展示数据（在分页结果上叠加优先级筛选） ----
 const visibleTickets = computed(() => {
-  if (!priorityBucket.value) return dispatchCtl.pagedRows.value
-  return dispatchCtl.pagedRows.value.filter(t => t.priority === priorityBucket.value)
+  if (!priorityBucket.value) return dispatchCtl.pagedRows
+  return dispatchCtl.pagedRows.filter(t => t.priority === priorityBucket.value)
 })
 
 /**

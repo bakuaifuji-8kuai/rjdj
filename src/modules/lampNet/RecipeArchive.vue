@@ -1,8 +1,8 @@
 <!--
-  智光云枢 · 灯网监控 · 策略归档
+  智光云枢 · 灯网监控 · 历史策略
   业务域：lampNet
-  功能：灯网监控策略沉淀中心的归档管理与还原处置
-        支持卡片/列表双视图、抽屉式详情、归档还原与批量清理
+  功能：灯网监控策略库中已废止策略的历史台账与还原处置
+        支持卡片/列表双视图、抽屉式详情、还原与批量清理
 -->
 <template>
   <section class="zg-archive">
@@ -13,9 +13,9 @@
           <el-icon :size="22"><DocumentChecked /></el-icon>
         </div>
         <div class="zg-archive__copy">
-          <h1 class="zg-archive__title">策略归档</h1>
+          <h1 class="zg-archive__title">历史策略</h1>
           <p class="zg-archive__sub">
-            灯网监控策略沉淀中心 · 在役归档 {{ activeArchiveCount }} 条 ·
+            灯网监控策略库 · 在役废止 {{ activeArchiveCount }} 条 ·
             已还原 {{ restoredArchiveCount }} 条 · 累计关联设备 {{ totalDeviceCount }} 台
           </p>
         </div>
@@ -26,11 +26,11 @@
     <div class="zg-metrics">
       <div class="zg-metrics__cell">
         <span class="zg-metrics__num">{{ archiveCtl.totalRows }}</span>
-        <span class="zg-metrics__lbl">归档策略总数</span>
+        <span class="zg-metrics__lbl">历史策略总数</span>
       </div>
       <div class="zg-metrics__cell zg-metrics__cell--ok">
         <span class="zg-metrics__num">{{ activeArchiveCount }}</span>
-        <span class="zg-metrics__lbl">在役归档</span>
+        <span class="zg-metrics__lbl">在役废止</span>
       </div>
       <div class="zg-metrics__cell zg-metrics__cell--warn">
         <span class="zg-metrics__num">{{ restoredArchiveCount }}</span>
@@ -59,11 +59,11 @@
       <div class="zg-filterband__fields">
         <el-select
           v-model="archiveCtl.statusBuckets"
-          placeholder="归档状态"
+          placeholder="废止状态"
           clearable
           class="zg-filterband__select"
         >
-          <el-option label="已归档" value="已归档" />
+          <el-option label="已废止" value="已废止" />
           <el-option label="已还原" value="已还原" />
         </el-select>
         <el-select
@@ -109,7 +109,7 @@
 
     <!-- 批量操作条（列表视图下） -->
     <div v-if="densityMode === 'list' && selectedArchives.length" class="zg-batchband">
-      <span class="zg-batchband__hint">已选 {{ selectedArchives.length }} 条归档记录</span>
+      <span class="zg-batchband__hint">已选 {{ selectedArchives.length }} 条历史记录</span>
       <el-button type="danger" size="small" @click="onBatchRetire()">批量删除</el-button>
     </div>
 
@@ -119,14 +119,14 @@
         v-for="archive in archiveCtl.pagedRows"
         :key="archive.id"
         class="zg-archivecard"
-        :class="archive.status === '已归档' ? 'archived' : 'restored'"
+        :class="archive.status === '已废止' ? 'archived' : 'restored'"
         @click="archiveInspector.openInspector(archive)"
       >
         <div class="zg-archivecard__head">
           <div class="zg-archivecard__glyph">
             <el-icon :size="24"><DocumentChecked /></el-icon>
           </div>
-          <span class="zg-status" :class="archive.status === '已归档' ? 'archived' : 'restored'">
+          <span class="zg-status" :class="archive.status === '已废止' ? 'archived' : 'restored'">
             <i class="dot"></i>{{ archive.status }}
           </span>
         </div>
@@ -180,14 +180,14 @@
           </template>
         </el-table-column>
         <el-table-column prop="deviceCount" label="关联设备数" width="100" align="center" />
-        <el-table-column label="归档状态" width="100" align="center">
+        <el-table-column label="废止状态" width="100" align="center">
           <template #default="{ row }">
-            <span class="zg-status" :class="row.status === '已归档' ? 'archived' : 'restored'">
+            <span class="zg-status" :class="row.status === '已废止' ? 'archived' : 'restored'">
               <i class="dot"></i>{{ row.status }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveDate" label="归档日期" width="120" />
+        <el-table-column prop="archiveDate" label="废止日期" width="120" />
         <el-table-column label="处置" width="240" align="center" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="archiveInspector.openInspector(row)">详情</el-button>
@@ -213,7 +213,7 @@
     <!-- 详情抽屉 -->
     <el-drawer
       v-model="archiveInspector.drawerOpen"
-      :title="'归档详情 · ' + (focusedArchive?.name || '')"
+      :title="'历史策略详情 · ' + (focusedArchive?.name || '')"
       direction="rtl"
       size="680px"
     >
@@ -225,7 +225,7 @@
           <div class="zg-inspector__meta">
             <h2 class="zg-inspector__name">{{ focusedArchive.name }}</h2>
             <p class="zg-inspector__type">{{ getTypeText(focusedArchive.type) }} · {{ getActionText(focusedArchive.action) }}</p>
-            <span class="zg-status" :class="focusedArchive.status === '已归档' ? 'archived' : 'restored'">
+            <span class="zg-status" :class="focusedArchive.status === '已废止' ? 'archived' : 'restored'">
               <i class="dot"></i>{{ focusedArchive.status }}
             </span>
           </div>
@@ -255,7 +255,7 @@
               <span class="val">{{ focusedArchive.startDate }} ~ {{ focusedArchive.endDate }}</span>
             </div>
             <div class="zg-inspector__cell">
-              <span class="lbl">归档日期</span>
+              <span class="lbl">废止日期</span>
               <span class="val">{{ focusedArchive.archiveDate }}</span>
             </div>
             <div class="zg-inspector__cell" style="grid-column: span 2;">
@@ -281,7 +281,7 @@
               <div class="zg-datacard__val">{{ focusedArchive.enabled ? '在役' : '停用' }}<em></em></div>
             </div>
             <div class="zg-datacard">
-              <div class="zg-datacard__lbl">归档天数</div>
+              <div class="zg-datacard__lbl">废止天数</div>
               <div class="zg-datacard__val">{{ computeArchiveDays(focusedArchive.archiveDate) }}<em>天</em></div>
             </div>
           </div>
@@ -305,10 +305,10 @@
 
 <script setup>
 /**
- * 智光云枢 · 灯网监控 · 策略归档
+ * 智光云枢 · 灯网监控 · 历史策略
  * 业务域：lampNet
- * 功能：灯网监控策略沉淀中心的归档管理与还原处置
- *        支持卡片/列表双视图、抽屉式详情、归档还原与批量清理
+ * 功能：灯网监控策略库中已废止策略的历史台账与还原处置
+ *        支持卡片/列表双视图、抽屉式详情、还原与批量清理
  * @module lampNet/RecipeArchive
  * @author 智光云枢研发团队
  */
@@ -338,8 +338,72 @@ watch(densityMode, () => {
   selectedArchives.value = []
 })
 
-// ---- 初始 mock 数据池 ----
-const initialArchives = [
+// ---- localStorage 键名 ----
+const ARCHIVE_STORAGE_KEY = 'zg_recipe_archive'
+const VAULT_STORAGE_KEY = 'zg_recipe_vault'
+
+/**
+ * 从 localStorage 读取历史策略数据
+ */
+function loadArchivePool () {
+  try {
+    const raw = localStorage.getItem(ARCHIVE_STORAGE_KEY)
+    if (raw) return JSON.parse(raw)
+  } catch (e) {
+    console.warn('读取历史策略缓存失败', e)
+  }
+  return null
+}
+
+/**
+ * 保存历史策略数据到 localStorage
+ */
+function saveArchivePool () {
+  try {
+    localStorage.setItem(ARCHIVE_STORAGE_KEY, JSON.stringify(archiveCtl.presetPlaybook))
+  } catch (e) {
+    console.warn('保存历史策略缓存失败', e)
+  }
+}
+
+/**
+ * 将历史策略以停用状态还原至策略库 localStorage
+ */
+function restoreToVaultPool (archive) {
+  try {
+    const raw = localStorage.getItem(VAULT_STORAGE_KEY)
+    const pool = raw ? JSON.parse(raw) : []
+    // 若策略库中已存在则更新状态，否则追加
+    const idx = pool.findIndex(r => r.id === archive.id)
+    const restoredRecipe = {
+      id: archive.id,
+      no: archive.id,
+      area: '长沙-岳麓区',
+      name: archive.name,
+      model: getTypeText(archive.type),
+      status: '停用',
+      brightness: archive.brightness || 60,
+      coverage: archive.deviceCount || 0,
+      poleCount: archive.deviceCount || 0,
+      effectTime: archive.archiveDate,
+      remark: archive.description || `${archive.name}（从历史策略还原）`,
+      runDuration: 0,
+      poles: []
+    }
+    if (idx !== -1) {
+      pool[idx] = { ...pool[idx], status: '停用' }
+    } else {
+      pool.push(restoredRecipe)
+    }
+    localStorage.setItem(VAULT_STORAGE_KEY, JSON.stringify(pool))
+  } catch (e) {
+    console.warn('还原至策略库缓存失败', e)
+  }
+}
+
+// 优先使用 localStorage 中的历史策略；若不存在则使用默认 mock
+const persistedArchives = loadArchivePool()
+const initialArchives = persistedArchives || [
   {
     id: 1,
     no: 1,
@@ -350,11 +414,11 @@ const initialArchives = [
     executeTime: '18:00',
     deviceCount: 50,
     enabled: true,
-    status: '已归档',
+    status: '已废止',
     archiveDate: '2024-06-15',
     startDate: '2024-01-01',
     endDate: '2024-12-31',
-    description: '工作日夜间降低亮度至60%'
+    description: '夜间自动降低主干道亮度至 60%'
   },
   {
     id: 2,
@@ -366,11 +430,11 @@ const initialArchives = [
     executeTime: '18:00',
     deviceCount: 30,
     enabled: true,
-    status: '已归档',
+    status: '已废止',
     archiveDate: '2024-05-20',
     startDate: '2024-01-01',
     endDate: '2024-12-31',
-    description: '周末全天保持全亮'
+    description: '重大活动保障，整夜保持 100% 亮度'
   },
   {
     id: 3,
@@ -379,14 +443,14 @@ const initialArchives = [
     type: 'coordinate',
     action: 'dim',
     brightness: 80,
-    executeTime: '',
+    executeTime: '-',
     deviceCount: 100,
     enabled: true,
-    status: '已归档',
+    status: '已废止',
     archiveDate: '2024-04-10',
     startDate: '2024-01-01',
     endDate: '2024-12-31',
-    description: '根据经纬度自动开关灯'
+    description: '根据当地日出日落时间自动开关灯'
   },
   {
     id: 4,
@@ -397,12 +461,12 @@ const initialArchives = [
     brightness: 40,
     executeTime: '23:00',
     deviceCount: 20,
-    enabled: false,
-    status: '已归档',
+    enabled: true,
+    status: '已废止',
     archiveDate: '2024-03-08',
     startDate: '2024-01-01',
     endDate: '2024-12-31',
-    description: '深夜每30分钟调光一次'
+    description: '深夜 23:00 后开启间隔调光节能'
   },
   {
     id: 5,
@@ -414,11 +478,11 @@ const initialArchives = [
     executeTime: '18:00',
     deviceCount: 80,
     enabled: true,
-    status: '已归档',
+    status: '已废止',
     archiveDate: '2024-02-01',
-    startDate: '2024-02-01',
-    endDate: '2024-02-29',
-    description: '节假日期间全亮模式'
+    startDate: '2024-01-01',
+    endDate: '2024-12-31',
+    description: '节假日期间全夜亮灯模式'
   },
   {
     id: 6,
@@ -429,7 +493,7 @@ const initialArchives = [
     brightness: 100,
     executeTime: '',
     deviceCount: 50,
-    enabled: true,
+    enabled: false,
     status: '已还原',
     archiveDate: '2024-01-12',
     startDate: '2024-01-01',
@@ -448,7 +512,7 @@ const archiveCtl = usePresetTable(null, {
 
 // ---- 概览指标派生 ----
 const activeArchiveCount = computed(
-  () => archiveCtl.presetPlaybook.filter(a => a.enabled).length
+  () => archiveCtl.presetPlaybook.filter(a => a.status === '已废止').length
 )
 const restoredArchiveCount = computed(
   () => archiveCtl.presetPlaybook.filter(a => a.status === '已还原').length
@@ -507,8 +571,8 @@ const handleSelectionChange = (rows) => {
 }
 
 /**
- * 还原归档策略：将已归档策略还原至在役库
- * @param {Object} archive 目标归档记录
+ * 还原历史策略：将已废止策略还原至策略库（状态为停用）
+ * @param {Object} archive 目标历史记录
  */
 const onRestoreArchive = (archive) => {
   if (archive.status === '已还原') {
@@ -516,53 +580,57 @@ const onRestoreArchive = (archive) => {
     return
   }
   ElMessageBox.confirm(
-    `确认将「${archive.name}」还原到在役策略库？`,
+    `确认将「${archive.name}」还原到策略库（状态为停用）？`,
     '还原确认',
     { type: 'warning' }
   )
     .then(() => {
+      restoreToVaultPool(archive)
       archiveCtl.reviseRecord(archive.id, { status: '已还原', enabled: false })
-      ElMessage.success(`「${archive.name}」已还原至在役策略库`)
+      saveArchivePool()
+      ElMessage.success(`「${archive.name}」已还原至策略库，状态为停用`)
     })
     .catch(() => {})
 }
 
 /**
- * 删除归档：二次确认后从归档台账中移除
- * @param {Object} archive 目标归档记录
+ * 删除历史策略：二次确认后从历史台账中移除
+ * @param {Object} archive 目标历史记录
  */
 const onRetireArchive = (archive) => {
   ElMessageBox.confirm(
-    `确定要将「${archive.name}」从归档台账中删除吗？`,
+    `确定要将「${archive.name}」从历史台账中删除吗？`,
     '删除确认',
     { type: 'warning' }
   )
     .then(() => {
       archiveCtl.retireRecord(archive.id)
+      saveArchivePool()
       selectedArchives.value = selectedArchives.value.filter(a => a.id !== archive.id)
-      ElMessage.success('归档记录已删除')
+      ElMessage.success('历史记录已删除')
     })
     .catch(() => {})
 }
 
 /**
- * 批量删除归档：对列表中选中的归档记录执行批量清理
+ * 批量删除历史策略：对列表中选中的历史记录执行批量清理
  */
 const onBatchRetire = () => {
   const count = selectedArchives.value.length
   if (!count) {
-    ElMessage.warning('请先选择待删除的归档记录')
+    ElMessage.warning('请先选择待删除的历史记录')
     return
   }
   ElMessageBox.confirm(
-    `确定要批量删除选中的 ${count} 条归档记录吗？`,
+    `确定要批量删除选中的 ${count} 条历史记录吗？`,
     '批量删除确认',
     { type: 'warning' }
   )
     .then(() => {
       selectedArchives.value.forEach(a => archiveCtl.retireRecord(a.id))
+      saveArchivePool()
       selectedArchives.value = []
-      ElMessage.success(`已批量删除 ${count} 条归档记录`)
+      ElMessage.success(`已批量删除 ${count} 条历史记录`)
     })
     .catch(() => {})
 }

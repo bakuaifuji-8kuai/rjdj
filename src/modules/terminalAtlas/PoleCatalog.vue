@@ -695,7 +695,7 @@ const totalLampCount = computed(
  * 区域筛选属本地状态，与 composable 的状态/类型/检索分桶协同工作
  */
 const visiblePoles = computed(() => {
-  let rows = poleCtl.pagedRows.value
+  let rows = poleCtl.pagedRows
   if (poleAreaFilter.value) {
     rows = rows.filter(r => r.location === poleAreaFilter.value)
   }

@@ -98,27 +98,27 @@
       <div class="zg-gis__legend">
         <h4 class="zg-gis__legend-title">图例</h4>
         <div class="zg-gis__legend-row">
-          <i class="zg-gis__dot zg-gis__dot--online"></i>
+          <span class="zg-gis__dot zg-gis__dot--online"></span>
           <span>在线</span>
         </div>
         <div class="zg-gis__legend-row">
-          <i class="zg-gis__dot zg-gis__dot--offline"></i>
+          <span class="zg-gis__dot zg-gis__dot--offline"></span>
           <span>离线</span>
         </div>
         <div class="zg-gis__legend-row">
-          <i class="zg-gis__dot zg-gis__dot--alarm"></i>
+          <span class="zg-gis__dot zg-gis__dot--alarm"></span>
           <span>告警</span>
         </div>
         <div class="zg-gis__legend-row">
-          <i class="zg-gis__dot zg-gis__dot--lamp"></i>
+          <span class="zg-gis__dot zg-gis__dot--lamp"></span>
           <span>路灯</span>
         </div>
         <div class="zg-gis__legend-row">
-          <i class="zg-gis__dot zg-gis__dot--cabinet"></i>
+          <span class="zg-gis__dot zg-gis__dot--cabinet"></span>
           <span>配电箱</span>
         </div>
         <div class="zg-gis__legend-row">
-          <i class="zg-gis__dot zg-gis__dot--sensor"></i>
+          <span class="zg-gis__dot zg-gis__dot--sensor"></span>
           <span>传感器</span>
         </div>
       </div>
@@ -651,6 +651,8 @@ const statusClass = (status) => {
     height: 10px;
     border-radius: 50%;
     display: inline-block;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.08);
 
     &--online { background: var(--zg-success); }
     &--offline { background: var(--zg-danger); }

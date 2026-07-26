@@ -156,7 +156,7 @@
 
     <el-drawer
       :title="portalForm.editMode === 'compose' ? '编排隧道' : '修订隧道'"
-      :visible="portalForm.drawerOpen"
+      v-model="portalForm.drawerOpen"
       :size="'560px'"
       direction="rtl"
       @close="portalForm.onDraftDiscard()"
@@ -190,7 +190,7 @@
 
     <el-drawer
       :title="portalInspector.loading ? '加载中...' : '隧道详情'"
-      :visible="portalInspector.drawerOpen"
+      v-model="portalInspector.drawerOpen"
       :size="portalInspector.drawerSize"
       :direction="portalInspector.drawerDirection"
       @close="portalInspector.closeInspector()"
@@ -221,7 +221,7 @@
  * @module tubeLumen/TubePortal
  * @author 智光云枢研发团队
  */
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Guide, SuccessFilled, WarningFilled, PieChart, Warning, Plus, RefreshLeft } from '@element-plus/icons-vue'
 import { usePresetTable } from '@/shared/composables/usePresetTable'
@@ -261,7 +261,7 @@ const portalForm = useFormDraft({
 
 const portalInspector = useDrawerInspector({ size: '560px', direction: 'rtl' })
 
-const focusedTunnel = ref(null)
+const focusedTunnel = computed(() => portalInspector.focusedRecord)
 
 /**
  * 刷新统计数据
@@ -296,16 +296,16 @@ const onCommitTunnelDraft = async () => {
 
 <style scoped lang="scss">
 .zg-tubeportal {
-  padding: var(--zg-spacing-lg);
-  background: var(--zg-bg-page);
+  padding: var(--zg-space-6);
+  background: var(--zg-canvas-mist);
   min-height: 100%;
 }
 
 .zg-tubeportal__head {
   display: flex;
   align-items: center;
-  gap: var(--zg-spacing-md);
-  margin-bottom: var(--zg-spacing-lg);
+  gap: var(--zg-space-4);
+  margin-bottom: var(--zg-space-6);
 }
 
 .zg-tubeportal__sigil {
@@ -325,38 +325,38 @@ const onCommitTunnelDraft = async () => {
 
 .zg-tubeportal__title {
   margin: 0;
-  font-size: var(--zg-font-size-xl);
+  font-size: var(--zg-text-display-md);
   font-weight: 600;
-  color: var(--zg-text-primary);
+  color: var(--zg-ink-primary);
   letter-spacing: -0.3px;
 }
 
 .zg-tubeportal__subtitle {
   margin: 4px 0 0;
-  font-size: var(--zg-font-size-sm);
-  color: var(--zg-text-secondary);
+  font-size: var(--zg-text-body-sm);
+  color: var(--zg-ink-secondary);
 }
 
 .zg-tubeportal__actions {
   display: flex;
-  gap: var(--zg-spacing-sm);
+  gap: var(--zg-space-3);
 }
 
 .zg-metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--zg-spacing-md);
-  margin-bottom: var(--zg-spacing-lg);
+  gap: var(--zg-space-4);
+  margin-bottom: var(--zg-space-6);
 }
 
 .zg-metrics__cell {
   background: #fff;
   border-radius: var(--zg-radius-lg);
-  padding: var(--zg-spacing-md);
+  padding: var(--zg-space-4);
   display: flex;
   align-items: center;
-  gap: var(--zg-spacing-md);
-  box-shadow: var(--zg-shadow-sm);
+  gap: var(--zg-space-4);
+  box-shadow: var(--zg-shadow-card);
 }
 
 .zg-metrics__icon {
@@ -390,46 +390,46 @@ const onCommitTunnelDraft = async () => {
 }
 
 .zg-metrics__value {
-  font-size: var(--zg-font-size-2xl);
+  font-size: var(--zg-text-display-lg);
   font-weight: 700;
-  color: var(--zg-text-primary);
+  color: var(--zg-ink-primary);
   line-height: 1.2;
   letter-spacing: -0.5px;
 }
 
 .zg-metrics__label {
-  font-size: var(--zg-font-size-sm);
-  color: var(--zg-text-secondary);
+  font-size: var(--zg-text-body-sm);
+  color: var(--zg-ink-secondary);
   margin-top: 6px;
 }
 
 .zg-contentgrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--zg-spacing-md);
+  gap: var(--zg-space-4);
 }
 
 .zg-contentgrid__item {
   background: #fff;
   border-radius: var(--zg-radius-lg);
-  padding: var(--zg-spacing-md);
-  box-shadow: var(--zg-shadow-sm);
+  padding: var(--zg-space-4);
+  box-shadow: var(--zg-shadow-card);
 }
 
 .zg-panel__head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--zg-spacing-md);
-  padding-bottom: var(--zg-spacing-sm);
-  border-bottom: 1px solid var(--zg-border-color);
+  margin-bottom: var(--zg-space-4);
+  padding-bottom: var(--zg-space-3);
+  border-bottom: 1px solid var(--zg-ghost-border);
 }
 
 .zg-panel__head h3 {
   margin: 0;
-  font-size: var(--zg-font-size-base);
+  font-size: var(--zg-text-body-lg);
   font-weight: 600;
-  color: var(--zg-text-primary);
+  color: var(--zg-ink-primary);
 }
 
 .tunnel-list {
@@ -437,10 +437,10 @@ const onCommitTunnelDraft = async () => {
 }
 
 .zg-table {
-  --el-table-header-bg-color: var(--zg-bg-muted);
-  --el-table-header-text-color: var(--zg-text-secondary);
-  --el-table-row-hover-bg-color: var(--zg-bg-hover);
-  --el-table-border-color: var(--zg-border-color);
+  --el-table-header-bg-color: var(--zg-surface-muted);
+  --el-table-header-text-color: var(--zg-ink-secondary);
+  --el-table-row-hover-bg-color: var(--zg-canvas-mist);
+  --el-table-border-color: var(--zg-ghost-border);
   border-radius: var(--zg-radius-md);
   overflow: hidden;
 }
@@ -448,69 +448,69 @@ const onCommitTunnelDraft = async () => {
 .zg-monitorgrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--zg-spacing-sm);
+  gap: var(--zg-space-3);
 }
 
 .zg-monitoritem {
-  background: var(--zg-bg-muted);
+  background: var(--zg-surface-muted);
   border-radius: var(--zg-radius-md);
-  padding: var(--zg-spacing-md);
+  padding: var(--zg-space-4);
   text-align: center;
-  border: 1px solid var(--zg-border-color);
+  border: 1px solid var(--zg-ghost-border);
   transition: all 0.2s ease;
 }
 
 .zg-monitoritem:hover {
-  background: var(--zg-bg-hover);
+  background: var(--zg-canvas-mist);
 }
 
 .zg-monitoritem__label {
-  font-size: var(--zg-font-size-sm);
-  color: var(--zg-text-secondary);
+  font-size: var(--zg-text-body-sm);
+  color: var(--zg-ink-secondary);
   margin-bottom: 8px;
 }
 
 .zg-monitoritem__value {
-  font-size: var(--zg-font-size-lg);
+  font-size: var(--zg-text-display-sm);
   font-weight: 700;
-  color: var(--zg-color-primary);
+  color: var(--zg-amber-glow);
 }
 
 .zg-monitoritem__value span {
-  font-size: var(--zg-font-size-xs);
+  font-size: var(--zg-text-caption);
   font-weight: 400;
-  color: var(--zg-text-muted);
+  color: var(--zg-whisper-tertiary);
 }
 
 .zg-monitoritem__status {
-  font-size: var(--zg-font-size-xs);
+  font-size: var(--zg-text-caption);
   margin-top: 6px;
 }
 
 .zg-monitoritem__status.normal {
-  color: var(--zg-color-success);
+  color: var(--zg-emerald-success);
   font-weight: 500;
 }
 
 .zg-alarmitems {
   display: flex;
   flex-direction: column;
-  gap: var(--zg-spacing-sm);
+  gap: var(--zg-space-3);
 }
 
 .zg-alarmitem {
   display: flex;
   align-items: center;
-  gap: var(--zg-spacing-md);
-  padding: var(--zg-spacing-md);
-  background: var(--zg-bg-muted);
+  gap: var(--zg-space-4);
+  padding: var(--zg-space-4);
+  background: var(--zg-surface-muted);
   border-radius: var(--zg-radius-md);
-  border: 1px solid var(--zg-border-color);
+  border: 1px solid var(--zg-ghost-border);
   transition: all 0.2s ease;
 }
 
 .zg-alarmitem:hover {
-  background: var(--zg-bg-hover);
+  background: var(--zg-canvas-mist);
 }
 
 .zg-alarmitem__icon {
@@ -538,9 +538,9 @@ const onCommitTunnelDraft = async () => {
 }
 
 .zg-alarmitem__title {
-  font-size: var(--zg-font-size-sm);
+  font-size: var(--zg-text-body-sm);
   font-weight: 500;
-  color: var(--zg-text-primary);
+  color: var(--zg-ink-primary);
   margin-bottom: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -548,10 +548,10 @@ const onCommitTunnelDraft = async () => {
 }
 
 .zg-alarmitem__info {
-  font-size: var(--zg-font-size-xs);
-  color: var(--zg-text-muted);
+  font-size: var(--zg-text-caption);
+  color: var(--zg-whisper-tertiary);
   display: flex;
-  gap: var(--zg-spacing-md);
+  gap: var(--zg-space-4);
 }
 
 .zg-chartplaceholder {
@@ -567,7 +567,7 @@ const onCommitTunnelDraft = async () => {
   align-items: flex-end;
   gap: 6px;
   height: 100%;
-  padding: var(--zg-spacing-md) 0;
+  padding: var(--zg-space-4) 0;
   width: 100%;
 }
 
@@ -588,26 +588,26 @@ const onCommitTunnelDraft = async () => {
 }
 
 .zg-barlabel {
-  font-size: var(--zg-font-size-xs);
-  color: var(--zg-text-muted);
+  font-size: var(--zg-text-caption);
+  color: var(--zg-whisper-tertiary);
   margin-top: 6px;
 }
 
 .zg-inspector {
-  padding: var(--zg-spacing-sm);
+  padding: var(--zg-space-3);
 }
 
 .zg-inspector__desc {
-  margin-bottom: var(--zg-spacing-md);
+  margin-bottom: var(--zg-space-4);
 }
 
 .zg-inspector__actions {
   display: flex;
-  gap: var(--zg-spacing-sm);
+  gap: var(--zg-space-3);
   justify-content: flex-end;
 }
 
 .zg-form {
-  padding: var(--zg-spacing-sm);
+  padding: var(--zg-space-3);
 }
 </style>

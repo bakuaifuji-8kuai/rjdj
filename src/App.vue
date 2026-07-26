@@ -73,8 +73,8 @@
           </el-badge>
           <el-dropdown>
             <span class="zg-profile">
-              <span class="zg-profile__avatar">运</span>
-              <span class="zg-profile__name">运维员</span>
+              <span class="zg-profile__avatar">{{ currentUser.avatar }}</span>
+              <span class="zg-profile__name">{{ currentUser.name }}</span>
               <el-icon :size="14"><ArrowDown /></el-icon>
             </span>
             <template #dropdown>
@@ -118,10 +118,13 @@ import {
   Bell
 } from '@element-plus/icons-vue'
 import { ElMessage as Toast } from 'element-plus'
+import { useCurrentUser } from '@/shared/composables/useCurrentUser'
 
 const route = useRoute()
 const router = useRouter()
 const isFolded = ref(false)
+
+const currentUser = useCurrentUser()
 
 const onlineNodeCount = ref(2184)
 
@@ -188,13 +191,8 @@ const navList = [
     path: '/scenarioOrch',
     icon: MagicStick,
     children: [
-      { name: '预案管理', path: '/scenarioOrch/presetConsole' },
-      { name: '预案库', path: '/scenarioOrch/presetLibrary' },
-      { name: '预案联动', path: '/scenarioOrch/presetLinkage' },
-      { name: '联动管理', path: '/scenarioOrch/linkageManager' },
-      { name: '预案模板', path: '/scenarioOrch/presetTemplate' },
-      { name: '触发器', path: '/scenarioOrch/presetTrigger' },
-      { name: '定时计划', path: '/scenarioOrch/presetSchedule' }
+      { name: '快捷操作', path: '/scenarioOrch/quickOperation' },
+      { name: '场景联动', path: '/scenarioOrch/sceneLinkage' }
     ]
   },
   {
@@ -203,8 +201,6 @@ const navList = [
     icon: Tickets,
     children: [
       { name: '工单池', path: '/opsTicket/dispatchPool' },
-      { name: '新建工单', path: '/opsTicket/ticketCreate' },
-      { name: '工单详情', path: '/opsTicket/ticketDetail/1' },
       { name: '自动派单', path: '/opsTicket/autoDispatch' },
       { name: '我的工单', path: '/opsTicket/myDesk' },
       { name: '效能看板', path: '/opsTicket/statBoard' }

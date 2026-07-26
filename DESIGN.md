@@ -223,7 +223,7 @@
 - ❌ 自定义鼠标光标
 - ❌ 元素重叠 — 永远保持清晰的空间分离
 - ❌ 3 列等宽卡片布局
-- ❌ 紫色/蓝色的 AI 美学
+- ❌ 紫色/蓝色的泛化美学
 
 ### 字体禁令
 - ❌ Inter 字体
@@ -233,7 +233,7 @@
 ### 内容禁令
 - ❌ 通用占位名（"John Doe", "Acme", "Nexus"）
 - ❌ 假的整数（99.99%, 50%）
-- ❌ AI 文案陈词滥调（"Elevate", "Seamless", "Unleash", "Next-Gen", "赋能", "打造"）
+- ❌ 空洞文案陈词滥调（"Elevate", "Seamless", "Unleash", "Next-Gen", "赋能", "打造"）
 - ❌ 填充式 UI 文案："Scroll to explore", "Swipe down", 滚动箭头，弹跳 chevron
 
 ### 图片禁令

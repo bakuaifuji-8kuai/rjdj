@@ -378,8 +378,68 @@ import { useDrawerInspector } from '@/shared/composables/useDrawerInspector'
 // ---- 视图密度切换 ----
 const densityMode = ref('card')
 
+// ---- localStorage 键名 ----
+const VAULT_STORAGE_KEY = 'zg_recipe_vault'
+const ARCHIVE_STORAGE_KEY = 'zg_recipe_archive'
+
+/**
+ * 从 localStorage 读取策略库数据
+ */
+function loadVaultPool () {
+  try {
+    const raw = localStorage.getItem(VAULT_STORAGE_KEY)
+    if (raw) return JSON.parse(raw)
+  } catch (e) {
+    console.warn('读取策略库缓存失败', e)
+  }
+  return null
+}
+
+/**
+ * 保存策略库数据到 localStorage
+ */
+function saveVaultPool () {
+  try {
+    localStorage.setItem(VAULT_STORAGE_KEY, JSON.stringify(vaultCtl.presetPlaybook))
+  } catch (e) {
+    console.warn('保存策略库缓存失败', e)
+  }
+}
+
+/**
+ * 将已废止策略追加到历史策略 localStorage
+ */
+function appendToArchivePool (recipe) {
+  try {
+    const raw = localStorage.getItem(ARCHIVE_STORAGE_KEY)
+    const pool = raw ? JSON.parse(raw) : []
+    // 避免重复
+    if (pool.some(a => a.id === recipe.id)) return
+    const archiveRecord = {
+      id: recipe.id,
+      no: recipe.id,
+      name: recipe.name,
+      type: recipe.model === '分时段调光' ? 'time' : recipe.model === '恒定亮度' ? 'time' : 'coordinate',
+      action: recipe.brightness === 100 ? 'on' : 'dim',
+      brightness: recipe.brightness,
+      executeTime: recipe.effectTime,
+      deviceCount: recipe.coverage,
+      enabled: false,
+      status: '已废止',
+      archiveDate: recipe.effectTime || new Date().toISOString().slice(0, 10),
+      startDate: recipe.effectTime,
+      endDate: '2099-12-31',
+      description: recipe.remark || `${recipe.name}（由策略库废止产生）`
+    }
+    pool.push(archiveRecord)
+    localStorage.setItem(ARCHIVE_STORAGE_KEY, JSON.stringify(pool))
+  } catch (e) {
+    console.warn('写入历史策略缓存失败', e)
+  }
+}
+
 // ---- 初始 mock 数据池 ----
-const initialRecipes = [
+const initialRecipes = loadVaultPool() || [
   {
     id: 1,
     no: 1,
@@ -553,6 +613,7 @@ const onCommitVaultDraft = async () => {
     vaultCtl.reviseRecord(origin.id, { ...snapshot })
     ElMessage.success('策略档案已更新')
   }
+  saveVaultPool()
 }
 
 /**
@@ -568,13 +629,14 @@ const onToggleVault = (recipe) => {
   )
     .then(() => {
       vaultCtl.reviseRecord(recipe.id, { status: nextStatus })
+      saveVaultPool()
       ElMessage.success(`策略已${nextStatus === '启用' ? '启用' : '停用'}，策略回执已签收`)
     })
     .catch(() => {})
 }
 
 /**
- * 废止策略：二次确认后从台账中移除
+ * 废止策略：二次确认后从台账中移除，并写入历史策略
  * @param {Object} recipe 目标策略
  */
 const onRetireVault = (recipe) => {
@@ -584,8 +646,10 @@ const onRetireVault = (recipe) => {
     { type: 'warning' }
   )
     .then(() => {
+      appendToArchivePool(recipe)
       vaultCtl.retireRecord(recipe.id)
-      ElMessage.success('策略已废止，台账已同步')
+      saveVaultPool()
+      ElMessage.success('策略已废止，已同步至历史策略')
     })
     .catch(() => {})
 }

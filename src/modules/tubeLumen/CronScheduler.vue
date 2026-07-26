@@ -131,7 +131,7 @@
 
     <el-drawer
       :title="scheduleInspector.loading ? '加载中...' : '时段详情'"
-      :visible="scheduleInspector.drawerOpen"
+      v-model="scheduleInspector.drawerOpen"
       :size="scheduleInspector.drawerSize"
       :direction="scheduleInspector.drawerDirection"
       @close="scheduleInspector.closeInspector()"
@@ -158,7 +158,7 @@
 
     <el-drawer
       :title="scheduleForm.editMode === 'compose' ? '编排时段' : '修订时段'"
-      :visible="scheduleForm.drawerOpen"
+      v-model="scheduleForm.drawerOpen"
       :size="'560px'"
       direction="rtl"
       @close="scheduleForm.onDraftDiscard()"
@@ -267,8 +267,6 @@ const onCommitScheduleDraft = async () => {
 const onToggleSchedule = (slot) => {
   const targetStatus = slot.status === '在役' ? '停用' : '在役'
   ElMessageBox.confirm(`确定要${targetStatus === '在役' ? '启用' : '停用'}此时段吗？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
     scheduleCtl.reviseRecord(slot.id, { status: targetStatus })
@@ -282,8 +280,6 @@ const onToggleSchedule = (slot) => {
  */
 const onRetireSchedule = (slot) => {
   ElMessageBox.confirm('确定要废止此时段吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
     scheduleCtl.retireRecord(slot.id)

@@ -167,46 +167,16 @@ const routes = [
     meta: { title: '烟感监测' }
   },
   {
-    path: '/scenarioOrch/presetConsole',
-    name: 'scenarioOrch.presetConsole',
-    component: () => import('@/modules/scenarioOrch/PresetConsole.vue'),
-    meta: { title: '预案管理' }
+    path: '/scenarioOrch/quickOperation',
+    name: 'scenarioOrch.quickOperation',
+    component: () => import('@/modules/scenarioOrch/QuickOperation.vue'),
+    meta: { title: '快捷操作' }
   },
   {
-    path: '/scenarioOrch/presetLibrary',
-    name: 'scenarioOrch.presetLibrary',
-    component: () => import('@/modules/scenarioOrch/PresetLibrary.vue'),
-    meta: { title: '预案库' }
-  },
-  {
-    path: '/scenarioOrch/presetLinkage',
-    name: 'scenarioOrch.presetLinkage',
-    component: () => import('@/modules/scenarioOrch/PresetLinkage.vue'),
-    meta: { title: '预案联动' }
-  },
-  {
-    path: '/scenarioOrch/linkageManager',
-    name: 'scenarioOrch.linkageManager',
-    component: () => import('@/modules/scenarioOrch/LinkageManager.vue'),
-    meta: { title: '联动管理' }
-  },
-  {
-    path: '/scenarioOrch/presetTemplate',
-    name: 'scenarioOrch.presetTemplate',
-    component: () => import('@/modules/scenarioOrch/PresetTemplate.vue'),
-    meta: { title: '预案模板' }
-  },
-  {
-    path: '/scenarioOrch/presetTrigger',
-    name: 'scenarioOrch.presetTrigger',
-    component: () => import('@/modules/scenarioOrch/PresetTrigger.vue'),
-    meta: { title: '触发器' }
-  },
-  {
-    path: '/scenarioOrch/presetSchedule',
-    name: 'scenarioOrch.presetSchedule',
-    component: () => import('@/modules/scenarioOrch/PresetSchedule.vue'),
-    meta: { title: '定时计划' }
+    path: '/scenarioOrch/sceneLinkage',
+    name: 'scenarioOrch.sceneLinkage',
+    component: () => import('@/modules/scenarioOrch/SceneLinkage.vue'),
+    meta: { title: '场景联动' }
   },
   {
     path: '/opsTicket/dispatchPool',
@@ -214,18 +184,7 @@ const routes = [
     component: () => import('@/modules/opsTicket/DispatchPool.vue'),
     meta: { title: '工单池' }
   },
-  {
-    path: '/opsTicket/ticketCreate',
-    name: 'opsTicket.ticketCreate',
-    component: () => import('@/modules/opsTicket/TicketCreate.vue'),
-    meta: { title: '新建工单' }
-  },
-  {
-    path: '/opsTicket/ticketDetail/:id',
-    name: 'opsTicket.ticketDetail',
-    component: () => import('@/modules/opsTicket/TicketDetail.vue'),
-    meta: { title: '工单详情' }
-  },
+  
   {
     path: '/opsTicket/autoDispatch',
     name: 'opsTicket.autoDispatch',

@@ -137,7 +137,7 @@
 
     <el-drawer
       :title="tubeInspector.loading ? '加载中...' : '隧道详情'"
-      :visible="tubeInspector.drawerOpen"
+      v-model="tubeInspector.drawerOpen"
       :size="tubeInspector.drawerSize"
       :direction="tubeInspector.drawerDirection"
       @close="tubeInspector.closeInspector()"
@@ -165,7 +165,7 @@
 
     <el-drawer
       :title="tubeForm.editMode === 'compose' ? '编排隧道' : '修订隧道'"
-      :visible="tubeForm.drawerOpen"
+      v-model="tubeForm.drawerOpen"
       :size="'720px'"
       direction="rtl"
       @close="tubeForm.onDraftDiscard()"
@@ -478,8 +478,6 @@ const onCommitTubeDraft = async () => {
 const onToggleTube = (tube) => {
   const targetStatus = tube.status === '正常' ? '维护中' : '正常'
   ElMessageBox.confirm(`确定要将隧道状态变更为${targetStatus}吗？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
     tubeCtl.reviseRecord(tube.id, { status: targetStatus })
@@ -493,8 +491,6 @@ const onToggleTube = (tube) => {
  */
 const onRetireTube = (tube) => {
   ElMessageBox.confirm('确定要废止此隧道吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
     tubeCtl.retireRecord(tube.id)

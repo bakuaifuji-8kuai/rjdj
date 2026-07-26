@@ -130,7 +130,6 @@ export function usePresetTable(fetchApi = null, options = {}) {
   }
 
   return reactive({
-    // 状态
     presetPlaybook,
     pagingCursor,
     pageSpan,
@@ -141,7 +140,6 @@ export function usePresetTable(fetchApi = null, options = {}) {
     loadingSpin,
     focusedRow,
     pagedRows,
-    // 方法
     onFilterApply,
     onFilterReset,
     appendRecord,

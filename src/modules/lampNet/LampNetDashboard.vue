@@ -285,13 +285,12 @@
           <span class="zg-detail-drawer__value">{{ row.value }}</span>
         </div>
         <div v-if="drawerContent.type === 'alert'" class="zg-detail-drawer__actions">
-          <el-button type="primary" size="small">派发工单</el-button>
-          <el-button size="small">标记已读</el-button>
-          <el-button size="small" plain>关闭</el-button>
+          <el-button type="primary" size="small" @click="dispatchTicket">派发工单</el-button>
+          <el-button size="small" @click="markAlertRead">标记已读</el-button>
+          <el-button size="small" plain @click="closeDrawer">关闭</el-button>
         </div>
         <div v-if="drawerContent.type === 'kpi'" class="zg-detail-drawer__actions">
-          <el-button type="primary" size="small">查看趋势</el-button>
-          <el-button size="small" plain>导出报表</el-button>
+          <!-- 已移除：查看趋势、导出报表 -->
         </div>
       </div>
     </el-drawer>
@@ -365,6 +364,28 @@ function openAlertDetail (alert) {
     ]
   }
   drawerOpen.value = true
+}
+
+/**
+ * 派发工单：跳转至运维工单创建页
+ */
+function dispatchTicket () {
+  router.push('/opsTicket/ticketCreate')
+}
+
+/**
+ * 标记已读：提示并关闭抽屉
+ */
+function markAlertRead () {
+  ElMessage.success('告警已标记为已读')
+  drawerOpen.value = false
+}
+
+/**
+ * 关闭抽屉
+ */
+function closeDrawer () {
+  drawerOpen.value = false
 }
 
 /**
