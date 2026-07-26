@@ -13,10 +13,6 @@
           <el-icon><RefreshLeft /></el-icon>
           刷新数据
         </el-button>
-        <el-button type="primary" @click="portalForm.openComposer()">
-          <el-icon><Plus /></el-icon>
-          新增隧道
-        </el-button>
       </div>
     </header>
 
@@ -63,7 +59,6 @@
       <div class="zg-contentgrid__item tunnel-list">
         <div class="zg-panel__head">
           <h3>管廊列表</h3>
-          <el-button type="primary" size="small" @click="portalForm.openComposer()">新增隧道</el-button>
         </div>
         <el-table :data="portalCtl.pagedRows" border class="zg-table">
           <el-table-column prop="name" label="隧道名称" width="150" />
@@ -87,7 +82,6 @@
       <div class="zg-contentgrid__item environment-monitor">
         <div class="zg-panel__head">
           <h3>环境监测</h3>
-          <el-button type="text" size="small">查看详情</el-button>
         </div>
         <div class="zg-monitorgrid">
           <div class="zg-monitoritem">
@@ -116,7 +110,6 @@
       <div class="zg-contentgrid__item alarm-list">
         <div class="zg-panel__head">
           <h3>最新告警</h3>
-          <el-button type="text" size="small">全部告警</el-button>
         </div>
         <div class="zg-alarmitems">
           <div v-for="alarm in recentAlarms" :key="alarm.id" class="zg-alarmitem">
@@ -223,7 +216,7 @@
  */
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Guide, SuccessFilled, WarningFilled, PieChart, Warning, Plus, RefreshLeft } from '@element-plus/icons-vue'
+import { Guide, SuccessFilled, WarningFilled, PieChart, Warning, RefreshLeft } from '@element-plus/icons-vue'
 import { usePresetTable } from '@/shared/composables/usePresetTable'
 import { useFormDraft } from '@/shared/composables/useFormDraft'
 import { useDrawerInspector } from '@/shared/composables/useDrawerInspector'
@@ -276,20 +269,8 @@ const onRefreshData = () => {
 const onCommitTunnelDraft = async () => {
   const result = await portalForm.onDraftCommit()
   if (result) {
-    if (portalForm.editMode === 'compose') {
-      portalCtl.appendRecord({
-        id: Date.now(),
-        name: result.name,
-        location: result.region,
-        length: result.length,
-        status: '在线',
-        devices: Math.floor(Math.random() * 200) + 50
-      })
-      ElMessage.success('隧道编排成功')
-    } else {
-      portalCtl.reviseRecord(portalForm.originRecord.id, result)
-      ElMessage.success('隧道修订成功')
-    }
+    portalCtl.reviseRecord(portalForm.originRecord.id, result)
+    ElMessage.success('隧道修订成功')
   }
 }
 </script>
