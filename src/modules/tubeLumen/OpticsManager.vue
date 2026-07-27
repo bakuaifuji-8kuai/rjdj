@@ -27,7 +27,7 @@
         </el-button>
         <el-button
           type="danger"
-          :disabled="opticsCtl.presetPlaybook.filter(r => r.selected).length === 0"
+          :disabled="selectedRows.length === 0"
           @click="onBatchRetire"
         >
           <span>批量废止</span>
@@ -143,7 +143,7 @@
 
     <!-- 列表视图 -->
     <div v-else class="zg-tablewrap">
-      <el-table :data="opticsCtl.pagedRows" stripe class="zg-datatable">
+      <el-table :data="opticsCtl.pagedRows" stripe class="zg-datatable" @selection-change="onSelectionChange">
         <el-table-column type="selection" width="50" align="center" />
         <el-table-column prop="no" label="序号" width="60" align="center" />
         <el-table-column prop="product" label="所属产品" width="130" />
@@ -333,6 +333,12 @@ import { useDrawerInspector } from '@/shared/composables/useDrawerInspector'
 // ---- 视图密度切换 ----
 const densityMode = ref('card')
 
+// ---- 选中行 ----
+const selectedRows = ref([])
+const onSelectionChange = (rows) => {
+  selectedRows.value = rows
+}
+
 // ---- 初始 mock 数据池 ----
 const initialOptics = [
   {
@@ -507,21 +513,21 @@ const onRetireOptic = (optic) => {
  * 批量废止：二次确认后批量移除选中光源
  */
 const onBatchRetire = () => {
-  const selectedRows = opticsCtl.presetPlaybook.filter(r => r.selected)
-  if (selectedRows.length === 0) {
+  if (selectedRows.value.length === 0) {
     ElMessage.warning('请先选择要废止的光源')
     return
   }
 
   ElMessageBox.confirm(
-    `确定要废止选中的 ${selectedRows.length} 个光源吗？`,
+    `确定要废止选中的 ${selectedRows.value.length} 个光源吗？`,
     '批量废止确认',
     { type: 'warning' }
   )
     .then(() => {
-      selectedRows.forEach(optic => {
+      selectedRows.value.forEach(optic => {
         opticsCtl.retireRecord(optic.id)
       })
+      selectedRows.value = []
       ElMessage.success('批量废止完成，台账已同步')
     })
     .catch(() => {})

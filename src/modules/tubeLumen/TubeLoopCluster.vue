@@ -9,7 +9,7 @@
         <p class="zg-loopcluster__subtitle">管廊照明链路分组管理与配置</p>
       </div>
       <div class="zg-loopcluster__actions">
-        <el-button type="danger" @click="onBatchRetire">
+        <el-button type="danger" :disabled="selectedClusters.length === 0" @click="onBatchRetire">
           <el-icon :size="16"><Delete /></el-icon>
           批量删除
         </el-button>
@@ -38,7 +38,7 @@
     </div>
 
     <div class="zg-tablewrap">
-      <el-table :data="clusterCtl.pagedRows" border class="zg-datatable">
+      <el-table :data="clusterCtl.pagedRows" border class="zg-datatable" @selection-change="onSelectionChange">
         <el-table-column type="selection" width="50" />
         <el-table-column prop="id" label="序号" width="60" align="center" />
         <el-table-column prop="name" label="分组名称" min-width="120" />
@@ -143,6 +143,7 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import {
   Connection,
   Plus,
@@ -154,6 +155,11 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePresetTable } from '@/shared/composables/usePresetTable'
 import { useFormDraft } from '@/shared/composables/useFormDraft'
 import { useDrawerInspector } from '@/shared/composables/useDrawerInspector'
+
+const selectedClusters = ref([])
+const onSelectionChange = (rows) => {
+  selectedClusters.value = rows
+}
 
 const initialClusters = [
   { id: 1, name: '入口段照明组', circuitCount: 2, deviceCount: 48, status: '正常', createTime: '2024-05-18 10:00' },
@@ -208,7 +214,22 @@ const onClusterRetire = (row) => {
 }
 
 const onBatchRetire = () => {
-  ElMessage.info('批量删除功能开发中')
+  if (selectedClusters.value.length === 0) {
+    ElMessage.warning('请先选择要删除的分组')
+    return
+  }
+
+  ElMessageBox.confirm(
+    `确定要删除选中的 ${selectedClusters.value.length} 个分组吗？`,
+    '批量删除确认',
+    { type: 'warning', confirmButtonClass: 'el-button--danger' }
+  ).then(() => {
+    selectedClusters.value.forEach(cluster => {
+      clusterCtl.retireRecord(cluster.id)
+    })
+    selectedClusters.value = []
+    ElMessage.success('批量删除成功')
+  })
 }
 
 const onCommitDraft = async () => {
