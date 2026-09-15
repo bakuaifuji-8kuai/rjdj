@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [软著核心代码] LianLuMapper.xml - 链路表自定义 SQL -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zgsq.illumination.lianlu.mapper.LianLuMapper">
+
+    <!-- 按编号查 -->
+    <select id="selectByNo" resultType="com.zgsq.illumination.lianlu.entity.LianLu">
+        SELECT * FROM t_zgsq_lian_lu
+        WHERE lian_lu_no = #{lianLuNo} AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <!-- 统计某管廊下链路数量 -->
+    <select id="countByGuanLangId" resultType="int">
+        SELECT COUNT(*) FROM t_zgsq_lian_lu
+        WHERE guan_lang_id = #{guanLangId} AND deleted = 0
+    </select>
+
+    <!-- 查同管廊下当前最大链路序号：LL-{guanLangNo}-XX -->
+    <select id="selectMaxSeqByGuanLangNo" resultType="int">
+        SELECT COALESCE(MAX(CAST(SUBSTRING_INDEX(lian_lu_no, '-', -1) AS UNSIGNED)), 0)
+        FROM t_zgsq_lian_lu
+        WHERE lian_lu_no LIKE CONCAT('LL-', #{guanLangNo}, '-%') AND deleted = 0
+    </select>
+
+    <!-- 条件分页查询（联表带出管廊名称） -->
+    <select id="selectPageList" resultType="com.zgsq.illumination.lianlu.entity.LianLu">
+        SELECT ll.*, gl.guan_lang_name AS guanLangName
+        FROM t_zgsq_lian_lu ll
+        LEFT JOIN t_zgsq_guan_lang gl ON ll.guan_lang_id = gl.guan_lang_id AND gl.deleted = 0
+        WHERE ll.deleted = 0
+        <if test="lianLuNo != null and lianLuNo != ''">
+            AND ll.lian_lu_no LIKE CONCAT('%', #{lianLuNo}, '%')
+        </if>
+        <if test="lianLuName != null and lianLuName != ''">
+            AND ll.lian_lu_name LIKE CONCAT('%', #{lianLuName}, '%')
+        </if>
+        <if test="lianLuStatus != null">
+            AND ll.lian_lu_status = #{lianLuStatus}
+        </if>
+        <if test="guanLangId != null">
+            AND ll.guan_lang_id = #{guanLangId}
+        </if>
+        ORDER BY ll.lian_lu_id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectPageCount" resultType="long">
+        SELECT COUNT(*) FROM t_zgsq_lian_lu ll
+        WHERE ll.deleted = 0
+        <if test="lianLuNo != null and lianLuNo != ''">
+            AND ll.lian_lu_no LIKE CONCAT('%', #{lianLuNo}, '%')
+        </if>
+        <if test="lianLuName != null and lianLuName != ''">
+            AND ll.lian_lu_name LIKE CONCAT('%', #{lianLuName}, '%')
+        </if>
+        <if test="lianLuStatus != null">
+            AND ll.lian_lu_status = #{lianLuStatus}
+        </if>
+        <if test="guanLangId != null">
+            AND ll.guan_lang_id = #{guanLangId}
+        </if>
+    </select>
+
+    <!-- 按管廊 ID 查链路列表（树形导航） -->
+    <select id="selectByGuanLangId" resultType="com.zgsq.illumination.lianlu.entity.LianLu">
+        SELECT * FROM t_zgsq_lian_lu
+        WHERE guan_lang_id = #{guanLangId} AND deleted = 0
+        ORDER BY lian_lu_id ASC
+    </select>
+
+</mapper>

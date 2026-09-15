@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [软著核心代码] UserMapper.xml - 用户表自定义 SQL -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zgsq.illumination.user.mapper.UserMapper">
+
+    <!-- 基础列清单（去了 user_password，避免直接透出） -->
+    <sql id="user_cols_no_pwd">
+        user_id, user_name, user_real_name, user_phone, user_email,
+        role_id, user_status, create_time, update_time
+    </sql>
+
+    <!-- 根据登录账号查询（唯一索引保证最多 1 条） -->
+    <select id="selectByUserName" resultType="com.zgsq.illumination.user.entity.User">
+        SELECT * FROM t_zgsq_user
+        WHERE user_name = #{userName} AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <!-- 条件分页查询：LEFT JOIN 带出角色名 -->
+    <select id="selectPageList" resultType="com.zgsq.illumination.user.entity.User">
+        SELECT u.*, r.role_name AS userRoleName
+        FROM t_zgsq_user u
+        LEFT JOIN t_zgsq_role r ON u.role_id = r.role_id AND r.deleted = 0
+        WHERE u.deleted = 0
+        <if test="userName != null and userName != ''">
+            AND u.user_name LIKE CONCAT('%', #{userName}, '%')
+        </if>
+        <if test="userStatus != null">
+            AND u.user_status = #{userStatus}
+        </if>
+        <if test="userRealName != null and userRealName != ''">
+            AND u.user_real_name LIKE CONCAT('%', #{userRealName}, '%')
+        </if>
+        ORDER BY u.user_id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 条件统计 -->
+    <select id="selectPageCount" resultType="long">
+        SELECT COUNT(*) FROM t_zgsq_user u
+        WHERE u.deleted = 0
+        <if test="userName != null and userName != ''">
+            AND u.user_name LIKE CONCAT('%', #{userName}, '%')
+        </if>
+        <if test="userStatus != null">
+            AND u.user_status = #{userStatus}
+        </if>
+        <if test="userRealName != null and userRealName != ''">
+            AND u.user_real_name LIKE CONCAT('%', #{userRealName}, '%')
+        </if>
+    </select>
+
+</mapper>

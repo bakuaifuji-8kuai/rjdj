@@ -1,0 +1,55 @@
+/* [软著核心代码] LianLuController.java - 链路管理 REST 控制器 */
+package com.zgsq.illumination.lianlu.controller;
+
+import com.zgsq.illumination.common.PageResult;
+import com.zgsq.illumination.common.Result;
+import com.zgsq.illumination.lianlu.dto.LianLuDTO;
+import com.zgsq.illumination.lianlu.service.LianLuService;
+import com.zgsq.illumination.lianlu.vo.LianLuVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * 链路管理 REST 控制器
+ *
+ * @author 智光云枢研发部
+ * @since 1.0.0
+ */
+@RestController
+@RequestMapping("/api/lianlu")
+public class LianLuController {
+
+    @Autowired
+    private LianLuService lianLuService;
+
+    @PostMapping("/add")
+    public Result<Long> add(@Validated @RequestBody LianLuDTO.LianLuAddDTO dto) {
+        return Result.ok(lianLuService.addLianLu(dto));
+    }
+
+    @PutMapping("/update")
+    public Result<Void> update(@RequestBody LianLuDTO.LianLuUpdateDTO dto) {
+        lianLuService.updateLianLu(dto);
+        return Result.ok();
+    }
+
+    @DeleteMapping("/delete")
+    public Result<Void> delete(@RequestParam Long lianLuId) {
+        lianLuService.deleteLianLu(lianLuId);
+        return Result.ok();
+    }
+
+    @GetMapping("/page")
+    public Result<PageResult<LianLuVO>> page(LianLuDTO.LianLuQueryDTO query) {
+        return Result.ok(lianLuService.pageLianLu(query));
+    }
+
+    /** 按管廊 ID 查询所有链路（树形导航用） */
+    @GetMapping("/listByGuanLang/{guanLangId}")
+    public Result<List<LianLuVO>> listByGuanLang(@PathVariable("guanLangId") Long guanLangId) {
+        return Result.ok(lianLuService.listByGuanLang(guanLangId));
+    }
+}

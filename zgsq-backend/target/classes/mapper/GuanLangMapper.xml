@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [软著核心代码] GuanLangMapper.xml - 管廊表自定义 SQL -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zgsq.illumination.guanlang.mapper.GuanLangMapper">
+
+    <!-- 按编号查（唯一性校验、详情） -->
+    <select id="selectByNo" resultType="com.zgsq.illumination.guanlang.entity.GuanLang">
+        SELECT * FROM t_zgsq_guan_lang
+        WHERE guan_lang_no = #{guanLangNo} AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <!-- 查询同城市下当前最大序号：GL-{city}-XXXX 中 XXXX 的最大值 -->
+    <select id="selectMaxSeqByCity" resultType="int">
+        SELECT COALESCE(MAX(CAST(
+            SUBSTRING_INDEX(SUBSTRING_INDEX(guan_lang_no, '-', 3), '-', -1) AS UNSIGNED
+        )), 0)
+        FROM t_zgsq_guan_lang
+        WHERE guan_lang_no LIKE CONCAT('GL-', #{cityName}, '-%') AND deleted = 0
+    </select>
+
+    <!-- 按状态列表筛选 -->
+    <select id="selectByStatusList" resultType="com.zgsq.illumination.guanlang.entity.GuanLang">
+        SELECT * FROM t_zgsq_guan_lang
+        WHERE deleted = 0 AND guan_lang_status IN
+        <foreach collection="statusList" item="s" open="(" separator="," close=")">
+            #{s}
+        </foreach>
+        ORDER BY guan_lang_id DESC
+    </select>
+
+    <!-- GIS 范围查询（bounding box 粗过滤，精确过滤由 Service 层 haversine 再做） -->
+    <select id="selectByGisRange" resultType="com.zgsq.illumination.guanlang.entity.GuanLang">
+        SELECT * FROM t_zgsq_guan_lang
+        WHERE deleted = 0
+          AND gis_coord IS NOT NULL
+          -- 经度粗过滤：SUBSTRING_INDEX("[116.4,39.9]", ",", 1) = 116.4
+          AND CAST(SUBSTRING_INDEX(SUBSTRING(gis_coord, 2), ',', 1) AS DECIMAL(10,6)) BETWEEN #{minLon} AND #{maxLon}
+          -- 纬度粗过滤
+          AND CAST(SUBSTRING_INDEX(SUBSTRING(gis_coord, 2), ',', -1) AS DECIMAL(10,6)) BETWEEN #{minLat} AND #{maxLat}
+        ORDER BY guan_lang_id DESC
+    </select>
+
+    <!-- 条件分页查询 -->
+    <select id="selectPageList" resultType="com.zgsq.illumination.guanlang.entity.GuanLang">
+        SELECT * FROM t_zgsq_guan_lang
+        WHERE deleted = 0
+        <if test="guanLangNo != null and guanLangNo != ''">
+            AND guan_lang_no LIKE CONCAT('%', #{guanLangNo}, '%')
+        </if>
+        <if test="guanLangName != null and guanLangName != ''">
+            AND guan_lang_name LIKE CONCAT('%', #{guanLangName}, '%')
+        </if>
+        <if test="guanLangStatus != null">
+            AND guan_lang_status = #{guanLangStatus}
+        </if>
+        <if test="belongDistrict != null and belongDistrict != ''">
+            AND belong_district LIKE CONCAT('%', #{belongDistrict}, '%')
+        </if>
+        ORDER BY guan_lang_id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 条件统计 -->
+    <select id="selectPageCount" resultType="long">
+        SELECT COUNT(*) FROM t_zgsq_guan_lang
+        WHERE deleted = 0
+        <if test="guanLangNo != null and guanLangNo != ''">
+            AND guan_lang_no LIKE CONCAT('%', #{guanLangNo}, '%')
+        </if>
+        <if test="guanLangName != null and guanLangName != ''">
+            AND guan_lang_name LIKE CONCAT('%', #{guanLangName}, '%')
+        </if>
+        <if test="guanLangStatus != null">
+            AND guan_lang_status = #{guanLangStatus}
+        </if>
+        <if test="belongDistrict != null and belongDistrict != ''">
+            AND belong_district LIKE CONCAT('%', #{belongDistrict}, '%')
+        </if>
+    </select>
+
+</mapper>

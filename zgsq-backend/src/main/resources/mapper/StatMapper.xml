@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [软著核心代码] StatMapper.xml - 数据统计自定义 SQL（全部原生聚合） -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zgsq.illumination.stat.mapper.StatMapper">
+
+    <!-- 管廊总数 -->
+    <select id="countGuanLang" resultType="long">
+        SELECT COUNT(*) FROM t_zgsq_guan_lang WHERE deleted = 0
+    </select>
+
+    <!-- 链路总数 -->
+    <select id="countLianLu" resultType="long">
+        SELECT COUNT(*) FROM t_zgsq_lian_lu WHERE deleted = 0
+    </select>
+
+    <!-- 配光组总数 -->
+    <select id="countPeiGuang" resultType="long">
+        SELECT COUNT(*) FROM t_zgsq_pei_guang WHERE deleted = 0
+    </select>
+
+    <!-- 启用中的定时调度数 -->
+    <select id="countActiveDingshi" resultType="long">
+        SELECT COUNT(*) FROM t_zgsq_ding_shi WHERE ding_shi_status = 0
+    </select>
+
+    <!-- 维护中的管廊数（status=1） -->
+    <select id="countMaintainGuanLang" resultType="long">
+        SELECT COUNT(*) FROM t_zgsq_guan_lang
+        WHERE deleted = 0 AND guan_lang_status = 1
+    </select>
+
+    <!-- 今日告警数（表不存在则返回 0，防止 Dashboard 报错） -->
+    <select id="countTodayAlarm" resultType="long">
+        SELECT 0
+    </select>
+
+    <!-- 按行政区分组统计管廊数量 -->
+    <select id="groupByDistrict" resultType="com.zgsq.illumination.stat.vo.StatVO$StatItem">
+        SELECT belong_district AS groupName, COUNT(*) AS count
+        FROM t_zgsq_guan_lang
+        WHERE deleted = 0 AND belong_district IS NOT NULL AND belong_district != ''
+        GROUP BY belong_district
+        ORDER BY count DESC
+    </select>
+
+    <!-- 按状态分组统计管廊数量（把 0/1/2 转为中文） -->
+    <select id="groupByStatus" resultType="com.zgsq.illumination.stat.vo.StatVO$StatItem">
+        SELECT CASE guan_lang_status
+                   WHEN 0 THEN '正常'
+                   WHEN 1 THEN '维护中'
+                   WHEN 2 THEN '停用'
+                   ELSE '未知'
+               END AS groupName,
+               COUNT(*) AS count
+        FROM t_zgsq_guan_lang
+        WHERE deleted = 0
+        GROUP BY guan_lang_status
+        ORDER BY guan_lang_status ASC
+    </select>
+
+</mapper>

@@ -1,0 +1,32 @@
+/* [软著核心代码] OpLogController.java - 操作日志查询 REST 控制器 */
+package com.zgsq.illumination.oplog.controller;
+
+import com.zgsq.illumination.common.PageResult;
+import com.zgsq.illumination.common.Result;
+import com.zgsq.illumination.oplog.dto.OpLogDTO;
+import com.zgsq.illumination.oplog.service.OpLogService;
+import com.zgsq.illumination.oplog.vo.OpLogVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 操作日志查询 REST 控制器
+ *
+ * @author 智光云枢研发部
+ * @since 1.0.0
+ */
+@RestController
+@RequestMapping("/api/oplog")
+public class OpLogController {
+
+    @Autowired
+    private OpLogService opLogService;
+
+    /** 分页查询操作日志（只读） */
+    @GetMapping("/page")
+    public Result<PageResult<OpLogVO>> page(OpLogDTO query) {
+        return Result.ok(opLogService.pageOpLog(query));
+    }
+}

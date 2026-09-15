@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [软著核心代码] PeiGuangMapper.xml - 配光组表自定义 SQL -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zgsq.illumination.peiguang.mapper.PeiGuangMapper">
+
+    <select id="selectByNo" resultType="com.zgsq.illumination.peiguang.entity.PeiGuang">
+        SELECT * FROM t_zgsq_pei_guang
+        WHERE pei_guang_no = #{peiGuangNo} AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <select id="countByLianLuId" resultType="int">
+        SELECT COUNT(*) FROM t_zgsq_pei_guang
+        WHERE lian_lu_id = #{lianLuId} AND deleted = 0
+    </select>
+
+    <select id="selectMaxSeqByLianLuNo" resultType="int">
+        SELECT COALESCE(MAX(CAST(SUBSTRING_INDEX(pei_guang_no, '-', -1) AS UNSIGNED)), 0)
+        FROM t_zgsq_pei_guang
+        WHERE pei_guang_no LIKE CONCAT('PG-', #{lianLuNo}, '-%') AND deleted = 0
+    </select>
+
+    <select id="selectPageList" resultType="com.zgsq.illumination.peiguang.entity.PeiGuang">
+        SELECT pg.*, ll.lian_lu_name AS lianLuName, gl.guan_lang_name AS guanLangName
+        FROM t_zgsq_pei_guang pg
+        LEFT JOIN t_zgsq_lian_lu ll ON pg.lian_lu_id = ll.lian_lu_id AND ll.deleted = 0
+        LEFT JOIN t_zgsq_guan_lang gl ON pg.guan_lang_id = gl.guan_lang_id AND gl.deleted = 0
+        WHERE pg.deleted = 0
+        <if test="peiGuangNo != null and peiGuangNo != ''">
+            AND pg.pei_guang_no LIKE CONCAT('%', #{peiGuangNo}, '%')
+        </if>
+        <if test="peiGuangName != null and peiGuangName != ''">
+            AND pg.pei_guang_name LIKE CONCAT('%', #{peiGuangName}, '%')
+        </if>
+        <if test="peiGuangStatus != null">
+            AND pg.pei_guang_status = #{peiGuangStatus}
+        </if>
+        <if test="peiGuangType != null">
+            AND pg.pei_guang_type = #{peiGuangType}
+        </if>
+        <if test="lianLuId != null">
+            AND pg.lian_lu_id = #{lianLuId}
+        </if>
+        <if test="guanLangId != null">
+            AND pg.guan_lang_id = #{guanLangId}
+        </if>
+        ORDER BY pg.pei_guang_id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectPageCount" resultType="long">
+        SELECT COUNT(*) FROM t_zgsq_pei_guang pg
+        WHERE pg.deleted = 0
+        <if test="peiGuangNo != null and peiGuangNo != ''">
+            AND pg.pei_guang_no LIKE CONCAT('%', #{peiGuangNo}, '%')
+        </if>
+        <if test="peiGuangName != null and peiGuangName != ''">
+            AND pg.pei_guang_name LIKE CONCAT('%', #{peiGuangName}, '%')
+        </if>
+        <if test="peiGuangStatus != null">
+            AND pg.pei_guang_status = #{peiGuangStatus}
+        </if>
+        <if test="peiGuangType != null">
+            AND pg.pei_guang_type = #{peiGuangType}
+        </if>
+        <if test="lianLuId != null">
+            AND pg.lian_lu_id = #{lianLuId}
+        </if>
+        <if test="guanLangId != null">
+            AND pg.guan_lang_id = #{guanLangId}
+        </if>
+    </select>
+
+    <select id="selectByLianLuId" resultType="com.zgsq.illumination.peiguang.entity.PeiGuang">
+        SELECT * FROM t_zgsq_pei_guang
+        WHERE lian_lu_id = #{lianLuId} AND deleted = 0
+        ORDER BY pei_guang_id ASC
+    </select>
+
+</mapper>

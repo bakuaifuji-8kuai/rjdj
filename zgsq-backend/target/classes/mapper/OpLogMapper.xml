@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [软著核心代码] OpLogMapper.xml - 操作日志表自定义 SQL -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zgsq.illumination.oplog.mapper.OpLogMapper">
+
+    <!-- 条件分页查询（按时间倒序，越新越靠前） -->
+    <select id="selectPageList" resultType="com.zgsq.illumination.oplog.entity.OpLog">
+        SELECT * FROM t_zgsq_op_log
+        WHERE 1 = 1
+        <if test="opModule != null and opModule != ''">
+            AND op_module LIKE CONCAT('%', #{opModule}, '%')
+        </if>
+        <if test="opUserName != null and opUserName != ''">
+            AND op_user_name LIKE CONCAT('%', #{opUserName}, '%')
+        </if>
+        <if test="startTime != null">
+            AND op_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND op_time &lt;= #{endTime}
+        </if>
+        ORDER BY op_time DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectPageCount" resultType="long">
+        SELECT COUNT(*) FROM t_zgsq_op_log
+        WHERE 1 = 1
+        <if test="opModule != null and opModule != ''">
+            AND op_module LIKE CONCAT('%', #{opModule}, '%')
+        </if>
+        <if test="opUserName != null and opUserName != ''">
+            AND op_user_name LIKE CONCAT('%', #{opUserName}, '%')
+        </if>
+        <if test="startTime != null">
+            AND op_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND op_time &lt;= #{endTime}
+        </if>
+    </select>
+
+</mapper>
