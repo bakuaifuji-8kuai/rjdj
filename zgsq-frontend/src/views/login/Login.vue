@@ -96,10 +96,11 @@ const loginFormRef = ref(null)
 const loginLoading = ref(false)
 
 // 登录表单数据（用 reactive 让整个对象响应式）
+// 默认预填管理员账号密码，方便首次进入直接点登录
 const loginForm = reactive({
-  userName: '',     // 用户名
-  password: '',     // 密码
-  rememberMe: false // 是否记住我（可扩展为记住用户名）
+  userName: 'admin',     // 用户名：默认预填 admin
+  password: 'admin123',  // 密码：默认预填 admin123
+  rememberMe: true       // 默认勾选"记住我"
 })
 
 // ========== 表单校验规则 ==========

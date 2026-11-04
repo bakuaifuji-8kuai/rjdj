@@ -28,7 +28,7 @@
   --zg-amber-600: #d97706;
   --zg-amber-700: #b45309;
 
-  /* === 语义色 === */
+  /* === 语义色（全称） === */
   --zg-emerald-success: #059669;
   --zg-emerald-soft: #d1fae5;
   --zg-emerald-50: #ecfdf5;
@@ -38,6 +38,23 @@
   --zg-sky-info: #0284c7;
   --zg-sky-soft: #e0f2fe;
   --zg-sky-50: #f0f9ff;
+
+  /* === 语义色（简写别名，供 opsOrg 等模块消费） === */
+  --zg-success: var(--zg-emerald-success);
+  --zg-success-soft: var(--zg-emerald-soft);
+  --zg-warning: var(--zg-amber-glow);
+  --zg-warning-soft: var(--zg-amber-soft);
+  --zg-danger: var(--zg-rose-danger);
+  --zg-danger-soft: var(--zg-rose-soft);
+  --zg-info: var(--zg-sky-info);
+  --zg-info-soft: var(--zg-sky-soft);
+
+  /* === 品牌主色别名 === */
+  --zg-brand-primary: var(--zg-amber-glow);
+  --zg-brand-deep: var(--zg-amber-deep);
+  --zg-brand-soft: var(--zg-amber-soft);
+  --zg-brand-tint-50: var(--zg-amber-50);
+  --zg-line-brand: var(--zg-amber-200);
 
   /* === 表面与层级 === */
   --zg-surface-base: var(--zg-canvas-mist);

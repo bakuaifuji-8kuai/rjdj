@@ -1,5 +1,6 @@
 package com.zgsq.illumination.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zgsq.illumination.common.PageQuery;
 import java.io.Serializable;
 
@@ -14,6 +15,8 @@ public class UserDTO {
     public static class LoginDTO implements Serializable {
         private static final long serialVersionUID = 1L;
         private String userName;
+        /** 前端字段名为 password，使用 @JsonProperty 兼容 */
+        @JsonProperty("password")
         private String userPassword;
 
         // ========== 手动生成: getter / setter ==========

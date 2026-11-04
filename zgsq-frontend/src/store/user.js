@@ -43,9 +43,9 @@ export const useUserStore = defineStore('user', () => {
    */
   const login = async (payload) => {
     const res = await userApi.login(payload)
-    // 后端返回格式：{ token, userInfo }
+    // 后端返回格式：{ token, user }
     setToken(res.token)
-    setUserInfo(res.userInfo)
+    setUserInfo(res.user)
     isLoggedIn.value = true
     return res
   }

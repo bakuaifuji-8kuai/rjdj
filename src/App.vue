@@ -4,97 +4,108 @@
 -->
 <template>
   <div class="zg-shell">
-    <aside class="zg-shell__rail" :class="{ 'zg-shell__rail--folded': isFolded }">
-      <div class="zg-brand">
-        <div class="zg-brand__sigil">
-          <el-icon :size="32"><Connection /></el-icon>
-        </div>
-        <transition name="zg-fade">
-          <div v-show="!isFolded" class="zg-brand__copy">
-            <div class="zg-brand__cn">智光云枢</div>
-            <div class="zg-brand__en">ZhiGuangCloud Hub</div>
+    <template v-if="isLoggedIn">
+      <aside class="zg-shell__rail" :class="{ 'zg-shell__rail--folded': isFolded }">
+        <div class="zg-brand">
+          <div class="zg-brand__sigil">
+            <el-icon :size="32"><Connection /></el-icon>
           </div>
-        </transition>
-      </div>
+          <transition name="zg-fade">
+            <div v-show="!isFolded" class="zg-brand__copy">
+              <div class="zg-brand__cn">智光云枢</div>
+              <div class="zg-brand__en">ZhiGuangCloud Hub</div>
+            </div>
+          </transition>
+        </div>
 
-      <nav class="zg-railnav">
-        <el-menu
-          :default-active="activeEntry"
-          mode="vertical"
-          class="zg-railnav__menu"
-          :collapse="isFolded"
-          background-color="transparent"
-          text-color="#cbd5e1"
-          active-text-color="#ffffff"
-        >
-          <template v-for="entry in navList" :key="entry.path">
-            <el-sub-menu :index="entry.path">
-              <template #title>
-                <span class="zg-railnav__glyph">
-                  <el-icon :size="18"><component :is="entry.icon" /></el-icon>
-                </span>
-                <span class="zg-railnav__label">{{ entry.name }}</span>
-              </template>
-              <template v-for="leaf in entry.children" :key="leaf.path">
-                <el-menu-item
-                  :index="leaf.path"
-                  @click="navigateTo(leaf.path)"
-                >
-                  {{ leaf.name }}
-                </el-menu-item>
-              </template>
-            </el-sub-menu>
-          </template>
-        </el-menu>
-      </nav>
+        <nav class="zg-railnav">
+          <el-menu
+            :default-active="activeEntry"
+            mode="vertical"
+            class="zg-railnav__menu"
+            :collapse="isFolded"
+            background-color="transparent"
+            text-color="#cbd5e1"
+            active-text-color="#ffffff"
+          >
+            <template v-for="entry in navList" :key="entry.path">
+              <el-sub-menu :index="entry.path">
+                <template #title>
+                  <span class="zg-railnav__glyph">
+                    <el-icon :size="18"><component :is="entry.icon" /></el-icon>
+                  </span>
+                  <span class="zg-railnav__label">{{ entry.name }}</span>
+                </template>
+                <template v-for="leaf in entry.children" :key="leaf.path">
+                  <el-menu-item
+                    :index="leaf.path"
+                    @click="navigateTo(leaf.path)"
+                  >
+                    {{ leaf.name }}
+                  </el-menu-item>
+                </template>
+              </el-sub-menu>
+            </template>
+          </el-menu>
+        </nav>
 
-      <div class="zg-foldtoggle" @click="isFolded = !isFolded">
-        <el-icon :size="16">
-          <component :is="isFolded ? ArrowRight : ArrowLeft" />
-        </el-icon>
-      </div>
-    </aside>
+        <div class="zg-foldtoggle" @click="isFolded = !isFolded">
+          <el-icon :size="16">
+            <component :is="isFolded ? ArrowRight : ArrowLeft" />
+          </el-icon>
+        </div>
+      </aside>
 
-    <main class="zg-shell__stage">
-      <header class="zg-topbar">
-        <div class="zg-topbar__lead">
-          <div class="zg-topbar__sigil">ZGH</div>
-          <div class="zg-topbar__copy">
-            <div class="zg-topbar__title">智光云枢 · 城市照明物联管控平台</div>
-            <div class="zg-topbar__hint">
-              <span class="zg-pulse"></span>
-              中枢在线 · {{ todayLabel }} · {{ onlineNodeCount }} 节点在网
+      <main class="zg-shell__stage">
+        <header class="zg-topbar">
+          <div class="zg-topbar__lead">
+            <div class="zg-topbar__sigil">ZGH</div>
+            <div class="zg-topbar__copy">
+              <div class="zg-topbar__title">智光云枢 · 城市照明物联管控平台</div>
+              <div class="zg-topbar__hint">
+                <span class="zg-pulse"></span>
+                中枢在线 · {{ todayLabel }} · {{ onlineNodeCount }} 节点在网
+              </div>
             </div>
           </div>
-        </div>
-        <div class="zg-topbar__trail">
-          <el-badge :value="3" class="zg-bell">
-            <el-icon :size="18"><Bell /></el-icon>
-          </el-badge>
-          <el-dropdown>
-            <span class="zg-profile">
-              <span class="zg-profile__avatar">{{ currentUser.avatar }}</span>
-              <span class="zg-profile__name">{{ currentUser.name }}</span>
-              <el-icon :size="14"><ArrowDown /></el-icon>
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="onProfile">个人中心</el-dropdown-item>
-                <el-dropdown-item divided @click="onLogout">退出中枢</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </header>
+          <div class="zg-topbar__trail">
+            <el-badge :value="3" class="zg-bell">
+              <el-icon :size="18"><Bell /></el-icon>
+            </el-badge>
+            <el-dropdown>
+              <span class="zg-profile">
+                <span class="zg-profile__avatar">{{ authStore.currentUser.value?.avatar || '?' }}</span>
+                <span class="zg-profile__name">{{ authStore.currentUser.value?.name || '未知用户' }}</span>
+                <el-icon :size="14"><ArrowDown /></el-icon>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="onProfile">个人中心</el-dropdown-item>
+                  <el-dropdown-item divided @click="onLogout">退出中枢</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </header>
 
-      <section class="zg-canvas">
+        <section class="zg-canvas">
+          <router-view v-slot="{ Component }">
+            <transition name="zg-routefade" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </router-view>
+        </section>
+      </main>
+    </template>
+    <template v-else>
+      <div class="zg-shell__full">
         <router-view v-slot="{ Component }">
           <transition name="zg-routefade" mode="out-in">
             <component :is="Component" />
           </transition>
         </router-view>
-      </section>
-    </main>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -115,16 +126,36 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowDown,
-  Bell
+  Bell,
+  ReadingLamp,
+  Grid,
+  Position,
+  Monitor,
+  Lock,
+  Iphone,
+  WindPower,
+  Platform,
+  House,
+  User,
+  Sunny,
+  Service,
+  Cpu,
+  Goods,
+  Warning,
+  Files,
+  Timer,
+  Lightning
 } from '@element-plus/icons-vue'
 import { ElMessage as Toast } from 'element-plus'
-import { useCurrentUser } from '@/shared/composables/useCurrentUser'
+import { getAuthStore, isAuthenticated } from '@/shared/stores/authStore'
 
 const route = useRoute()
 const router = useRouter()
 const isFolded = ref(false)
 
-const currentUser = useCurrentUser()
+const authStore = getAuthStore()
+
+const isLoggedIn = computed(() => authStore.isLoggedIn.value)
 
 const onlineNodeCount = ref(2184)
 
@@ -220,7 +251,149 @@ const navList = [
       { name: '光通控制', path: '/tubeLumen/lumenControl' },
       { name: '定时调度', path: '/tubeLumen/cronScheduler' }
     ]
-  }
+  },
+  {
+    name: '杆桩运营',
+    path: '/poleBiz',
+    icon: Grid,
+    children: [
+      { name: '扫码共享用电', path: '/poleBiz/sharedPower' },
+      { name: '共享用电订单中心', path: '/poleBiz/powerOrder' },
+      { name: '企业客户中心', path: '/poleBiz/powerEnterprise' },
+      { name: '共享用电实时监控', path: '/poleBiz/powerMonitor' },
+      { name: '充电桩管理', path: '/poleBiz/chargingPile' },
+      { name: '5G 微基站站址', path: '/poleBiz/gBaseTower' },
+      { name: '信息屏广告排期', path: '/poleBiz/adSchedule' }
+    ]
+  },
+  {
+    name: '隧道增强',
+    path: '/tunnelPlus',
+    icon: ReadingLamp,
+    children: [
+      { name: '灯随车亮', path: '/tunnelPlus/followLight' }
+    ]
+  },
+  // ========== Phase 1 新增业务域 ==========
+  {
+    name: '指挥中心',
+    path: '/commandCenter',
+    icon: Monitor,
+    children: [
+      { name: '数据大屏', path: '/commandCenter/overview' }
+    ]
+  },
+  {
+    name: '智能安防',
+    path: '/security',
+    icon: Lock,
+    children: [
+      { name: '安防总览', path: '/security/overview' },
+      { name: '井盖防偷', path: '/security/manhole' },
+      { name: 'AI 周界防护', path: '/security/perimeter' },
+      { name: '应急对讲 SOS', path: '/security/sos' }
+    ]
+  },
+  {
+    name: '移动端运维',
+    path: '/mobile',
+    icon: Iphone,
+    children: [
+      { name: '运维助手首页', path: '/mobile/home' }
+    ]
+  },
+  {
+    name: '低空经济',
+    path: '/lowAltitude',
+    icon: WindPower,
+    children: [
+      { name: '无人机机队', path: '/lowAltitude/drone' },
+      { name: '停机坪站址', path: '/lowAltitude/vertiport' },
+      { name: '飞行计划与空域', path: '/lowAltitude/flightPlan' }
+    ]
+  },
+  {
+    name: '数字孪生',
+    path: '/digitalTwin',
+    icon: Platform,
+    children: [
+      { name: '城市 3D 孪生', path: '/digitalTwin/city' },
+      { name: '灯杆构件级孪生', path: '/digitalTwin/structure' },
+      { name: '光照推演模拟器', path: '/digitalTwin/simulate' },
+      { name: '数字孪生大屏', path: '/digitalTwin/matrix' },
+      { name: '元数起航引擎接入', path: '/digitalTwin/adapter' }
+    ]
+  },
+  // ========== Phase 2 新增业务域 ==========
+  {
+    name: 'AI 视觉分析',
+    path: '/aiVision',
+    icon: Cpu,
+    children: [
+      { name: 'AI 分析总览', path: '/aiVision/overview' },
+      { name: '灯杆倾斜/倒塌', path: '/aiVision/garbageOverflow' },
+      { name: '灯具故障检测', path: '/aiVision/pavementDefect' },
+      { name: '配电箱/杆身安全', path: '/aiVision/occupation' },
+      { name: '照明效果验收', path: '/aiVision/lightingAcceptance' }
+    ]
+  },
+  {
+    name: '智能运维 Copilot',
+    path: '/aiOps',
+    icon: Service,
+    children: [
+      { name: 'AI 运维助手', path: '/aiOps/copilot' }
+    ]
+  },
+  {
+    name: '环境气象站',
+    path: '/envProbe',
+    icon: Sunny,
+    children: [
+      { name: '气象站与空气质量', path: '/envProbe/weatherStation' }
+    ]
+  },
+  {
+    name: '开放平台',
+    path: '/openApi',
+    icon: Connection,
+    children: [
+      { name: '开放 API 网关', path: '/openApi/gateway' },
+      { name: '场景可视化编排', path: '/scenarioOrch/visualFlow' }
+    ]
+  },
+  // ========== v3 公司内部核心 ==========
+  { name: '固定资产', path: '/assetManage', icon: House, children: [
+    { name: '资产总台账', path: '/assetManage/ledger' },
+    { name: '资产盘点', path: '/assetManage/check' },
+    { name: '折旧中心', path: '/assetManage/depreciation' },
+    { name: '报废与回收', path: '/assetManage/scrap' } ] },
+  { name: '运维组织', path: '/opsOrg', icon: User, children: [
+    { name: '组织架构与人员', path: '/opsOrg/orgChart' },
+    { name: '资质证书到期', path: '/opsOrg/certCenter' },
+    { name: '智能调度看板', path: '/opsOrg/dispatchBoard' },
+    { name: '巡检计划配置', path: '/opsOrg/patrolPlan' },
+    { name: '巡检执行与打卡', path: '/opsOrg/patrolRecord' },
+    { name: '绩效考核', path: '/opsOrg/performanceBoard' } ] },
+  { name: '节能报告中心', path: '/energyReport', icon: Coin, children: [
+    { name: '节能绩效看板', path: '/energyReport/overview' },
+    { name: 'EMC 收益计算', path: '/energyReport/emcCalc' },
+    { name: '碳减排核算', path: '/energyReport/carbon' },
+    { name: '政府报送模板', path: '/energyReport/govReport' } ] },
+  { name: '仓储库存', path: '/warehouse', icon: Goods, children: [
+    { name: '仓储总览', path: '/warehouse/overview' },
+    { name: '库存台账', path: '/warehouse/ledger' },
+    { name: '库存盘点', path: '/warehouse/check' },
+    { name: '采购申请', path: '/warehouse/purchase' } ] },
+  { name: '线路拓扑', path: '/lineTopo', icon: Connection, children: [
+    { name: '线路拓扑 GIS', path: '/lineTopo/topology' },
+    { name: '配电箱详情', path: '/lineTopo/cabinet' } ] },
+  { name: '电网知识库', path: '/gridKnowledge', icon: Files, children: [
+    { name: '知识总览', path: '/gridKnowledge/overview' } ] },
+  { name: '抢修与停电研判', path: '/opsEmergency', icon: Warning, children: [
+    { name: '抢修研判中心', path: '/opsEmergency/outageDispatch' } ] },
+  { name: '用电申请服务', path: '/powerApply', icon: Lightning, children: [
+    { name: '用电申请中心', path: '/powerApply/new' } ] }
 ]
 
 const activeEntry = computed(() => route.path)
@@ -238,7 +411,11 @@ const onProfile = () => {
   Toast.info('个人中心建设中')
 }
 const onLogout = () => {
+  authStore.logout()
   Toast.success('已退出中枢')
+  setTimeout(() => {
+    router.push('/login')
+  }, 500)
 }
 
 onMounted(() => {
@@ -260,6 +437,7 @@ onUnmounted(() => {
 
 .zg-shell {
   display: flex;
+  width: 100%;
   height: 100vh;
   overflow: hidden;
   background: var(--zg-canvas-mist);
@@ -285,6 +463,12 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+  }
+
+  &__full {
+    flex: 1;
+    width: 100%;
+    min-height: 100vh;
   }
 }
 

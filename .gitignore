@@ -39,3 +39,44 @@ Thumbs.db
 .cache
 .parcel-cache
 .eslintcache
+
+# IDE / Tooling
+.trae/
+.trae-html-share-packages/
+.uploads/
+
+# Build target (backend)
+zgsq-backend/target/
+
+# Temp / artifacts
+*.zip
+*.docx
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+deck_report/
+downloads/
+scripts/
+v5_screenshots/
+v7_screenshots/
+v9_screenshots/
+akiot_scan/
+_test_waf.py
+akiot_walk.py
+download.html
+extracted_steps.txt
+generate_docx.py
+screenshot_rjdj.cjs
+export-*.cjs
+update-hierarchy.js
+update-hierarchy.py
+source-code.html
+source-code.md
+source-code.txt
+rjdj_screenshot.png
+v9_preview.html
+build-all-functions-docx.js
+build-docx.js
+gen-v2.js

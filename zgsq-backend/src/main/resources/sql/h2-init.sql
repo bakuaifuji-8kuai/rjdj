@@ -143,10 +143,9 @@ INSERT INTO t_zgsq_role (role_name, role_code, role_desc, role_status) VALUES
 ('运维工程师', 'engineer', '日常巡检和告警处理', 0),
 ('只读用户', 'viewer', '仅查看数据', 0);
 
-INSERT INTO t_zgsq_user (user_name, user_password, user_real_name, user_phone, role_id, user_status) VALUES
-('admin',    'admin123', '系统管理员', '13800000000', 1, 0),
-('engineer', '123456',   '张工程师',   '13900000001', 2, 0),
-('viewer',   '123456',   '李观察员',   '13700000002', 3, 0);
+INSERT INTO t_zgsq_user (user_name, user_password, user_real_name, user_phone, role_id, user_status) VALUES ('admin',    '0bf5a4d295256ead0cfe45a7339a1ddb', '系统管理员', '13800000000', 1, 0);
+INSERT INTO t_zgsq_user (user_name, user_password, user_real_name, user_phone, role_id, user_status) VALUES ('engineer', 'adf3f3a220a96528f7ef35b72875d561', '张工程师',   '13900000001', 2, 0);
+INSERT INTO t_zgsq_user (user_name, user_password, user_real_name, user_phone, role_id, user_status) VALUES ('viewer',   'adf3f3a220a96528f7ef35b72875d561', '李观察员',   '13700000002', 3, 0);
 
 INSERT INTO t_zgsq_guan_lang (guan_lang_no, guan_lang_name, tunnel_length, guan_lang_status, belong_district, maintain_unit, build_year, design_life, patrol_frequency, gis_coord, remark) VALUES
 ('GL-长沙-0001', '岳麓大道综合管廊', 2580.00, 0, '岳麓区', '长沙市路灯管理处', 2018, 30, 30, '112.93,28.22', '含电力、通信、给水管道'),

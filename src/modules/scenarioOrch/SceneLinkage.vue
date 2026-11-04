@@ -146,7 +146,20 @@
             </div>
           </div>
           <div class="zg-rulecard__body">
-            <span class="zg-rulecard__execute-date">{{ rule.executeDate }}</span>
+            <el-tag size="small" effect="light" type="primary">{{ TRIGGER_LABELS[rule.triggerType] || rule.triggerType }}</el-tag>
+            <span class="zg-rulecard__scope">
+              <b class="zg-highlight">{{ ruleScopesPoles(rule) }}</b> 杆 ·
+              <b class="zg-highlight">{{ ruleScopesLamps(rule) }}</b> 盏
+            </span>
+            <span v-if="rule.scopeAreas?.length" class="zg-rulecard__areas">
+              {{ rule.scopeAreas.join('、') }}
+            </span>
+            <div class="zg-rulecard__actions-mini">
+              <el-tag v-for="(a, ai) in (rule.executeActions || [])" :key="ai"
+                size="small" effect="light" class="zg-action-tag">
+                {{ ACTION_LABELS[a.actionType] || a.actionType }}
+              </el-tag>
+            </div>
           </div>
         </div>
       </article>
@@ -183,7 +196,23 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="executeDate" label="执行日期" min-width="140" />
+        <el-table-column label="绑定范围" min-width="200">
+          <template #default="{ row }">
+            <div style="font-size:12px">
+              <div v-if="row.scopeMode === 'area' && row.scopeAreas?.length">
+                <el-tag size="small" effect="light" style="margin-right:4px">{{ row.scopeAreas.join('、') }}</el-tag>
+              </div>
+              <div style="color:#6366f1;font-weight:600;margin-top:4px">
+                {{ ruleScopesPoles(row) }} 杆 · {{ ruleScopesLamps(row) }} 盏
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="触发方式" width="100" align="center">
+          <template #default="{ row }">
+            <el-tag size="small" effect="light" type="primary">{{ TRIGGER_LABELS[row.triggerType] || row.triggerType }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="200" align="center" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="ruleInspector.openInspector(row)">详情</el-button>
@@ -207,63 +236,261 @@
 
     <el-drawer
       v-model="ruleForm.drawerOpen"
-      :title="ruleForm.editMode === 'compose' ? '新增规则' : '编辑规则'"
+      :title="ruleForm.editMode === 'compose' ? '📋 新增场景规则' : '✏️ 编辑场景规则'"
       direction="rtl"
-      size="720px"
+      size="780px"
     >
       <el-form :model="ruleForm.draftPayload" label-width="96px" class="zg-draftform">
+
+        <!-- ============ 区块 1：规则元信息 ============ -->
+        <div class="zg-section-head">
+          <span class="zg-section-ico">📌</span>
+          <h4>规则基本信息</h4>
+        </div>
         <el-form-item label="规则名称" required>
-          <el-input v-model="ruleForm.draftPayload.name" placeholder="请输入规则名称" />
+          <el-input v-model="ruleForm.draftPayload.name"
+            placeholder="如：日落自动开灯 / 杆桩倾斜自动派单" />
         </el-form-item>
-        <el-form-item label="优先级" required>
-          <el-select v-model="ruleForm.draftPayload.priority" placeholder="请选择" style="width: 100%">
-            <el-option label="低" value="low" />
-            <el-option label="中" value="medium" />
-            <el-option label="高" value="high" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="执行日期" required>
-          <el-radio-group v-model="ruleForm.draftPayload.executeMode">
-            <el-radio value="一直执行">一直执行</el-radio>
-            <el-radio value="定时执行">定时执行</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item v-if="ruleForm.draftPayload.executeMode === '定时执行'" label="日期范围">
-          <el-date-picker
-            v-model="ruleForm.draftPayload.executeDateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="YYYY-MM-DD"
-            style="width: 100%"
-          />
-        </el-form-item>
-        <el-form-item label="触发时间段">
-          <el-button type="primary" size="small" @click="openTimeRangeModal">
-            <el-icon><Clock /></el-icon>
-            <span>设置时间段</span>
-          </el-button>
-          <div v-if="ruleForm.draftPayload.triggerTimeRanges.length > 0" class="zg-time-range-list">
-            <div
-              v-for="(range, index) in ruleForm.draftPayload.triggerTimeRanges"
-              :key="index"
-              class="zg-time-range-item"
-            >
-              {{ range.start }} - {{ range.end }}
-              <el-button type="danger" size="small" @click="removeTimeRange(index)">删除</el-button>
-            </div>
-          </div>
+        <div class="zg-draftform__row">
+          <el-form-item label="优先级" class="zg-draftform__col">
+            <el-select v-model="ruleForm.draftPayload.priority" placeholder="请选择" style="width:100%">
+              <el-option label="🔴 高优先级（紧急场景）" value="high" />
+              <el-option label="🟡 中优先级（日常场景）" value="medium" />
+              <el-option label="🟢 低优先级（节能场景）" value="low" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="启用开关" class="zg-draftform__col">
+            <el-switch v-model="ruleForm.draftPayload.enabled"
+              active-text="保存后立即启用" inactive-text="保存为草稿" />
+          </el-form-item>
+        </div>
+        <el-form-item label="场景描述">
+          <el-input v-model="ruleForm.draftPayload.description" type="textarea" :rows="2"
+            placeholder="描述这个规则的业务用途，供运维同事快速理解" />
         </el-form-item>
 
+        <el-divider />
+
+        <!-- ============ 区块 2：触发方式（4 选 1，最核心） ============ -->
+        <div class="zg-section-head">
+          <span class="zg-section-ico">🎯</span>
+          <h4>触发方式 <b style="color:#ef4444">*</b></h4>
+          <span class="zg-section-sub">选择后下方配置面板会自动切换对应字段</span>
+        </div>
+
+        <el-radio-group v-model="ruleForm.draftPayload.triggerType" class="zg-trigger-radio">
+          <el-radio-button value="timer" class="zg-trigger-radio__btn">
+            <span class="zg-trigger-radio__ico">⏱</span>
+            <span class="zg-trigger-radio__lbl">定时触发</span>
+            <span class="zg-trigger-radio__hint">cron + 快捷预设 + 时区</span>
+          </el-radio-button>
+          <el-radio-button value="alarm" class="zg-trigger-radio__btn">
+            <span class="zg-trigger-radio__ico">🚨</span>
+            <span class="zg-trigger-radio__lbl">告警产生</span>
+            <span class="zg-trigger-radio__hint">7 种告警类型 + 去重</span>
+          </el-radio-button>
+          <el-radio-button value="device-event" class="zg-trigger-radio__btn">
+            <span class="zg-trigger-radio__ico">📡</span>
+            <span class="zg-trigger-radio__lbl">设备事件</span>
+            <span class="zg-trigger-radio__hint">控制模块/灯具/杆桩运营 9 种</span>
+          </el-radio-button>
+          <el-radio-button value="api-call" class="zg-trigger-radio__btn">
+            <span class="zg-trigger-radio__ico">🔌</span>
+            <span class="zg-trigger-radio__lbl">API 回调</span>
+            <span class="zg-trigger-radio__hint">方法/URL/鉴权/频率限制</span>
+          </el-radio-button>
+        </el-radio-group>
+
+        <!-- ⏱ 定时触发配置 -->
+        <template v-if="ruleForm.draftPayload.triggerType === 'timer'">
+          <el-form-item label="快捷预设">
+            <div class="zg-timer-presets">
+              <el-button v-for="p in TIMER_PRESETS" :key="p.label" size="small"
+                :type="ruleForm.draftPayload.timerCron === p.cron ? 'primary' : 'default'"
+                @click="ruleForm.draftPayload.timerCron = p.cron">
+                {{ p.icon }} {{ p.label }}
+              </el-button>
+            </div>
+          </el-form-item>
+          <el-form-item label="Cron 表达式" required>
+            <el-input v-model="ruleForm.draftPayload.timerCron" placeholder="分 时 日 月 周" />
+            <div class="zg-helptext">
+              <span style="color:#6366f1">分</span>·
+              <span style="color:#8b5cf6">时</span>·
+              <span style="color:#10b981">日</span>·
+              <span style="color:#f59e0b">月</span>·
+              <span style="color:#ef4444">周</span>
+              <span style="color:#64748b">· 示例 <code>30 18 * * *</code> 每天 18:30</span>
+            </div>
+          </el-form-item>
+          <el-form-item label="生效时区">
+            <el-select v-model="ruleForm.draftPayload.timezone" style="width:100%">
+              <el-option label="Asia/Shanghai (UTC+8) 中国标准时间" value="Asia/Shanghai" />
+              <el-option label="Asia/Hong_Kong (UTC+8)" value="Asia/Hong_Kong" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="节假日">
+            <el-switch v-model="ruleForm.draftPayload.skipHoliday"
+              active-text="节假日不触发（跳过法定假日）" inactive-text="节假日照常触发" />
+          </el-form-item>
+        </template>
+
+        <!-- 🚨 告警产生配置 -->
+        <template v-if="ruleForm.draftPayload.triggerType === 'alarm'">
+          <el-form-item label="告警等级">
+            <el-checkbox-group v-model="ruleForm.draftPayload.alarmLevel">
+              <el-checkbox value="critical">🔴 紧急（杆桩倾斜/冒烟）</el-checkbox>
+              <el-checkbox value="major">🟠 重要（灯具故障/能耗超）</el-checkbox>
+              <el-checkbox value="minor">🟡 一般（控制模块离线）</el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="告警类型" required>
+            <el-select v-model="ruleForm.draftPayload.alarmTypes" multiple collapse-tags
+              style="width:100%" placeholder="选一个或多个">
+              <el-option label="🔌 灯杆倾斜/倒塌" value="pole_tilt" />
+              <el-option label="💡 灯具故障（不亮/闪烁）" value="lamp_fault" />
+              <el-option label="🧰 配电箱冒烟/被撬" value="cabinet_smoke" />
+              <el-option label="⚡ 能耗超阈值" value="energy_over" />
+              <el-option label="💰 杆桩欠费" value="pole_debt" />
+              <el-option label="🔩 控制模块离线" value="ctrl_offline" />
+              <el-option label="⚠️ 隧道烟雾/火情" value="tunnel_smoke" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="作用范围">
+            <el-radio-group v-model="ruleForm.draftPayload.alarmScope">
+              <el-radio value="all">全部设备</el-radio>
+              <el-radio value="area">按区域分组</el-radio>
+              <el-radio value="specific">指定杆桩编号</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="ruleForm.draftPayload.alarmScope !== 'all'" label="具体范围">
+            <el-input v-model="ruleForm.draftPayload.alarmScopeValue"
+              :placeholder="ruleForm.draftPayload.alarmScope === 'area' ? '如：先导路 / 麓谷产业园' : '如：YD-LG-023, YD-LG-024'" />
+          </el-form-item>
+          <el-form-item label="去重策略">
+            <el-radio-group v-model="ruleForm.draftPayload.alarmDedupe">
+              <el-radio :label="0">不去重</el-radio>
+              <el-radio :label="5">同告警 5 分钟内只触发 1 次</el-radio>
+              <el-radio :label="30">同告警 30 分钟内只触发 1 次</el-radio>
+              <el-radio :label="1440">同告警 1 天内只触发 1 次</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </template>
+
+        <!-- 📡 设备事件配置 -->
+        <template v-if="ruleForm.draftPayload.triggerType === 'device-event'">
+          <el-form-item label="事件类型" required>
+            <el-select v-model="ruleForm.draftPayload.eventType" style="width:100%">
+              <el-option-group label="🔩 控制模块">
+                <el-option label="✅ 设备上线（网关启动）" value="gw_online" />
+                <el-option label="❌ 设备离线（心跳超时）" value="gw_offline" />
+                <el-option label="💓 心跳延迟>10s" value="gw_heartbeat_abnormal" />
+              </el-option-group>
+              <el-option-group label="💡 灯具">
+                <el-option label="灯具功率突变 Δσ>2" value="lamp_sudden_change" />
+                <el-option label="灯具功率超上限" value="lamp_over_power" />
+              </el-option-group>
+              <el-option-group label="🏗 杆桩运营">
+                <el-option label="📱 用户扫码用电启动" value="pole_power_start" />
+                <el-option label="💰 杆桩余额不足" value="pole_balance_low" />
+                <el-option label="🔌 充电桩启动充电" value="charger_start" />
+              </el-option-group>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="防抖（连续 N 次才触发）">
+            <el-input-number v-model="ruleForm.draftPayload.eventConsecutive" :min="1" :max="10" />
+            <span class="zg-helptext" style="margin-left:8px">次（防瞬时抖动）</span>
+          </el-form-item>
+        </template>
+
+        <!-- 🔌 API 回调配置 -->
+        <template v-if="ruleForm.draftPayload.triggerType === 'api-call'">
+          <el-form-item label="HTTP 方法">
+            <el-radio-group v-model="ruleForm.draftPayload.apiMethod">
+              <el-radio-button label="GET">GET</el-radio-button>
+              <el-radio-button label="POST">POST</el-radio-button>
+              <el-radio-button label="PUT">PUT</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="Endpoint URL" required>
+            <el-input v-model="ruleForm.draftPayload.apiEndpoint" placeholder="https://example.com/callback" />
+          </el-form-item>
+          <el-form-item label="鉴权方式">
+            <el-radio-group v-model="ruleForm.draftPayload.apiAuth">
+              <el-radio :label="'none'">无鉴权</el-radio>
+              <el-radio :label="'bearer'">Bearer Token</el-radio>
+              <el-radio :label="'apiKey'">API Key</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="ruleForm.draftPayload.apiAuth !== 'none'" label="Token / Key">
+            <el-input v-model="ruleForm.draftPayload.apiAuthValue" show-password />
+          </el-form-item>
+          <el-form-item label="频率限制">
+            <el-input-number v-model="ruleForm.draftPayload.apiRateLimit" :min="1" :max="60" />
+            <span class="zg-helptext" style="margin-left:8px">次 / 分钟（防回调风暴）</span>
+          </el-form-item>
+        </template>
+
+        <el-divider />
+
+        <!-- ============ 区块 3：绑定范围 ============ -->
+        <div class="zg-section-head">
+          <span class="zg-section-ico">📐</span>
+          <h4>绑定范围（作用于哪些杆桩/灯具）</h4>
+        </div>
+        <el-form-item label="范围模式" required>
+          <el-radio-group v-model="ruleForm.draftPayload.scopeMode">
+            <el-radio :label="'area'">按区域分组（推荐）</el-radio>
+            <el-radio :label="'specific'">指定杆桩编号</el-radio>
+            <el-radio :label="'lamp-type'">按灯具类型</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item v-if="ruleForm.draftPayload.scopeMode === 'area'" label="选择区域">
+          <el-checkbox-group v-model="ruleForm.draftPayload.scopeAreas">
+            <el-checkbox value="先导路">先导路（30 杆 · 90 盏）</el-checkbox>
+            <el-checkbox value="麓谷产业园">麓谷产业园（64 杆 · 192 盏）</el-checkbox>
+            <el-checkbox value="梅溪湖环湖路">梅溪湖环湖路（72 杆 · 216 盏）</el-checkbox>
+            <el-checkbox value="金星大道">金星大道（86 杆 · 258 盏）</el-checkbox>
+            <el-checkbox value="咸嘉湖路">咸嘉湖路（54 杆 · 162 盏）</el-checkbox>
+            <el-checkbox value="岳麓山景区">岳麓山景区（60 杆 · 180 盏）</el-checkbox>
+            <el-checkbox value="隧道 L-01/02/03">隧道（3 座 · 1280 盏）</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item v-if="ruleForm.draftPayload.scopeMode === 'specific'" label="指定杆桩">
+          <el-input v-model="ruleForm.draftPayload.scopeSpecific"
+            placeholder="如：YD-LG-023, YD-LG-024, YD-LG-050" />
+        </el-form-item>
+        <el-form-item v-if="ruleForm.draftPayload.scopeMode === 'lamp-type'" label="灯具类型">
+          <el-select v-model="ruleForm.draftPayload.scopeLampTypes" multiple collapse-tags style="width:100%">
+            <el-option label="道路路灯 100W LED" value="ZG-LD-100W" />
+            <el-option label="道路路灯 80W LED" value="ZG-LD-80W" />
+            <el-option label="景观灯 40W" value="ZG-JG-40W" />
+            <el-option label="隧道灯 150W" value="ZG-SD-150W" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="生效时间窗口">
+          <el-radio-group v-model="ruleForm.draftPayload.timeMode">
+            <el-radio :label="'all'">全时段（24/7）</el-radio>
+            <el-radio :label="'night-only'">仅夜间（18:00-06:00）</el-radio>
+            <el-radio :label="'weeknight'">工作日夜间</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-divider />
+
+        <!-- ============ 区块 4：附加条件 + 执行动作 ============ -->
         <el-tabs v-model="activeFormTab">
-          <el-tab-pane label="触发条件" name="trigger">
+          <el-tab-pane label="📋 附加条件（可选）" name="trigger">
+            <div class="zg-helptext" style="margin-bottom:10px">
+              <b>触发方式已配置后</b>，可以叠加条件判断（如：定时 18:30 触发 + 附加条件"亮度 < 60"才真正执行）
+            </div>
             <div class="zg-form-section">
               <div class="zg-form-section__head">
-                <h4 class="zg-form-section__title">触发条件</h4>
+                <h4>附加条件</h4>
                 <el-button type="primary" size="small" @click="addTriggerCondition">
-                  <el-icon><Plus /></el-icon>
-                  <span>添加条件</span>
+                  <el-icon><Plus /></el-icon>添加条件
                 </el-button>
               </div>
               <div
@@ -273,101 +500,49 @@
               >
                 <div class="zg-condition-step__header">
                   <span class="zg-condition-step__num">{{ index + 1 }}</span>
-                  <span class="zg-condition-step__title">触发条件 {{ index + 1 }}</span>
-                  <el-button
-                    v-if="ruleForm.draftPayload.triggerConditions.length > 1"
-                    type="danger"
-                    size="small"
-                    @click="removeTriggerCondition(index)"
-                  >
+                  <span class="zg-condition-step__title">条件 {{ index + 1 }}</span>
+                  <el-button v-if="ruleForm.draftPayload.triggerConditions.length > 1"
+                    type="danger" size="small" @click="removeTriggerCondition(index)">
                     <el-icon><Delete /></el-icon>
                   </el-button>
                 </div>
-                <el-form-item label="产品类型" required>
-                  <el-select
-                    v-model="cond.productType"
-                    placeholder="请选择产品类型"
-                    style="width: 100%"
-                    @change="onTriggerProductTypeChange(index)"
-                  >
-                    <el-option label="灯控制器" value="灯控制器" />
-                    <el-option label="集控" value="集控" />
-                    <el-option label="传感器" value="传感器" />
-                    <el-option label="摄像头" value="摄像头" />
-                    <el-option label="智能主控" value="智能主控" />
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="设备" required>
-                  <el-select
-                    v-model="cond.device"
-                    placeholder="请选择设备"
-                    style="width: 100%"
-                  >
-                    <el-option
-                      v-for="dev in getDevicesByType(cond.productType)"
-                      :key="dev.id"
-                      :label="dev.name"
-                      :value="dev.id"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="触发类型" required>
-                  <el-select
-                    v-model="cond.triggerType"
-                    placeholder="请选择触发类型"
-                    style="width: 100%"
-                  >
-                    <el-option label="事件触发" value="事件触发" />
-                    <el-option label="属性触发" value="属性触发" />
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="触发条件" required>
-                  <el-select
-                    v-model="cond.triggerCondition"
-                    placeholder="请选择触发条件"
-                    style="width: 100%"
-                  >
-                    <el-option label="信号强度" value="信号强度" />
-                    <el-option label="离线告警" value="离线告警" />
-                    <el-option label="当日流量超限" value="当日流量超限" />
-                    <el-option label="欠压告警" value="欠压告警" />
-                    <el-option label="过压告警" value="过压告警" />
-                    <el-option label="过流告警" value="过流告警" />
-                    <el-option label="低温告警" value="低温告警" />
-                    <el-option label="高温告警" value="高温告警" />
-                    <el-option label="人体感应" value="人体感应" />
-                    <el-option label="光照度低于阈值" value="光照度低于阈值" />
-                  </el-select>
-                </el-form-item>
-                <template v-if="cond.triggerType === '属性触发'">
-                  <el-form-item label="对比条件">
-                    <el-select
-                      v-model="cond.compareCondition"
-                      placeholder="请选择对比条件"
-                      style="width: 100%"
-                    >
-                      <el-option label="大于" value="大于" />
-                      <el-option label="小于" value="小于" />
-                      <el-option label="等于" value="等于" />
-                      <el-option label="大于等于" value="大于等于" />
-                      <el-option label="小于等于" value="小于等于" />
+                <div class="zg-draftform__row zg-draftform__row--no-label">
+                  <el-form-item class="zg-draftform__col">
+                    <el-select v-model="cond.triggerVar" placeholder="变量" style="width:100%">
+                      <el-option label="环境亮度 lux" value="lux" />
+                      <el-option label="环境温度 °C" value="temp" />
+                      <el-option label="实时功率 W" value="power" />
+                      <el-option label="在线率 %" value="online_rate" />
+                      <el-option label="杆桩余额 ¥" value="balance" />
+                      <el-option label="配电箱内部温度 °C" value="cabinet_temp" />
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="触发阈值">
-                    <el-input v-model="cond.triggerThreshold" placeholder="请输入触发阈值" />
+                  <el-form-item class="zg-draftform__col" style="max-width:120px">
+                    <el-select v-model="cond.triggerOp" style="width:100%">
+                      <el-option label=">" value=">" />
+                      <el-option label="<" value="<" />
+                      <el-option label="=" value="=" />
+                      <el-option label=">=" value=">=" />
+                      <el-option label="<=" value="<=" />
+                    </el-select>
                   </el-form-item>
-                </template>
+                  <el-form-item class="zg-draftform__col" style="max-width:150px">
+                    <el-input-number v-model="cond.triggerThreshold" style="width:100%" />
+                  </el-form-item>
+                </div>
+              </div>
+              <div v-if="ruleForm.draftPayload.triggerConditions.length === 0" class="zg-helptext">
+                💡 条件可为空 — 触发方式本身就是触发源（定时/告警/事件）
               </div>
             </div>
           </el-tab-pane>
 
-          <el-tab-pane label="执行动作" name="action">
+          <el-tab-pane label="🎬 执行动作（必配）" name="action">
             <div class="zg-form-section">
               <div class="zg-form-section__head">
-                <h4 class="zg-form-section__title">执行动作</h4>
+                <h4>执行动作</h4>
                 <el-button type="primary" size="small" @click="addExecuteAction">
-                  <el-icon><Plus /></el-icon>
-                  <span>添加动作</span>
+                  <el-icon><Plus /></el-icon>添加动作
                 </el-button>
               </div>
               <div
@@ -377,99 +552,96 @@
               >
                 <div class="zg-action-step__header">
                   <span class="zg-action-step__num">{{ index + 1 }}</span>
-                  <span class="zg-action-step__title">执行动作 {{ index + 1 }}</span>
-                  <el-button
-                    v-if="ruleForm.draftPayload.executeActions.length > 1"
-                    type="danger"
-                    size="small"
-                    @click="removeExecuteAction(index)"
-                  >
+                  <span class="zg-action-step__title">动作 {{ index + 1 }}</span>
+                  <el-button v-if="ruleForm.draftPayload.executeActions.length > 1"
+                    type="danger" size="small" @click="removeExecuteAction(index)">
                     <el-icon><Delete /></el-icon>
                   </el-button>
                 </div>
-                <el-form-item label="产品类型" required>
-                  <el-select
-                    v-model="action.productType"
-                    placeholder="请选择产品类型"
-                    style="width: 100%"
-                    @change="onActionProductTypeChange(index)"
-                  >
-                    <el-option label="灯控制器" value="灯控制器" />
-                    <el-option label="集控" value="集控" />
-                    <el-option label="传感器" value="传感器" />
-                    <el-option label="摄像头" value="摄像头" />
-                    <el-option label="智能主控" value="智能主控" />
+                <div class="zg-draftform__row zg-draftform__row--no-label">
+                  <el-form-item class="zg-draftform__col">
+                    <el-select v-model="action.actionType" placeholder="动作类型" style="width:100%">
+                      <el-option label="💡 开灯" value="lamp-on" />
+                      <el-option label="🌑 关灯" value="lamp-off" />
+                      <el-option label="🔅 调节亮度" value="dim" />
+                      <el-option label="📋 创建运维工单" value="ticket" />
+                      <el-option label="📱 发送消息" value="message" />
+                      <el-option label="⚡ 杆桩供电合闸/断电" value="pole-power" />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item class="zg-draftform__col zg-draftform__col--sm">
+                    <el-input-number v-model="action.delaySeconds" :min="0" :max="3600"
+                      style="width:100%" />
+                    <span class="zg-helptext" style="margin-left:4px">秒延时</span>
+                  </el-form-item>
+                </div>
+
+                <!-- 动作专属配置 -->
+                <el-form-item v-if="action.actionType === 'dim'" label="亮度">
+                  <el-slider v-model="action.brightness" :min="0" :max="100" show-input input-size="small" />
+                </el-form-item>
+                <el-form-item v-if="action.actionType === 'ticket'" label="工单类型">
+                  <el-select v-model="action.ticketType" style="width:100%">
+                    <el-option label="🔴 紧急故障" value="urgent" />
+                    <el-option label="🟠 日常巡检" value="routine" />
+                    <el-option label="🚧 杆桩维护" value="pole" />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="设备" required>
-                  <el-select
-                    v-model="action.devices"
-                    multiple
-                    collapse-tags
-                    collapse-tags-tooltip
-                    placeholder="请选择设备"
-                    style="width: 100%"
-                  >
-                    <el-option
-                      v-for="dev in getDevicesByType(action.productType)"
-                      :key="dev.id"
-                      :label="dev.name"
-                      :value="dev.id"
-                    />
-                  </el-select>
+                <el-form-item v-if="action.actionType === 'message'" label="通知渠道">
+                  <el-checkbox-group v-model="action.channels">
+                    <el-checkbox value="wecom">企业微信</el-checkbox>
+                    <el-checkbox value="sms">短信</el-checkbox>
+                    <el-checkbox value="dingtalk">钉钉</el-checkbox>
+                  </el-checkbox-group>
                 </el-form-item>
-                <el-form-item label="延时时长" required>
-                  <el-input-number
-                    v-model="action.delaySeconds"
-                    :min="0"
-                    :max="3600"
-                    style="width: 100%"
-                  />
-                  <span class="zg-form-item__unit">秒</span>
-                </el-form-item>
-                <el-form-item label="动作类型" required>
-                  <el-select
-                    v-model="action.actionType"
-                    placeholder="请选择动作类型"
-                    style="width: 100%"
-                  >
-                    <el-option label="开关灯" value="开关灯" />
-                    <el-option label="亮度调节" value="亮度调节" />
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="动作内容" required>
-                  <el-select
-                    v-if="action.actionType === '开关灯'"
-                    v-model="action.actionContent"
-                    placeholder="请选择动作内容"
-                    style="width: 100%"
-                  >
-                    <el-option label="开启" value="开启" />
-                    <el-option label="关闭" value="关闭" />
-                  </el-select>
-                  <el-input-number
-                    v-else
-                    v-model="action.actionContent"
-                    :min="0"
-                    :max="100"
-                    style="width: 100%"
-                  />
-                  <span v-if="action.actionType === '亮度调节'" class="zg-form-item__unit">%</span>
+                <el-form-item v-if="action.actionType === 'pole-power'" label="供电动作">
+                  <el-radio-group v-model="action.powerAction">
+                    <el-radio value="on">合闸供电</el-radio>
+                    <el-radio value="off">断电保护</el-radio>
+                  </el-radio-group>
                 </el-form-item>
               </div>
             </div>
           </el-tab-pane>
         </el-tabs>
+
+        <el-divider />
+
+        <!-- 实时预览 -->
+        <div class="zg-preview-row">
+          <div class="zg-preview-row__label">📊 执行预览</div>
+          <div class="zg-preview-row__boxes">
+            <div class="zg-preview-row__box">
+              <b>{{ bindingPoleCount }}</b>
+              <span>根杆桩</span>
+            </div>
+            <div class="zg-preview-row__box">
+              <b>{{ bindingLampCount }}</b>
+              <span>盏灯具</span>
+            </div>
+            <div class="zg-preview-row__box">
+              <b>{{ ruleForm.draftPayload.executeActions.length }}</b>
+              <span>个动作</span>
+            </div>
+            <div class="zg-preview-row__box">
+              <b>{{ ruleForm.draftPayload.triggerConditions.length }}</b>
+              <span>条条件</span>
+            </div>
+          </div>
+        </div>
       </el-form>
+
       <template #footer>
         <div class="zg-draftform__foot">
           <el-button @click="ruleForm.onDraftDiscard()">取消</el-button>
-          <el-button
-            type="primary"
-            :loading="ruleForm.submitting"
-            @click="onCommitRuleDraft"
-          >
-            {{ ruleForm.editMode === 'compose' ? '保存' : '保存修改' }}
+          <el-button type="primary" plain :disabled="ruleForm.draftPayload.triggerType === ''"
+            @click="ruleForm.onDraftTestRun()">
+            <el-icon><VideoPlay /></el-icon>🧪 测试运行
+          </el-button>
+          <el-button type="primary" :loading="ruleForm.submitting"
+            :disabled="ruleForm.draftPayload.triggerType === ''"
+            @click="ruleForm.onDraftCommit()">
+            {{ ruleForm.editMode === 'compose' ? '保存规则' : '保存修改' }}
           </el-button>
         </div>
       </template>
@@ -488,33 +660,86 @@
           </div>
           <div class="zg-inspector__meta">
             <h2 class="zg-inspector__name">{{ focusedRule.name }}</h2>
-            <p class="zg-inspector__type">{{ priorityText[focusedRule.priority] }}优先级 · {{ focusedRule.executeDate }}</p>
+            <p class="zg-inspector__type">
+              {{ priorityText[focusedRule.priority] }}优先级 ·
+              {{ TRIGGER_LABELS[focusedRule.triggerType] || focusedRule.triggerType }}
+            </p>
             <span class="zg-status" :class="focusedRule.status === '启用' ? 'online' : 'offline'">
               <i class="dot"></i>{{ focusedRule.status }}
             </span>
           </div>
         </div>
 
+        <!-- 触发方式 -->
         <div class="zg-inspector__section">
-          <h4 class="zg-inspector__section-title">触发条件</h4>
-          <div v-if="focusedRule.triggerConditions && focusedRule.triggerConditions.length > 0">
-            <div
-              v-for="(cond, index) in focusedRule.triggerConditions"
-              :key="index"
-              class="zg-inspector__condition-item"
-            >
-              <span class="zg-inspector__condition-num">{{ index + 1 }}.</span>
-              <span>{{ cond.productType }} · {{ getDeviceName(cond.productType, cond.device) }} · {{ cond.triggerType }} · {{ cond.triggerCondition }}</span>
-              <span v-if="cond.compareCondition && cond.triggerThreshold">
-                · {{ cond.compareCondition }} {{ cond.triggerThreshold }}
-              </span>
-            </div>
+          <h4 class="zg-inspector__section-title">🎯 触发方式</h4>
+          <div class="zg-trigger-badge-row">
+            <el-tag effect="dark" size="large" style="margin-bottom:8px">
+              {{ TRIGGER_LABELS[focusedRule.triggerType] || focusedRule.triggerType }}
+            </el-tag>
           </div>
-          <p v-else class="zg-inspector__empty">-</p>
+          <div v-if="focusedRule.triggerType === 'timer'" class="zg-inspector__kv">
+            <div><span class="lbl">Cron</span><span class="val mono">{{ focusedRule.timerCron }}</span></div>
+            <div><span class="lbl">时区</span><span class="val">{{ focusedRule.timezone }}</span></div>
+            <div><span class="lbl">节假日</span><span class="val">{{ focusedRule.skipHoliday ? '跳过' : '照常触发' }}</span></div>
+          </div>
+          <div v-if="focusedRule.triggerType === 'alarm'" class="zg-inspector__kv">
+            <div><span class="lbl">告警等级</span><span class="val">{{ (focusedRule.alarmLevel || []).join(', ') }}</span></div>
+            <div><span class="lbl">告警类型</span><span class="val">{{ (focusedRule.alarmTypes || []).join(', ') }}</span></div>
+            <div><span class="lbl">去重策略</span><span class="val">同告警 {{ focusedRule.alarmDedupe }} 分钟内只触发 1 次</span></div>
+          </div>
+          <div v-if="focusedRule.triggerType === 'device-event'" class="zg-inspector__kv">
+            <div><span class="lbl">事件类型</span><span class="val">{{ focusedRule.eventType }}</span></div>
+            <div><span class="lbl">防抖</span><span class="val">连续 {{ focusedRule.eventConsecutive }} 次才触发</span></div>
+          </div>
+          <div v-if="focusedRule.triggerType === 'api-call'" class="zg-inspector__kv">
+            <div><span class="lbl">方法</span><span class="val">{{ focusedRule.apiMethod }}</span></div>
+            <div><span class="lbl">URL</span><span class="val mono">{{ focusedRule.apiEndpoint }}</span></div>
+            <div><span class="lbl">鉴权</span><span class="val">{{ focusedRule.apiAuth }}</span></div>
+          </div>
         </div>
 
+        <!-- 附加条件 -->
+        <div v-if="focusedRule.triggerConditions && focusedRule.triggerConditions.length > 0" class="zg-inspector__section">
+          <h4 class="zg-inspector__section-title">📋 附加条件</h4>
+          <div
+            v-for="(cond, index) in focusedRule.triggerConditions"
+            :key="index"
+            class="zg-inspector__condition-item"
+          >
+            <span class="zg-inspector__condition-num">{{ index + 1 }}.</span>
+            <span class="mono">{{ cond.triggerVar }} {{ cond.triggerOp }} {{ cond.triggerThreshold }}</span>
+          </div>
+        </div>
+
+        <!-- 绑定范围 -->
         <div class="zg-inspector__section">
-          <h4 class="zg-inspector__section-title">执行动作</h4>
+          <h4 class="zg-inspector__section-title">📐 绑定范围</h4>
+          <div class="zg-summary-grid">
+            <div class="zg-summary-grid__cell">
+              <span class="num">{{ ruleScopesPoles(focusedRule) }}</span>
+              <span class="lbl">根杆桩</span>
+            </div>
+            <div class="zg-summary-grid__cell">
+              <span class="num">{{ ruleScopesLamps(focusedRule) }}</span>
+              <span class="lbl">盏灯具</span>
+            </div>
+            <div class="zg-summary-grid__cell">
+              <span class="num">{{ focusedRule.scopeAreas?.length || 0 }}</span>
+              <span class="lbl">个区域</span>
+            </div>
+          </div>
+          <div v-if="focusedRule.scopeAreas?.length" class="zg-inspector__areas">
+            <el-tag v-for="a in focusedRule.scopeAreas" :key="a"
+              size="small" effect="light" style="margin:2px">
+              {{ a }}
+            </el-tag>
+          </div>
+        </div>
+
+        <!-- 执行动作 -->
+        <div class="zg-inspector__section">
+          <h4 class="zg-inspector__section-title">🎬 执行动作</h4>
           <div v-if="focusedRule.executeActions && focusedRule.executeActions.length > 0">
             <div
               v-for="(action, index) in focusedRule.executeActions"
@@ -522,56 +747,24 @@
               class="zg-inspector__condition-item"
             >
               <span class="zg-inspector__condition-num">{{ index + 1 }}.</span>
-              <span>{{ action.productType }} · {{ action.devices.map(id => getDeviceName(action.productType, id)).join(', ') }} · 延时{{ action.delaySeconds }}秒 · {{ action.actionType }} · {{ action.actionContent }}</span>
+              <span class="zg-inspector__action-main">
+                <el-tag effect="light">{{ ACTION_LABELS[action.actionType] || action.actionType }}</el-tag>
+                <span v-if="action.delaySeconds" class="zg-delay-txt">· 延时 {{ action.delaySeconds }} 秒</span>
+                <span v-if="action.brightness != null && action.brightness > 0" class="zg-delay-txt">· 亮度 {{ action.brightness }}%</span>
+                <span v-if="action.powerAction === 'off'" class="zg-delay-txt">· 断电保护</span>
+                <span v-if="action.channels?.length" class="zg-delay-txt">· 渠道 {{ action.channels.join(',') }}</span>
+              </span>
             </div>
           </div>
-          <p v-else class="zg-inspector__empty">-</p>
+          <p v-else class="zg-helptext">尚未配置执行动作</p>
         </div>
 
         <div class="zg-inspector__actions">
           <el-button size="large" @click="ruleInspector.closeInspector()">关闭</el-button>
-          <el-button type="primary" size="large" @click="ruleForm.openReviser(focusedRule)">修改</el-button>
+          <el-button type="primary" size="large" @click="ruleForm.openReviser(focusedRule)">修改规则</el-button>
         </div>
       </div>
     </el-drawer>
-
-    <el-dialog v-model="timeRangeModalVisible" title="设置触发时间段" width="480px">
-      <div class="zg-time-range-form">
-        <div v-for="(range, index) in timeRangeFormData" :key="index" class="zg-time-range-row">
-          <el-time-picker
-            v-model="range.start"
-            format="HH:mm:ss"
-            value-format="HH:mm:ss"
-            placeholder="开始时间"
-            style="width: 140px"
-          />
-          <span class="zg-time-range-separator">-</span>
-          <el-time-picker
-            v-model="range.end"
-            format="HH:mm:ss"
-            value-format="HH:mm:ss"
-            placeholder="结束时间"
-            style="width: 140px"
-          />
-          <el-button
-            v-if="timeRangeFormData.length > 1"
-            type="danger"
-            size="small"
-            @click="removeTimeRangeForm(index)"
-          >
-            <el-icon><Delete /></el-icon>
-          </el-button>
-        </div>
-        <el-button type="primary" size="small" @click="addTimeRangeForm" style="margin-top: 12px">
-          <el-icon><Plus /></el-icon>
-          <span>添加时间段</span>
-        </el-button>
-      </div>
-      <template #footer>
-        <el-button @click="timeRangeModalVisible = false">取消</el-button>
-        <el-button type="primary" @click="saveTimeRange">确定</el-button>
-      </template>
-    </el-dialog>
   </section>
 </template>
 
@@ -596,106 +789,127 @@ import { useDrawerInspector } from '@/shared/composables/useDrawerInspector'
 const viewMode = ref('card')
 const activeFormTab = ref('trigger')
 const selectedRules = ref([])
-const timeRangeModalVisible = ref(false)
-const timeRangeFormData = ref([{ start: '', end: '' }])
 
-const priorityText = {
-  high: '高',
-  medium: '中',
-  low: '低'
+const priorityText = { high: '高', medium: '中', low: '低' }
+
+// ============ 常量（与 QuickOperation 统一） ============
+const AREA_MAPPING = {
+  '先导路':          { poles: 30,  lamps: 90 },
+  '麓谷产业园':      { poles: 64,  lamps: 192 },
+  '梅溪湖环湖路':    { poles: 72,  lamps: 216 },
+  '金星大道':        { poles: 86,  lamps: 258 },
+  '咸嘉湖路':        { poles: 54,  lamps: 162 },
+  '岳麓山景区':      { poles: 60,  lamps: 180 },
+  '隧道 L-01/02/03': { poles: 12,  lamps: 1280 },
 }
 
-const deviceData = {
-  '灯控制器': [
-    { id: 'lc-001', name: '灯控器-A1' },
-    { id: 'lc-002', name: '灯控器-A2' },
-    { id: 'lc-003', name: '灯控器-B1' },
-    { id: 'lc-004', name: '灯控器-B2' }
-  ],
-  '集控': [
-    { id: 'cc-001', name: '集控中心-主站' },
-    { id: 'cc-002', name: '集控中心-分站' }
-  ],
-  '传感器': [
-    { id: 'sen-001', name: '温湿度传感器-1' },
-    { id: 'sen-002', name: '光照传感器-1' },
-    { id: 'sen-003', name: '人体感应传感器-1' }
-  ],
-  '摄像头': [
-    { id: 'cam-001', name: '摄像头-东门' },
-    { id: 'cam-002', name: '摄像头-西门' }
-  ],
-  '智能主控': [
-    { id: 'mc-001', name: '智能主控-区域1' },
-    { id: 'mc-002', name: '智能主控-区域2' }
-  ]
+const TRIGGER_LABELS = {
+  timer: '⏱ 定时',
+  alarm: '🚨 告警',
+  'device-event': '📡 设备事件',
+  'api-call': '🔌 API 回调',
+}
+const ACTION_LABELS = {
+  'lamp-on': '💡 开灯',
+  'lamp-off': '🌑 关灯',
+  'dim': '🔅 调光',
+  'ticket': '📋 工单',
+  'message': '📱 通知',
+  'pole-power': '⚡ 杆桩供电',
+}
+
+const bindingPoleCount = computed(() => {
+  const d = ruleForm.draftPayload
+  if (d.scopeMode === 'area') return (d.scopeAreas || []).reduce((s, a) => s + (AREA_MAPPING[a]?.poles || 0), 0)
+  if (d.scopeMode === 'specific') return (d.scopeSpecific || '').split(/[,，\s]+/).filter(Boolean).length
+  return 384
+})
+const bindingLampCount = computed(() => {
+  const d = ruleForm.draftPayload
+  if (d.scopeMode === 'area') return (d.scopeAreas || []).reduce((s, a) => s + (AREA_MAPPING[a]?.lamps || 0), 0)
+  return 1152
+})
+const ruleScopesPoles = (r) => {
+  if (r.scopeMode === 'area') return (r.scopeAreas || []).reduce((s, a) => s + (AREA_MAPPING[a]?.poles || 0), 0)
+  return 0
+}
+const ruleScopesLamps = (r) => {
+  if (r.scopeMode === 'area') return (r.scopeAreas || []).reduce((s, a) => s + (AREA_MAPPING[a]?.lamps || 0), 0)
+  return 0
 }
 
 const initialRules = [
   {
-    id: 1,
-    no: 1,
-    name: '检测有人开灯',
-    priority: 'high',
-    status: '启用',
-    executeMode: '一直执行',
-    executeDate: '一直执行',
-    triggerTimeRanges: [{ start: '00:00:00', end: '23:59:59' }],
-    triggerConditions: [
-      { productType: '传感器', device: 'sen-003', triggerType: '事件触发', triggerCondition: '人体感应' }
-    ],
+    id: 1, no: 1,
+    name: '日落自动开灯（先导路 + 麓谷）',
+    priority: 'high', status: '启用', enabled: true,
+    triggerType: 'timer',
+    timerCron: '30 18 * * *', timezone: 'Asia/Shanghai', skipHoliday: false,
+    scopeMode: 'area', scopeAreas: ['先导路', '麓谷产业园'],
+    timeMode: 'all',
+    triggerConditions: [],
     executeActions: [
-      { productType: '灯控制器', devices: ['lc-001', 'lc-002'], delaySeconds: 0, actionType: '开关灯', actionContent: '开启' }
-    ]
+      { actionType: 'lamp-on', brightness: 80, delaySeconds: 0, ticketType: '', channels: [], powerAction: '' },
+    ],
   },
   {
-    id: 2,
-    no: 2,
-    name: '光照度自动亮灯',
-    priority: 'high',
-    status: '启用',
-    executeMode: '一直执行',
-    executeDate: '一直执行',
-    triggerTimeRanges: [{ start: '06:00:00', end: '18:00:00' }],
-    triggerConditions: [
-      { productType: '传感器', device: 'sen-002', triggerType: '属性触发', triggerCondition: '光照度低于阈值', compareCondition: '小于', triggerThreshold: '20' }
-    ],
+    id: 2, no: 2,
+    name: '杆桩倾斜告警 → 派紧急工单',
+    priority: 'high', status: '启用', enabled: true,
+    triggerType: 'alarm',
+    alarmLevel: ['critical'], alarmTypes: ['pole_tilt'],
+    alarmScope: 'area', alarmScopeValue: '岳麓区全域', alarmDedupe: 30,
+    scopeMode: 'area', scopeAreas: ['先导路', '麓谷产业园', '岳麓山景区'],
+    timeMode: 'all',
+    triggerConditions: [],
     executeActions: [
-      { productType: '灯控制器', devices: ['lc-001', 'lc-002', 'lc-003'], delaySeconds: 0, actionType: '开关灯', actionContent: '开启' }
-    ]
+      { actionType: 'ticket', brightness: 0, delaySeconds: 0, ticketType: 'urgent', channels: [], powerAction: '' },
+      { actionType: 'message', brightness: 0, delaySeconds: 2, ticketType: '', channels: ['wecom', 'sms'], powerAction: '' },
+    ],
   },
   {
-    id: 3,
-    no: 3,
-    name: '检测无人关灯',
-    priority: 'medium',
-    status: '启用',
-    executeMode: '一直执行',
-    executeDate: '一直执行',
-    triggerTimeRanges: [{ start: '00:00:00', end: '23:59:59' }],
-    triggerConditions: [
-      { productType: '传感器', device: 'sen-003', triggerType: '事件触发', triggerCondition: '人体感应' }
-    ],
+    id: 3, no: 3,
+    name: '隧道烟雾告警 → 断电保护 + 工单',
+    priority: 'high', status: '启用', enabled: true,
+    triggerType: 'alarm',
+    alarmLevel: ['critical'], alarmTypes: ['tunnel_smoke'],
+    alarmScope: 'area', alarmScopeValue: '隧道 L-01/02/03', alarmDedupe: 5,
+    scopeMode: 'area', scopeAreas: ['隧道 L-01/02/03'],
+    timeMode: 'all',
+    triggerConditions: [],
     executeActions: [
-      { productType: '灯控制器', devices: ['lc-001', 'lc-002'], delaySeconds: 600, actionType: '开关灯', actionContent: '关闭' }
-    ]
+      { actionType: 'pole-power', brightness: 0, delaySeconds: 0, ticketType: '', channels: [], powerAction: 'off' },
+      { actionType: 'message', brightness: 0, delaySeconds: 1, ticketType: '', channels: ['wecom', 'sms'], powerAction: '' },
+      { actionType: 'ticket', brightness: 0, delaySeconds: 3, ticketType: 'urgent', channels: [], powerAction: '' },
+    ],
   },
   {
-    id: 4,
-    no: 4,
-    name: '夜间节能模式',
-    priority: 'low',
-    status: '禁用',
-    executeMode: '定时执行',
-    executeDate: '2026-07-08 ~ 2026-07-13',
-    triggerTimeRanges: [{ start: '22:00:00', end: '06:00:00' }],
-    triggerConditions: [
-      { productType: '传感器', device: 'sen-002', triggerType: '属性触发', triggerCondition: '光照度低于阈值', compareCondition: '小于', triggerThreshold: '10' }
-    ],
+    id: 4, no: 4,
+    name: 'API 回调触发 → 联动先导路开灯',
+    priority: 'medium', status: '禁用', enabled: false,
+    triggerType: 'api-call',
+    apiMethod: 'POST', apiEndpoint: 'https://event.external.com/callback',
+    apiAuth: 'bearer', apiAuthValue: 'Bearer ****', apiRateLimit: 10,
+    scopeMode: 'area', scopeAreas: ['先导路'],
+    timeMode: 'all',
+    triggerConditions: [],
     executeActions: [
-      { productType: '灯控制器', devices: ['lc-001', 'lc-002', 'lc-003', 'lc-004'], delaySeconds: 0, actionType: '亮度调节', actionContent: 30 }
-    ]
-  }
+      { actionType: 'lamp-on', brightness: 100, delaySeconds: 0, ticketType: '', channels: [], powerAction: '' },
+    ],
+  },
+  {
+    id: 5, no: 5,
+    name: '网关离线 3 次 → 企业微信通知',
+    priority: 'medium', status: '启用', enabled: true,
+    triggerType: 'device-event',
+    eventType: 'gw_offline', eventConsecutive: 3,
+    scopeMode: 'area', scopeAreas: ['先导路', '麓谷产业园'],
+    timeMode: 'all',
+    triggerConditions: [],
+    executeActions: [
+      { actionType: 'message', brightness: 0, delaySeconds: 0, ticketType: '', channels: ['wecom'], powerAction: '' },
+    ],
+  },
 ]
 
 const ruleCtl = usePresetTable(null, {
@@ -703,72 +917,88 @@ const ruleCtl = usePresetTable(null, {
   initialData: initialRules
 })
 
+const TIMER_PRESETS = [
+  { icon: '🌅', label: '日落开灯', cron: '30 18 * * *' },
+  { icon: '🌇', label: '下班高峰', cron: '0 17 * * 1-5' },
+  { icon: '🌙', label: '深夜降亮', cron: '0 23 * * *' },
+  { icon: '🌄', label: '日出关灯', cron: '30 6 * * *' },
+  { icon: '⏰', label: '每小时巡检', cron: '0 * * * *' },
+  { icon: '🎉', label: '节假日全亮', cron: '0 19 1 5 *' },
+];
+
 const ruleForm = useFormDraft(
   {
     name: '',
-    priority: 'low',
-    executeMode: '一直执行',
-    executeDate: '一直执行',
-    executeDateRange: [],
-    triggerTimeRanges: [],
-    triggerConditions: [{
-      productType: '',
-      device: '',
-      triggerType: '',
-      triggerCondition: '',
-      compareCondition: '',
-      triggerThreshold: ''
-    }],
-    executeActions: [{
-      productType: '',
-      devices: [],
-      delaySeconds: 0,
-      actionType: '',
-      actionContent: ''
-    }]
+    description: '',
+    priority: 'medium',
+    enabled: true,
+
+    /* 触发方式（4 选 1）*/
+    triggerType: '',
+    /* timer 专属 */
+    timerCron: '30 18 * * *',
+    timezone: 'Asia/Shanghai',
+    skipHoliday: false,
+    /* alarm 专属 */
+    alarmLevel: ['critical'],
+    alarmTypes: ['pole_tilt'],
+    alarmScope: 'all',
+    alarmScopeValue: '',
+    alarmDedupe: 30,
+    /* device-event 专属 */
+    eventType: 'gw_offline',
+    eventConsecutive: 3,
+    /* api-call 专属 */
+    apiMethod: 'POST',
+    apiEndpoint: '',
+    apiAuth: 'none',
+    apiAuthValue: '',
+    apiRateLimit: 10,
+
+    /* 绑定范围 */
+    scopeMode: 'area',
+    scopeAreas: ['先导路'],
+    scopeSpecific: '',
+    scopeLampTypes: [],
+    timeMode: 'all',
+
+    /* 附加条件（可选）*/
+    triggerConditions: [
+      { triggerVar: 'lux', triggerOp: '<', triggerThreshold: 60 }
+    ],
+
+    /* 执行动作 */
+    executeActions: [
+      { actionType: 'lamp-on', brightness: 80, ticketType: 'urgent', channels: ['wecom'], powerAction: 'off', delaySeconds: 0 }
+    ]
   },
   {
-    submitApi: async (draft, { mode, origin }) => {
-      const executeDate = draft.executeMode === '一直执行'
-        ? '一直执行'
-        : `${draft.executeDateRange[0]} ~ ${draft.executeDateRange[1]}`
-
+    submitApi: async (draft, { mode }) => {
       if (mode === 'compose') {
-        const newRule = {
-          ...draft,
-          id: Date.now(),
-          no: ruleCtl.totalRows + 1,
-          status: '启用',
-          executeDate: executeDate
-        }
-        ruleCtl.appendRecord(newRule)
-        ElMessage.success('规则已创建')
-      } else if (origin && origin.id) {
-        ruleCtl.reviseRecord(origin.id, { ...draft, executeDate })
+        ruleCtl.appendRecord({
+          ...draft, id: Date.now(), no: ruleCtl.totalRows + 1,
+          status: draft.enabled ? '启用' : '禁用'
+        })
+        ElMessage.success('🎉 规则已创建并生效！')
+      } else {
+        ruleCtl.reviseRecord(draft.id, draft)
         ElMessage.success('规则已更新')
       }
       return { ok: true }
     },
     validateFn: (draft) => {
-      if (!draft.name) {
-        ElMessage.warning('请填写规则名称')
-        return false
-      }
-      const validCondition = draft.triggerConditions.some(
-        c => c.productType && c.device && c.triggerType && c.triggerCondition
-      )
-      if (!validCondition) {
-        ElMessage.warning('请至少配置一个有效的触发条件')
-        return false
-      }
-      const validAction = draft.executeActions.some(
-        a => a.productType && a.devices.length > 0 && a.actionType && a.actionContent
-      )
-      if (!validAction) {
-        ElMessage.warning('请至少配置一个有效的执行动作')
-        return false
-      }
+      if (!draft.name) { ElMessage.warning('请填写规则名称'); return false }
+      if (!draft.triggerType) { ElMessage.warning('请选择触发方式（定时/告警/设备事件/API）'); return false }
+      if (!draft.scopeMode) { ElMessage.warning('请设置绑定范围'); return false }
+      if (draft.executeActions.length === 0) { ElMessage.warning('请至少配置一个执行动作'); return false }
+      const hasAnyAction = draft.executeActions.some(a => a.actionType)
+      if (!hasAnyAction) { ElMessage.warning('请选择动作类型'); return false }
       return true
+    },
+    extraMethods: {
+      onDraftTestRun() {
+        ElMessage.info('🧪 测试运行模拟：' + ruleForm.draftPayload.triggerType + ' 触发，' + bindingPoleCount.value + ' 根杆执行中...')
+      }
     }
   }
 )
@@ -788,16 +1018,6 @@ const highPriorityCount = computed(
 const totalTriggerCount = computed(
   () => ruleCtl.presetPlaybook.reduce((sum, r) => sum + (r.triggerCount || 0), 0)
 )
-
-const getDevicesByType = (productType) => {
-  return deviceData[productType] || []
-}
-
-const getDeviceName = (productType, deviceId) => {
-  const devices = deviceData[productType] || []
-  const device = devices.find(d => d.id === deviceId)
-  return device?.name || deviceId
-}
 
 const onToggleSelect = (id) => {
   const index = selectedRules.value.indexOf(id)
@@ -846,12 +1066,7 @@ const onBatchDelete = () => {
 
 const addTriggerCondition = () => {
   ruleForm.draftPayload.triggerConditions.push({
-    productType: '',
-    device: '',
-    triggerType: '',
-    triggerCondition: '',
-    compareCondition: '',
-    triggerThreshold: ''
+    triggerVar: 'lux', triggerOp: '<', triggerThreshold: 60
   })
 }
 
@@ -859,17 +1074,10 @@ const removeTriggerCondition = (index) => {
   ruleForm.draftPayload.triggerConditions.splice(index, 1)
 }
 
-const onTriggerProductTypeChange = (index) => {
-  ruleForm.draftPayload.triggerConditions[index].device = ''
-}
-
 const addExecuteAction = () => {
   ruleForm.draftPayload.executeActions.push({
-    productType: '',
-    devices: [],
-    delaySeconds: 0,
-    actionType: '',
-    actionContent: ''
+    actionType: 'lamp-on', brightness: 80, ticketType: 'urgent',
+    channels: ['wecom'], powerAction: 'off', delaySeconds: 0
   })
 }
 
@@ -877,42 +1085,9 @@ const removeExecuteAction = (index) => {
   ruleForm.draftPayload.executeActions.splice(index, 1)
 }
 
-const onActionProductTypeChange = (index) => {
-  ruleForm.draftPayload.executeActions[index].devices = []
-}
-
-const openTimeRangeModal = () => {
-  timeRangeFormData.value = ruleForm.draftPayload.triggerTimeRanges.length > 0
-    ? JSON.parse(JSON.stringify(ruleForm.draftPayload.triggerTimeRanges))
-    : [{ start: '', end: '' }]
-  timeRangeModalVisible.value = true
-}
-
-const addTimeRangeForm = () => {
-  timeRangeFormData.value.push({ start: '', end: '' })
-}
-
-const removeTimeRangeForm = (index) => {
-  timeRangeFormData.value.splice(index, 1)
-}
-
-const saveTimeRange = () => {
-  const validRanges = timeRangeFormData.value.filter(r => r.start && r.end)
-  ruleForm.draftPayload.triggerTimeRanges = validRanges
-  timeRangeModalVisible.value = false
-  ElMessage.success('触发时间段已设置')
-}
-
 const onCommitRuleDraft = async () => {
   await ruleForm.onDraftCommit()
 }
-
-watch(() => ruleForm.draftPayload.executeMode, (mode) => {
-  if (mode === '一直执行') {
-    ruleForm.draftPayload.executeDate = '一直执行'
-    ruleForm.draftPayload.executeDateRange = []
-  }
-})
 </script>
 
 <style scoped lang="scss">
